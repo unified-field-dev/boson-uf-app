@@ -31,7 +31,7 @@ orbital-macros = { workspace = true }
 uf-product-macros = { workspace = true }
 orbital-paging = { workspace = true }
 orbital-data = { workspace = true }
-orbital-charts = { workspace = true, default-features = false, optional = true }
+orbital-charts = { workspace = true, default-features = false }
 
 boson-coordinator = { workspace = true, optional = true, default-features = false }
 boson-core = { workspace = true, optional = true }
@@ -47,7 +47,6 @@ hydrate = [
     "orbital-motion/hydrate",
     "uf-integrations/hydrate",
     "orbital-paging/hydrate",
-    "dep:orbital-charts",
     "orbital-charts/hydrate",
     "dep:leptos-use",
 ]
@@ -60,7 +59,6 @@ ssr = [
     "orbital-motion/ssr",
     "orbital/ssr",
     "uf-integrations/ssr",
-    "dep:orbital-charts",
     "orbital-charts/ssr",
     "dep:boson-coordinator",
     "dep:boson-core",
