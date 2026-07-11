@@ -1,0 +1,13 @@
+use leptos::prelude::*;
+use orbital::components::{Text, TextFont};
+use orbital::primitives::*;
+
+/// Error display for failed runs, using MessageBar with monospace text for error output.
+#[component]
+pub fn RunErrorDisplay(message: String) -> impl IntoView {
+    view! {
+        <MessageBar intent=MessageBarIntent::Error>
+            <Text font=TextFont::Monospace>{message}</Text>
+        </MessageBar>
+    }
+}

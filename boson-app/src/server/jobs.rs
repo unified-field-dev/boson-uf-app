@@ -1,0 +1,93 @@
+//! Job queue server functions.
+
+use leptos::prelude::*;
+use orbital_paging::{Page, PageRequest};
+
+#[cfg(feature = "ssr")]
+use super::helpers::{ensure_verified_user, job_to_summary, parse_job_status_filter};
+use super::page_query;
+use super::types::{JobSummary, BOSON_LIST_FETCH_CAP};
+
+/// Cancel a job.
+#[uf_product_macros::server]
+pub async fn cancel_job(job_id: String) -> Result<(), ServerFnError> {
+    let ctx = higgs::Higgs::from_request().await?;
+    ensure_verified_user(&ctx)?;
+    let backend = ctx.boson()?;
+    backend
+        .cancel_job(&job_id)
+        .await
+        .map_err(|e| ServerFnError::new(format!("Failed to cancel job: {}", e)))
+}
+
+/// Paginated jobs endpoint.
+#[uf_product_macros::server]
+pub async fn list_jobs_page(
+    offset: u32,
+    limit: u32,
+    status_filter: Option<String>,
+) -> Result<Page<JobSummary>, ServerFnError> {
+    let ctx = higgs::Higgs::from_request().await?;
+    let backend = ctx.boson()?;
+    let status = status_filter
+        .as_deref()
+        .and_then(parse_job_status_filter);
+
+    let jobs = backend
+        .list_jobs(status, offset as usize, (limit + 1) as usize)
+        .await;
+
+    let dtos: Vec<JobSummary> = jobs.into_iter().map(job_to_summary).collect();
+
+    let total_count: Option<u64> = if offset == 0 {
+        Some(backend.count_jobs(status).await)
+    } else {
+        None
+    };
+
+    Ok(Page::from_oversized(dtos, limit, total_count))
+}
+
+/// Paginated jobs for DataTable with status + quick search filters.
+#[uf_product_macros::server]
+pub async fn list_jobs_datatable_page(
+    request: PageRequest,
+) -> Result<Page<JobSummary>, ServerFnError> {
+    let status_filter = page_query::extract_status_filter(&request);
+    let needs_memory_filter = page_query::quick_search_text(&request).is_some()
+        || request
+            .filter
+            .as_ref()
+            .is_some_and(|f| f.items.iter().any(|r| r.field != "status"));
+
+    if needs_memory_filter {
+        let ctx = higgs::Higgs::from_request().await?;
+        let backend = ctx.boson()?;
+        let status = status_filter
+            .as_deref()
+            .and_then(parse_job_status_filter);
+
+        let jobs = backend
+            .list_jobs(status, 0, BOSON_LIST_FETCH_CAP)
+            .await;
+        let mut dtos: Vec<JobSummary> = jobs.into_iter().map(job_to_summary).collect();
+
+        page_query::apply_jobs_datatable_query(&mut dtos, &request);
+
+        let total_count = if request.is_first_page() {
+            Some(dtos.len() as u64)
+        } else {
+            None
+        };
+
+        let sliced: Vec<JobSummary> = dtos
+            .into_iter()
+            .skip(request.offset as usize)
+            .take((request.limit + 1) as usize)
+            .collect();
+
+        Ok(Page::from_oversized(sliced, request.limit, total_count))
+    } else {
+        list_jobs_page(request.offset, request.limit, status_filter).await
+    }
+}
