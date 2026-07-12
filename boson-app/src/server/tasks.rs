@@ -16,8 +16,8 @@ use boson_core::TaskConfig;
 /// Get all tasks with effective config and stats.
 #[uf_product_macros::server]
 pub async fn get_tasks() -> Result<Vec<TaskSummary>, ServerFnError> {
-    let ctx = higgs::Higgs::from_request().await?;
-    let backend = ctx.boson()?;
+    let backend = super::helpers::boson_backend()?;
+    let backend = backend.as_ref();
     let registry = backend.registry();
     let jobs = backend.list_jobs(None, 0, usize::MAX).await;
     let runs = backend.list_runs(None, 0, usize::MAX).await;
@@ -40,8 +40,8 @@ pub async fn get_tasks() -> Result<Vec<TaskSummary>, ServerFnError> {
 /// Get a single task by name (O(1) registry lookup + task-scoped stats).
 #[uf_product_macros::server]
 pub async fn get_task(task_name: String) -> Result<Option<TaskSummary>, ServerFnError> {
-    let ctx = higgs::Higgs::from_request().await?;
-    let backend = ctx.boson()?;
+    let backend = super::helpers::boson_backend()?;
+    let backend = backend.as_ref();
     let desc = match backend.registry().get(&task_name) {
         Some(d) => d,
         None => return Ok(None),
@@ -52,8 +52,8 @@ pub async fn get_task(task_name: String) -> Result<Option<TaskSummary>, ServerFn
 /// Get task config.
 #[uf_product_macros::server]
 pub async fn get_task_config(task_name: String) -> Result<TaskConfigDto, ServerFnError> {
-    let ctx = higgs::Higgs::from_request().await?;
-    let backend = ctx.boson()?;
+    let backend = super::helpers::boson_backend()?;
+    let backend = backend.as_ref();
     let config = backend
         .get_task_config(&task_name)
         .await
@@ -75,7 +75,8 @@ pub async fn update_task_config(
 ) -> Result<TaskConfigDto, ServerFnError> {
     let ctx = higgs::Higgs::from_request().await?;
     ensure_verified_user(&ctx)?;
-    let backend = ctx.boson()?;
+    let backend = super::helpers::boson_backend()?;
+    let backend = backend.as_ref();
     let mut config = backend
         .get_task_config(&task_name)
         .await

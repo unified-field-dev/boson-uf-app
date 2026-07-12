@@ -29,6 +29,9 @@ orbital-motion = { workspace = true }
 uf-integrations = { workspace = true, default-features = false }
 orbital-macros = { workspace = true }
 uf-product-macros = { workspace = true }
+uf-ssr = { workspace = true, optional = true }
+inventory = { workspace = true, optional = true }
+uf-app-registry = { workspace = true, optional = true }
 orbital-paging = { workspace = true }
 orbital-data = { workspace = true }
 orbital-charts = { workspace = true, default-features = false }
@@ -37,7 +40,7 @@ boson-coordinator = { workspace = true, optional = true, default-features = fals
 boson-core = { workspace = true, optional = true }
 boson-runtime = { workspace = true, optional = true, default-features = false }
 valence = { workspace = true, optional = true }
-higgs = { workspace = true, features = ["ssr"], optional = true }
+higgs = { workspace = true, optional = true }
 leptos-use = { workspace = true, default-features = false, features = ["use_interval_fn"], optional = true }
 
 [features]
@@ -64,6 +67,12 @@ ssr = [
     "dep:boson-core",
     "dep:boson-runtime",
     "dep:valence",
+    "valence/ssr",
     "dep:higgs",
+    "higgs/ssr",
+    "dep:uf-ssr",
+    "uf-ssr/ssr",
     "orbital-paging/ssr",
+    "dep:inventory",
+    "dep:uf-app-registry",
 ]

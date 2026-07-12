@@ -13,8 +13,8 @@ use boson_core::JobStatus;
 /// Get dashboard statistics.
 #[uf_product_macros::server]
 pub async fn get_dashboard_stats() -> Result<DashboardStats, ServerFnError> {
-    let ctx = higgs::Higgs::from_request().await?;
-    let backend = ctx.boson()?;
+    let backend = super::helpers::boson_backend()?;
+    let backend = backend.as_ref();
     let task_count = backend.registry().len() as u32;
 
     let jobs_queued = backend.count_jobs(Some(JobStatus::Queued)).await as u32;
@@ -41,8 +41,8 @@ pub async fn get_dashboard_stats() -> Result<DashboardStats, ServerFnError> {
 pub async fn get_run_stats_series(
     range_secs: i64,
 ) -> Result<Vec<DashboardChartSeries>, ServerFnError> {
-    let ctx = higgs::Higgs::from_request().await?;
-    let backend = ctx.boson()?;
+    let backend = super::helpers::boson_backend()?;
+    let backend = backend.as_ref();
 
     let now = chrono::Utc::now();
     let since = now - chrono::Duration::seconds(range_secs);

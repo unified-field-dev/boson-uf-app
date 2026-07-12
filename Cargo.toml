@@ -4,6 +4,8 @@ members = [
     "boson-app",
     "uf-integrations",
     "uf-product-macros",
+    "uf-ssr",
+    "uf-app-registry",
 ]
 
 [workspace.package]
@@ -35,9 +37,9 @@ turf = "0.10"
 boson = { git = "https://github.com/deathbreakfast/boson.git", rev = "2769b6f93d9da47b1d7855aefd5aa29f33e958d4", default-features = false }
 boson-core = { git = "https://github.com/deathbreakfast/boson.git", rev = "2769b6f93d9da47b1d7855aefd5aa29f33e958d4", default-features = false }
 boson-runtime = { git = "https://github.com/deathbreakfast/boson.git", rev = "2769b6f93d9da47b1d7855aefd5aa29f33e958d4", default-features = false }
-boson-coordinator = { git = "https://github.com/deathbreakfast/boson-coordinator", branch = "main" }
-higgs = { git = "https://github.com/deathbreakfast/higgs", rev = "d990a66e034fa0e8215136a4181c4765b91ed17c", default-features = false }
-valence = { git = "https://github.com/deathbreakfast/valence", rev = "fcf891c6c93b350a2b42f54754241b092f7c130a", default-features = false, features = ["mem"] }
+boson-coordinator = { git = "https://github.com/deathbreakfast/boson-coordinator", rev = "deb8060ef87ffb507b40f7ea6597eeef76e204a0" }
+higgs = { git = "https://github.com/deathbreakfast/valence-platform", rev = "8e8a4e7", package = "higgs", default-features = false }
+valence = { git = "https://github.com/deathbreakfast/valence-platform", rev = "8e8a4e7", package = "valence", default-features = false }
 
 orbital = { git = "https://github.com/deathbreakfast/orbital", rev = "2815678421984f854e2690c6e13d45bc6512ae38", default-features = false }
 orbital-charts = { git = "https://github.com/deathbreakfast/orbital", rev = "2815678421984f854e2690c6e13d45bc6512ae38", default-features = false }
@@ -48,3 +50,6 @@ orbital-paging = { git = "https://github.com/deathbreakfast/orbital", rev = "281
 
 uf-integrations = { path = "uf-integrations", default-features = false }
 uf-product-macros = { path = "uf-product-macros" }
+uf-ssr = { path = "uf-ssr", default-features = false }
+uf-app-registry = { path = "uf-app-registry" }
+inventory = "0.3"

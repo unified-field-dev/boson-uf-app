@@ -13,7 +13,8 @@ use super::types::{JobSummary, BOSON_LIST_FETCH_CAP};
 pub async fn cancel_job(job_id: String) -> Result<(), ServerFnError> {
     let ctx = higgs::Higgs::from_request().await?;
     ensure_verified_user(&ctx)?;
-    let backend = ctx.boson()?;
+    let backend = super::helpers::boson_backend()?;
+    let backend = backend.as_ref();
     backend
         .cancel_job(&job_id)
         .await
@@ -27,8 +28,8 @@ pub async fn list_jobs_page(
     limit: u32,
     status_filter: Option<String>,
 ) -> Result<Page<JobSummary>, ServerFnError> {
-    let ctx = higgs::Higgs::from_request().await?;
-    let backend = ctx.boson()?;
+    let backend = super::helpers::boson_backend()?;
+    let backend = backend.as_ref();
     let status = status_filter
         .as_deref()
         .and_then(parse_job_status_filter);
@@ -62,7 +63,8 @@ pub async fn list_jobs_datatable_page(
 
     if needs_memory_filter {
         let ctx = higgs::Higgs::from_request().await?;
-        let backend = ctx.boson()?;
+        let backend = super::helpers::boson_backend()?;
+    let backend = backend.as_ref();
         let status = status_filter
             .as_deref()
             .and_then(parse_job_status_filter);

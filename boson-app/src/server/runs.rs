@@ -15,8 +15,8 @@ pub async fn list_runs_page(
     limit: u32,
     job_id_filter: Option<String>,
 ) -> Result<Page<RunSummary>, ServerFnError> {
-    let ctx = higgs::Higgs::from_request().await?;
-    let backend = ctx.boson()?;
+    let backend = super::helpers::boson_backend()?;
+    let backend = backend.as_ref();
 
     let runs = backend
         .list_runs(
@@ -44,8 +44,8 @@ pub async fn list_runs_datatable_page(
     scope_job_id: Option<String>,
 ) -> Result<Page<RunSummary>, ServerFnError> {
     let job_filter = page_query::resolve_job_filter(scope_job_id, &request);
-    let ctx = higgs::Higgs::from_request().await?;
-    let backend = ctx.boson()?;
+    let backend = super::helpers::boson_backend()?;
+    let backend = backend.as_ref();
 
     let runs = backend
         .list_runs(job_filter.as_deref(), 0, BOSON_LIST_FETCH_CAP)
@@ -73,7 +73,7 @@ pub async fn list_runs_datatable_page(
 /// Get a single run by id.
 #[uf_product_macros::server]
 pub async fn get_run(run_id: String) -> Result<Option<RunSummary>, ServerFnError> {
-    let ctx = higgs::Higgs::from_request().await?;
-    let backend = ctx.boson()?;
+    let backend = super::helpers::boson_backend()?;
+    let backend = backend.as_ref();
     Ok(backend.get_run(&run_id).await.map(run_to_summary))
 }

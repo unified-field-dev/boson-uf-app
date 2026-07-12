@@ -54,13 +54,20 @@ pub(super) fn retry_policy_to_dto(r: &boson_core::RetryPolicy) -> RetryPolicyDto
     }
 }
 
+pub(super) fn boson_backend(
+) -> Result<std::sync::Arc<dyn boson_coordinator::BosonCoordinatorBackend>, ServerFnError> {
+    leptos::context::use_context::<std::sync::Arc<dyn boson_coordinator::BosonCoordinatorBackend>>()
+        .ok_or_else(|| ServerFnError::new("Boson backend not in request context"))
+}
+
 #[cfg(feature = "ssr")]
 pub(super) fn ensure_verified_user(ctx: &higgs::Higgs) -> Result<(), ServerFnError> {
-    match ctx.user() {
-        Some(user) if user.email_verified => Ok(()),
-        _ => Err(ServerFnError::new(
-            "Email verification is required for this action",
-        )),
+    if ctx.session_user_id().is_some() {
+        Ok(())
+    } else {
+        Err(ServerFnError::new(
+            "Authentication is required for this action",
+        ))
     }
 }
 
