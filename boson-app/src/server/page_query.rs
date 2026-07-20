@@ -286,6 +286,51 @@ mod tests {
     }
 
     #[test]
+    fn resolve_job_filter_falls_back_to_filter_rule() {
+        let request = PageRequest {
+            offset: 0,
+            limit: 20,
+            quick_search: None,
+            filter: Some(FilterQuery {
+                logic: FilterLogicWire::And,
+                items: vec![FilterRuleParam {
+                    field: "job_id".into(),
+                    operator: "equals".into(),
+                    value: DataValue::Text("from-filter".into()),
+                }],
+            }),
+            sort: None,
+        };
+        assert_eq!(
+            resolve_job_filter(None, &request),
+            Some("from-filter".into())
+        );
+        assert_eq!(
+            resolve_job_filter(Some(String::new()), &request),
+            Some("from-filter".into())
+        );
+    }
+
+    #[test]
+    fn extract_status_filter_ignores_non_status_rules() {
+        let request = PageRequest {
+            offset: 0,
+            limit: 20,
+            quick_search: None,
+            filter: Some(FilterQuery {
+                logic: FilterLogicWire::And,
+                items: vec![FilterRuleParam {
+                    field: "task_name".into(),
+                    operator: "equals".into(),
+                    value: DataValue::Text("alpha".into()),
+                }],
+            }),
+            sort: None,
+        };
+        assert_eq!(extract_status_filter(&request), None);
+    }
+
+    #[test]
     fn apply_jobs_datatable_query_filters_by_quick_search() {
         let mut jobs = vec![
             sample_job("j1", "alpha", JobStatusDto::Queued),
@@ -319,6 +364,65 @@ mod tests {
                     field: "status".into(),
                     operator: "equals".into(),
                     value: DataValue::Text("failed".into()),
+                }],
+            }),
+            sort: None,
+        };
+        apply_runs_datatable_query(&mut runs, &request);
+        assert_eq!(runs.len(), 1);
+        assert_eq!(runs[0].run_id, "r2");
+    }
+
+    #[test]
+    fn apply_jobs_datatable_query_or_logic_keeps_either_match() {
+        let mut jobs = vec![
+            sample_job("j1", "alpha", JobStatusDto::Queued),
+            sample_job("j2", "beta", JobStatusDto::Running),
+            sample_job("j3", "gamma", JobStatusDto::Failed),
+        ];
+        let request = PageRequest {
+            offset: 0,
+            limit: 20,
+            quick_search: None,
+            filter: Some(FilterQuery {
+                logic: FilterLogicWire::Or,
+                items: vec![
+                    FilterRuleParam {
+                        field: "task_name".into(),
+                        operator: "equals".into(),
+                        value: DataValue::Text("alpha".into()),
+                    },
+                    FilterRuleParam {
+                        field: "status".into(),
+                        operator: "equals".into(),
+                        value: DataValue::Text("failed".into()),
+                    },
+                ],
+            }),
+            sort: None,
+        };
+        apply_jobs_datatable_query(&mut jobs, &request);
+        assert_eq!(jobs.len(), 2);
+        assert!(jobs.iter().any(|j| j.job_id == "j1"));
+        assert!(jobs.iter().any(|j| j.job_id == "j3"));
+    }
+
+    #[test]
+    fn apply_runs_datatable_query_not_equals_status() {
+        let mut runs = vec![
+            sample_run("r1", "j1", "alpha", RunStatusDto::Success),
+            sample_run("r2", "j2", "beta", RunStatusDto::Failed),
+        ];
+        let request = PageRequest {
+            offset: 0,
+            limit: 20,
+            quick_search: None,
+            filter: Some(FilterQuery {
+                logic: FilterLogicWire::And,
+                items: vec![FilterRuleParam {
+                    field: "status".into(),
+                    operator: "not_equals".into(),
+                    value: DataValue::Text("success".into()),
                 }],
             }),
             sort: None,

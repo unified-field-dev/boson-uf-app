@@ -121,6 +121,40 @@ fn run_bucket_granularity(range_secs: i64) -> RunBucketGranularity {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::{align_run_bucket, run_bucket_granularity, RunBucketGranularity};
+    use chrono::{TimeZone, Timelike, Utc};
+
+    #[test]
+    fn run_bucket_granularity_switches_at_one_day() {
+        assert!(matches!(
+            run_bucket_granularity(86_400),
+            RunBucketGranularity::FourHourly
+        ));
+        assert!(matches!(
+            run_bucket_granularity(86_401),
+            RunBucketGranularity::Daily
+        ));
+    }
+
+    #[test]
+    fn align_run_bucket_four_hourly_floors_to_block() {
+        let ts = Utc.with_ymd_and_hms(2026, 1, 1, 10, 45, 0).unwrap();
+        let aligned = align_run_bucket(ts, RunBucketGranularity::FourHourly);
+        assert_eq!(aligned.hour(), 8);
+        assert_eq!(aligned.minute(), 0);
+    }
+
+    #[test]
+    fn align_run_bucket_daily_floors_to_midnight() {
+        let ts = Utc.with_ymd_and_hms(2026, 1, 1, 10, 45, 0).unwrap();
+        let aligned = align_run_bucket(ts, RunBucketGranularity::Daily);
+        assert_eq!(aligned.hour(), 0);
+        assert_eq!(aligned.minute(), 0);
+    }
+}
+
 fn align_run_bucket(
     ts: chrono::DateTime<chrono::Utc>,
     bucket: RunBucketGranularity,

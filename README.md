@@ -21,8 +21,10 @@ Mount Boson admin routes (queue, runs, task config, dashboards) from your host s
 ## Verify
 
 ```bash
+export CARGO_BUILD_JOBS=1
 cargo check --workspace
 cargo check -p boson-app --features ssr
+cargo test -p boson-app --features ssr
 ```
 
 ## License

@@ -312,7 +312,67 @@ mod tests {
                 parse_job_status_filter("queued"),
                 Some(JobStatus::Queued)
             );
+            assert_eq!(
+                parse_job_status_filter("running"),
+                Some(JobStatus::Running)
+            );
+            assert_eq!(
+                parse_job_status_filter("success"),
+                Some(JobStatus::Success)
+            );
+            assert_eq!(
+                parse_job_status_filter("failed"),
+                Some(JobStatus::Failed)
+            );
+            assert_eq!(
+                parse_job_status_filter("canceled"),
+                Some(JobStatus::Canceled)
+            );
             assert_eq!(parse_job_status_filter("unknown"), None);
+            assert_eq!(parse_job_status_filter(""), None);
+            assert_eq!(parse_job_status_filter("QUEUED"), None);
+        }
+
+        #[test]
+        fn job_and_run_to_summary_preserve_identity_fields() {
+            use super::super::{job_to_summary, run_to_summary};
+
+            let now = chrono::Utc::now();
+            let job = Job {
+                job_id: "j1".into(),
+                task_name: "alpha".into(),
+                actor_json: serde_json::json!({}),
+                params_json: serde_json::json!({}),
+                priority: 3,
+                pool: "global".into(),
+                status: JobStatus::Queued,
+                idempotency_key: None,
+                created_at: now,
+                signature_hash: 0,
+                attempt: 1,
+            };
+            let summary = job_to_summary(job);
+            assert_eq!(summary.job_id, "j1");
+            assert_eq!(summary.task_name, "alpha");
+            assert_eq!(summary.status, JobStatusDto::Queued);
+            assert_eq!(summary.priority, 3);
+
+            let run = Run {
+                run_id: "r1".into(),
+                job_id: "j1".into(),
+                task_name: "alpha".into(),
+                attempt: 2,
+                status: RunStatus::Failed,
+                started_at: now,
+                finished_at: Some(now),
+                duration_ms: Some(42),
+                error_message: Some("boom".into()),
+            };
+            let run_summary = run_to_summary(run);
+            assert_eq!(run_summary.run_id, "r1");
+            assert_eq!(run_summary.status, RunStatusDto::Failed);
+            assert_eq!(run_summary.duration_ms, Some(42));
+            assert_eq!(run_summary.error_message.as_deref(), Some("boom"));
         }
 
         #[test]
