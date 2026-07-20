@@ -1,28 +1,17 @@
 # boson-app
 
-**Zone B** — official Orbital UI for Boson queue inspection, runs, task config, and dashboards.
+Leptos admin UI for Boson: queue inspection, runs, task config, and dashboards (typically mounted at `/boson`).
 
-**Tracker:** `boson_extract_01` · [`boson/EXTRACTION.md`](../boson/EXTRACTION.md)
+Depends on the Boson facade (enqueue/admin APIs via server functions), Orbital UI components, and optionally Photon for live updates.
 
-## Role
+## Pages
 
-Product-facing admin UI mounted at `/boson` in the Unified Field template. Depends on:
+Dashboard, queue, runs, tasks, and task-config views. See [`BOSON_UI_AUDIT.md`](BOSON_UI_AUDIT.md) for UI coverage notes.
 
-- [`boson`](../boson/) facade (enqueue/admin API via server functions)
-- Orbital components (data tables, charts, layout)
-- Optional Photon live updates via [`boson-photon-events`](../boson-photon-events/README.md)
+## Feature checks
 
-Unified Field keeps a thin wrapper only where permissions, Gluon pool labels, or UF-specific routes differ.
-
-## E2E
-
-- **Official app flows:** boson-app integration tests (Phase 5+) — queue, runs, task-config
-- **Template shell:** [`end2end/tests/boson/boson.spec.ts`](../end2end/tests/boson/boson.spec.ts) — nav, auth, root visibility only
-
-## Must not
-
-- Reference Zone A internal module paths; use public boson API and Zone B adapters only
-
-## Status
-
-Implemented — dashboard, queue, runs, tasks, task config pages. See [`BOSON_UI_AUDIT.md`](BOSON_UI_AUDIT.md).
+```bash
+cargo check -p boson-app
+cargo check -p boson-app --features hydrate
+cargo check -p boson-app --features ssr
+```

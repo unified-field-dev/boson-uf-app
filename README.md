@@ -1,30 +1,30 @@
-# Boson Uf App
+# Boson UF App
 
-        [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-        Official Unified Field admin UI for Boson.
+Official Unified Field admin UI for Boson (Leptos).
 
-        ## Quick start
+```toml
+[dependencies]
+boson-app = { git = "https://github.com/deathbreakfast/boson-uf-app", package = "boson-app", branch = "main" }
+```
 
-        ```toml
-        [dependencies]
-        # Example — replace branch with a release tag when available.
-        boson-uf-app = { git = "https://github.com/deathbreakfast/boson-uf-app", branch = "main" }
-        ```
+Mount Boson admin routes (queue, runs, task config, dashboards) from your host shell.
 
-        ```rust
-        # Official boson admin UI (Leptos)
-# Enable from your host app via git dependency.
-        ```## Workspace
+## Workspace
 
 | Crate | Role |
 |-------|------|
-| `boson-app` | boson-app crate |
+| `boson-app` | Boson admin UI |
+| `uf-*` | Thin shell / registry helpers shared with other uf-app repos |
 
 ## Verify
 
 ```bash
 cargo check --workspace
+cargo check -p boson-app --features ssr
 ```
 
-See [EXTRACTION.md](EXTRACTION.md) for the phased import plan.
+## License
+
+MIT. See [LICENSE](LICENSE), [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
