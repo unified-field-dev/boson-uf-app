@@ -11,6 +11,7 @@ use crate::server::get_task;
 
 use skeleton::TaskDetailSkeleton;
 
+/// Detail view for a single task: configuration summary and recent runs.
 #[component]
 pub fn BosonTaskDetailPage() -> impl IntoView {
     let params = use_params_map();

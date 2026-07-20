@@ -10,7 +10,9 @@ use turf::inline_style_sheet_values;
 /// this with flex fill classes from [`boson_table_page_layout`].
 #[component]
 pub fn BosonCardContent(
+    /// Additional CSS class(es) to apply.
     #[prop(optional, into)] class: MaybeProp<String>,
+    /// Child content rendered inside the component.
     children: Children,
 ) -> impl IntoView {
     view! {
@@ -82,7 +84,9 @@ pub fn boson_table_page_layout() -> (&'static str, BosonTablePageClasses) {
 /// list cards and table columns reachable without clipping the card padding.
 #[component]
 pub fn BosonDataTableShell(
+    /// Data testid.
     #[prop(optional, into)] data_testid: MaybeProp<String>,
+    /// Child content rendered inside the component.
     children: Children,
 ) -> impl IntoView {
     let (style_sheet, class_names) = inline_style_sheet_values! {

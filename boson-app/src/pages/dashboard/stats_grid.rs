@@ -11,7 +11,9 @@ use crate::server::DashboardStats;
 /// Stat card shell with a skeleton placeholder for the value only.
 #[component]
 fn DashboardStatCardSkeleton(
+    /// Label text.
     label: &'static str,
+    /// Icon to display.
     icon: icondata_core::Icon,
 ) -> impl IntoView {
     let value_skeleton = Signal::from(SkeletonItemSize::S32);
@@ -97,6 +99,7 @@ fn DashboardStatsSkeleton() -> impl IntoView {
 /// KPI stat cards with staggered enter on first load; poll refetches keep cards mounted.
 #[component]
 pub fn DashboardStatsGrid(
+    /// Resource that loads the stats data.
     stats_res: Resource<Result<DashboardStats, ServerFnError>>,
 ) -> impl IntoView {
     let kpi_enter = RwSignal::new(false);

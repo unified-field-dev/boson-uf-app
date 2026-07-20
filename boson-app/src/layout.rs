@@ -10,6 +10,10 @@ use uf_integrations::{
 use crate::paths;
 use crate::AppMetadata;
 
+/// Boson's shell layout: app bar, left navigation, and a router [`Outlet`] for the
+/// currently active page.
+///
+/// Wraps every route declared in [`crate::BosonRoutes`].
 #[component]
 pub fn BosonLayout() -> impl IntoView {
     let app_name = AppMetadata::name().to_string();

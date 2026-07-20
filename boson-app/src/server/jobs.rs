@@ -10,7 +10,10 @@ use super::types::{JobSummary, BOSON_LIST_FETCH_CAP};
 
 /// Cancel a job.
 #[uf_product_macros::server]
-pub async fn cancel_job(job_id: String) -> Result<(), ServerFnError> {
+pub async fn cancel_job(
+    /// Unique identifier of the job to cancel.
+    job_id: String,
+) -> Result<(), ServerFnError> {
     let ctx = higgs::Higgs::from_request().await?;
     ensure_verified_user(&ctx)?;
     let backend = super::helpers::boson_backend()?;
@@ -24,8 +27,11 @@ pub async fn cancel_job(job_id: String) -> Result<(), ServerFnError> {
 /// Paginated jobs endpoint.
 #[uf_product_macros::server]
 pub async fn list_jobs_page(
+    /// Zero-based index of the first job to return.
     offset: u32,
+    /// Maximum number of jobs to return.
     limit: u32,
+    /// Optional job status name to filter by (e.g. "queued", "running").
     status_filter: Option<String>,
 ) -> Result<Page<JobSummary>, ServerFnError> {
     let backend = super::helpers::boson_backend()?;
@@ -52,6 +58,7 @@ pub async fn list_jobs_page(
 /// Paginated jobs for DataTable with status + quick search filters.
 #[uf_product_macros::server]
 pub async fn list_jobs_datatable_page(
+    /// DataTable paging/filter/search/sort request from the client.
     request: PageRequest,
 ) -> Result<Page<JobSummary>, ServerFnError> {
     let status_filter = page_query::extract_status_filter(&request);

@@ -7,7 +7,10 @@ use crate::server::RunSummary;
 
 /// Metadata grid showing run details (ID, job, task, status, timestamps, etc.).
 #[component]
-pub fn RunInfoGrid(run: RunSummary) -> impl IntoView {
+pub fn RunInfoGrid(
+    /// Run to display.
+    run: RunSummary,
+) -> impl IntoView {
     let job_id = run.job_id.clone();
     let job_href = format!("{}?job={}", crate::paths::RUNS, job_id);
 

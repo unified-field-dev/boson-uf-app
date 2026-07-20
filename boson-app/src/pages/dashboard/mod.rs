@@ -16,6 +16,7 @@ use orbital::primitives::*;
 use crate::live::use_boson_poll_tick;
 use crate::server::{get_dashboard_stats, get_tasks};
 
+/// Boson dashboard: aggregate stats, run trend chart, quick links, and recent tasks.
 #[component]
 pub fn BosonRootPage() -> impl IntoView {
     let poll_tick = use_boson_poll_tick();

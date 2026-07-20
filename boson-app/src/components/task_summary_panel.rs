@@ -28,8 +28,11 @@ fn success_rate_label(task: &TaskSummary) -> String {
 /// Shared task metadata block for card and detail views.
 #[component]
 pub fn TaskSummaryPanel(
+    /// Task to display.
     task: TaskSummary,
+    /// Whether to show title.
     #[prop(default = false)] show_title: bool,
+    /// Child content rendered inside the component.
     #[prop(optional)] children: Option<Children>,
 ) -> impl IntoView {
     let (style_sheet, class_names) = turf::inline_style_sheet_values! {

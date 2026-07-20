@@ -6,6 +6,7 @@ use leptos_router::hooks::{use_navigate, use_query_map};
 use orbital::components::{Card, Caption1, ContentContainer, SpacingSize, Tag, Title3};
 use orbital::primitives::*;
 
+/// Run history index: paginated list of past runs across all tasks.
 #[component]
 pub fn BosonRunsIndexPage() -> impl IntoView {
     let query = use_query_map();

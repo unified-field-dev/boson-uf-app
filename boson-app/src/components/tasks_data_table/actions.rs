@@ -5,7 +5,10 @@ use orbital::primitives::*;
 
 /// Action buttons shared by TaskCard and the tasks DataTable actions column.
 #[component]
-pub fn TaskCardActions(task_name: String) -> impl IntoView {
+pub fn TaskCardActions(
+    /// Task name.
+    task_name: String,
+) -> impl IntoView {
     let navigate = use_navigate();
     let nav_store = StoredValue::new(navigate);
 

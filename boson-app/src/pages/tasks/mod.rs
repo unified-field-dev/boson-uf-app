@@ -7,6 +7,7 @@ use leptos::prelude::*;
 use orbital::components::{Card, ContentContainer, SpacingSize, Title3};
 use orbital::primitives::*;
 
+/// Task index: searchable list of all configured tasks.
 #[component]
 pub fn BosonTasksIndexPage() -> impl IntoView {
     let (page_style, page_classes) = boson_table_page_layout();

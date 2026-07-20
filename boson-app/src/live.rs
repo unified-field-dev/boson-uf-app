@@ -47,7 +47,9 @@ pub fn boson_run_event_is_status(event: &Value) -> bool {
 /// Placeholder live source — Photon Axum wiring omitted from this export.
 #[component]
 pub fn BosonJobsLiveSource(
+    /// Two-way signal holding the trigger element/state.
     trigger: RwSignal<u64>,
+    /// Two-way signal holding the latest event.
     latest_event: RwSignal<Option<Value>>,
 ) -> impl IntoView {
     let _ = (trigger, latest_event);
@@ -57,8 +59,11 @@ pub fn BosonJobsLiveSource(
 /// Placeholder per-job live source — polling refresh is used instead.
 #[component]
 pub fn BosonJobRunLiveSource(
+    /// Reactive signal for the job ID.
     job_id: Signal<Option<String>>,
+    /// Two-way signal holding the trigger element/state.
     trigger: RwSignal<u64>,
+    /// Two-way signal holding the latest event.
     latest_event: RwSignal<Option<Value>>,
 ) -> impl IntoView {
     let _ = (job_id, trigger, latest_event);

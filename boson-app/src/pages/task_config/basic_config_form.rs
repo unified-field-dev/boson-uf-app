@@ -8,8 +8,11 @@ use crate::server::GluonPoolPickRow;
 /// Basic configuration form section (pool and priority).
 #[component]
 pub fn TaskConfigForm(
+    /// Two-way signal holding the resource pool identifier.
     pool: RwSignal<String>,
+    /// Two-way signal holding the priority.
     priority_str: RwSignal<String>,
+    /// List of pool options.
     #[prop(default = Vec::new())] pool_options: Vec<GluonPoolPickRow>,
 ) -> impl IntoView {
     let opts_for_select = pool_options.clone();

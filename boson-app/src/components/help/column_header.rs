@@ -12,7 +12,9 @@ fn column_test_id(label: &str) -> String {
 /// Table column header with an optional info popover.
 #[component]
 pub fn BosonHelpColumnHeader(
+    /// Label text.
     label: &'static str,
+    /// Supplementary info/help content.
     #[prop(optional)] info: Option<AnyView>,
 ) -> impl IntoView {
     view! {

@@ -35,6 +35,8 @@ fn TaskConfigSkeleton() -> impl IntoView {
     }
 }
 
+/// Task configuration form: priority, pools, and retry policy. Requires verified email
+/// (see the `BosonVerifiedTaskConfigPage` route guard in the crate root).
 #[component]
 pub fn BosonTaskConfigPage() -> impl IntoView {
     let params = use_params_map();

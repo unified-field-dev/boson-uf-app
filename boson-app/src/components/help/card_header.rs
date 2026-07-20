@@ -5,8 +5,11 @@ use orbital::primitives::{InfoLabel, InfoLabelInfo};
 /// Card header with optional visible description and deeper info popover.
 #[component]
 pub fn BosonHelpCardHeader(
+    /// Title text.
     title: &'static str,
+    /// Description text.
     #[prop(optional)] description: Option<&'static str>,
+    /// Supplementary info/help content.
     #[prop(optional)] info: Option<AnyView>,
 ) -> impl IntoView {
     let title_row = move || {

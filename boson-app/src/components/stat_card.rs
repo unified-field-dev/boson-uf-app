@@ -6,10 +6,15 @@ use turf::inline_style_sheet_values;
 /// Stat card with optional InfoLabel on the metric label (when StatCard label prop is insufficient).
 #[component]
 pub fn BosonHelpStatCard(
+    /// Label text.
     label: &'static str,
+    /// Reactive signal for the current value.
     #[prop(into)] value: Signal<String>,
+    /// Icon to display.
     #[prop(optional)] icon: Option<icondata_core::Icon>,
+    /// Visual variant to render.
     #[prop(optional)] variant: Option<StatCardVariant>,
+    /// Supplementary info/help content for the label.
     #[prop(optional)] label_info: Option<AnyView>,
 ) -> impl IntoView {
     match label_info {

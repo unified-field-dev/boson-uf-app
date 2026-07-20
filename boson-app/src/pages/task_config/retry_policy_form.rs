@@ -10,9 +10,13 @@ use crate::components::{
 /// Retry policy form section (max attempts, delays, backoff).
 #[component]
 pub fn RetryPolicyForm(
+    /// Two-way signal holding the max attempts.
     max_attempts_str: RwSignal<String>,
+    /// Two-way signal holding the base delay milliseconds.
     base_delay_ms_str: RwSignal<String>,
+    /// Two-way signal holding the max delay milliseconds.
     max_delay_ms_str: RwSignal<String>,
+    /// Two-way signal holding the backoff multiplier.
     backoff_multiplier_str: RwSignal<String>,
 ) -> impl IntoView {
     view! {

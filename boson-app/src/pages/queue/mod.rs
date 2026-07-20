@@ -10,6 +10,7 @@ use leptos::task::spawn_local;
 use orbital::components::{Card, ContentContainer, SpacingSize, Title3};
 use orbital::primitives::*;
 
+/// Job queue view: pending/active jobs across all tasks.
 #[component]
 pub fn BosonQueuePage() -> impl IntoView {
     let cancel_pending = RwSignal::new(HashSet::<String>::new());

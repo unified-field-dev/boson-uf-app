@@ -34,6 +34,7 @@ fn RunDetailSkeleton() -> impl IntoView {
     }
 }
 
+/// Detail view for a single run: status, timing, error output, and live updates.
 #[component]
 pub fn BosonRunDetailPage() -> impl IntoView {
     let params = use_params_map();

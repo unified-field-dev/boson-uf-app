@@ -39,7 +39,10 @@ pub async fn get_tasks() -> Result<Vec<TaskSummary>, ServerFnError> {
 
 /// Get a single task by name (O(1) registry lookup + task-scoped stats).
 #[uf_product_macros::server]
-pub async fn get_task(task_name: String) -> Result<Option<TaskSummary>, ServerFnError> {
+pub async fn get_task(
+    /// Registry name of the task to look up.
+    task_name: String,
+) -> Result<Option<TaskSummary>, ServerFnError> {
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
     let desc = match backend.registry().get(&task_name) {
@@ -51,7 +54,10 @@ pub async fn get_task(task_name: String) -> Result<Option<TaskSummary>, ServerFn
 
 /// Get task config.
 #[uf_product_macros::server]
-pub async fn get_task_config(task_name: String) -> Result<TaskConfigDto, ServerFnError> {
+pub async fn get_task_config(
+    /// Registry name of the task whose config should be fetched.
+    task_name: String,
+) -> Result<TaskConfigDto, ServerFnError> {
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
     let config = backend
@@ -70,7 +76,9 @@ pub async fn get_task_config(task_name: String) -> Result<TaskConfigDto, ServerF
 /// Update task config.
 #[uf_product_macros::server]
 pub async fn update_task_config(
+    /// Registry name of the task whose config should be updated.
     task_name: String,
+    /// Partial update request with the fields to change.
     req: UpdateTaskConfigRequest,
 ) -> Result<TaskConfigDto, ServerFnError> {
     let ctx = higgs::Higgs::from_request().await?;
@@ -118,8 +126,11 @@ pub async fn update_task_config(
 /// small) so we fetch all, sort, filter, then slice.
 #[uf_product_macros::server]
 pub async fn get_tasks_page(
+    /// Zero-based index of the first task to return.
     offset: u32,
+    /// Maximum number of tasks to return.
     limit: u32,
+    /// Optional case-insensitive search string matched against name, signature, and pool.
     query: Option<String>,
 ) -> Result<Page<TaskSummary>, ServerFnError> {
     let mut tasks = get_tasks().await?;
@@ -154,6 +165,7 @@ pub async fn get_tasks_page(
 /// Paginated tasks for DataTable toolbar (quick search via PageRequest).
 #[uf_product_macros::server]
 pub async fn get_tasks_datatable_page(
+    /// DataTable paging/filter/search/sort request from the client.
     request: PageRequest,
 ) -> Result<Page<TaskSummary>, ServerFnError> {
     get_tasks_page(

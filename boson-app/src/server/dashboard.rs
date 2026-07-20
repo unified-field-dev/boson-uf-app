@@ -39,6 +39,7 @@ pub async fn get_dashboard_stats() -> Result<DashboardStats, ServerFnError> {
 /// Uses a bounded backend fetch (0.1.n limitation).
 #[uf_product_macros::server]
 pub async fn get_run_stats_series(
+    /// Width of the trailing time window, in seconds, to aggregate run outcomes over.
     range_secs: i64,
 ) -> Result<Vec<DashboardChartSeries>, ServerFnError> {
     let backend = super::helpers::boson_backend()?;

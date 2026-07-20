@@ -13,7 +13,10 @@ const RANGE_24H: i64 = 86_400;
 const RANGE_7D: i64 = 604_800;
 
 #[component]
-fn RunTrendChartSkeleton(#[prop(into)] class: String) -> impl IntoView {
+fn RunTrendChartSkeleton(
+    /// Additional CSS class(es) to apply.
+    #[prop(into)] class: String,
+) -> impl IntoView {
     view! {
         <Skeleton>
             <SkeletonItem class=class />

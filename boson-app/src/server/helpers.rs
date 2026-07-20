@@ -54,6 +54,7 @@ pub(super) fn retry_policy_to_dto(r: &boson_core::RetryPolicy) -> RetryPolicyDto
     }
 }
 
+#[cfg(feature = "ssr")]
 pub(super) fn boson_backend(
 ) -> Result<std::sync::Arc<dyn boson_coordinator::BosonCoordinatorBackend>, ServerFnError> {
     leptos::context::use_context::<std::sync::Arc<dyn boson_coordinator::BosonCoordinatorBackend>>()

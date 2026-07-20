@@ -12,8 +12,11 @@ use crate::server::{JobStatusDto, JobSummary};
 /// Individual job card with metadata and action buttons.
 #[component]
 pub fn JobCard(
+    /// Job to display.
     job: JobSummary,
+    /// Callback invoked when the action is cancelled.
     on_cancel: Callback<String>,
+    /// Reactive signal for the cancel pending.
     cancel_pending: ReadSignal<HashSet<String>>,
 ) -> impl IntoView {
     let navigate = use_navigate();

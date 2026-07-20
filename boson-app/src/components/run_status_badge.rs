@@ -5,7 +5,10 @@ use orbital::primitives::*;
 
 /// Badge component for displaying run status.
 #[component]
-pub fn RunStatusBadge(#[prop(into)] status: RunStatusDto) -> impl IntoView {
+pub fn RunStatusBadge(
+    /// Current status value.
+    #[prop(into)] status: RunStatusDto,
+) -> impl IntoView {
     let (label, appearance, color) = match status {
         RunStatusDto::Running => ("Running", BadgeAppearance::Tint, BadgeColor::Brand),
         RunStatusDto::Success => ("Success", BadgeAppearance::Filled, BadgeColor::Success),

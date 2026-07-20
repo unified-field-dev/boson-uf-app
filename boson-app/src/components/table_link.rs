@@ -23,7 +23,12 @@ pub fn boson_table_link_styles() -> (&'static str, BosonTableLinkClasses) {
 
 /// Orbital Link for table cells and metadata grids.
 #[component]
-pub fn BosonTableLink(href: String, children: Children) -> impl IntoView {
+pub fn BosonTableLink(
+    /// Link target.
+    href: String,
+    /// Child content rendered inside the component.
+    children: Children,
+) -> impl IntoView {
     view! {
         <Link href=href>
             {children()}
@@ -34,8 +39,11 @@ pub fn BosonTableLink(href: String, children: Children) -> impl IntoView {
 /// Truncated table cell link with ellipsis and full-text tooltip on hover.
 #[component]
 pub fn BosonTruncatedTableCellLink(
+    /// Link target.
     href: String,
+    /// Label text.
     label: String,
+    /// Optional data testid.
     #[prop(optional, into)] data_testid: Option<String>,
 ) -> impl IntoView {
     view! {

@@ -5,8 +5,11 @@ use orbital::primitives::*;
 /// Shared back navigation using Orbital Button (chronon job-create pattern).
 #[component]
 pub fn BosonBackLink(
+    /// Link target.
     href: &'static str,
+    /// Label text.
     label: &'static str,
+    /// Optional data testid.
     #[prop(optional)] data_testid: Option<&'static str>,
 ) -> impl IntoView {
     let navigate = use_navigate();

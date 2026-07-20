@@ -68,6 +68,7 @@ fn RecentTasksTableSkeleton() -> impl IntoView {
 /// Table showing the top tasks from the index with navigation.
 #[component]
 pub fn RecentTasksTable(
+    /// Resource that loads the tasks data.
     tasks_res: Resource<Result<Vec<TaskSummary>, ServerFnError>>,
 ) -> impl IntoView {
     let navigate = use_navigate();

@@ -6,7 +6,10 @@ use crate::server::TaskSummary;
 
 /// Individual task card with metadata and action buttons.
 #[component]
-pub fn TaskCard(task: TaskSummary) -> impl IntoView {
+pub fn TaskCard(
+    /// Task to display.
+    task: TaskSummary,
+) -> impl IntoView {
     let name = task.name.clone();
     let name_card_testid = name.clone();
 

@@ -11,8 +11,11 @@ use super::types::{RunSummary, BOSON_LIST_FETCH_CAP};
 /// Paginated runs endpoint.
 #[uf_product_macros::server]
 pub async fn list_runs_page(
+    /// Zero-based index of the first run to return.
     offset: u32,
+    /// Maximum number of runs to return.
     limit: u32,
+    /// Optional job id to restrict results to runs of a single job.
     job_id_filter: Option<String>,
 ) -> Result<Page<RunSummary>, ServerFnError> {
     let backend = super::helpers::boson_backend()?;
@@ -40,7 +43,9 @@ pub async fn list_runs_page(
 /// Paginated runs for DataTable with in-memory filter/search (bounded fetch).
 #[uf_product_macros::server]
 pub async fn list_runs_datatable_page(
+    /// DataTable paging/filter/search/sort request from the client.
     request: PageRequest,
+    /// Optional job id to scope results to a single job's runs.
     scope_job_id: Option<String>,
 ) -> Result<Page<RunSummary>, ServerFnError> {
     let job_filter = page_query::resolve_job_filter(scope_job_id, &request);
@@ -72,7 +77,10 @@ pub async fn list_runs_datatable_page(
 
 /// Get a single run by id.
 #[uf_product_macros::server]
-pub async fn get_run(run_id: String) -> Result<Option<RunSummary>, ServerFnError> {
+pub async fn get_run(
+    /// Unique identifier of the run to look up.
+    run_id: String,
+) -> Result<Option<RunSummary>, ServerFnError> {
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
     Ok(backend.get_run(&run_id).await.map(run_to_summary))

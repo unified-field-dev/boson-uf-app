@@ -17,8 +17,11 @@ use fetcher::{build_queue_fetcher, QUEUE_TABLE_PAGE_SIZE};
 /// Queue jobs DataTable with status filter and cancel actions.
 #[component]
 pub fn QueueDataTable(
+    /// Reactive signal for the cancel pending.
     cancel_pending: ReadSignal<HashSet<String>>,
+    /// Callback invoked when the action is cancelled.
     on_cancel: Callback<String>,
+    /// Optional refresh signal.
     #[prop(optional)] refresh_signal: Option<Signal<u32>>,
 ) -> impl IntoView {
     let navigate = use_navigate();

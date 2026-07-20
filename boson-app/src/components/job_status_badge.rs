@@ -5,7 +5,10 @@ use orbital::primitives::*;
 
 /// Badge component for displaying job status.
 #[component]
-pub fn JobStatusBadge(#[prop(into)] status: JobStatusDto) -> impl IntoView {
+pub fn JobStatusBadge(
+    /// Current status value.
+    #[prop(into)] status: JobStatusDto,
+) -> impl IntoView {
     let (label, appearance, color) = match status {
         JobStatusDto::Queued => ("Queued", BadgeAppearance::Outline, BadgeColor::Informative),
         JobStatusDto::Running => ("Running", BadgeAppearance::Tint, BadgeColor::Brand),

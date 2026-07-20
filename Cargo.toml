@@ -13,6 +13,12 @@ version = "0.1.0"
 edition = "2021"
 license = "MIT"
 
+[workspace.lints.rust]
+missing_docs = "deny"
+
+[workspace.lints.rustdoc]
+broken_intra_doc_links = "allow"
+
 [workspace.dependencies]
 leptos = { version = "0.8.20", default-features = false, features = ["nightly"] }
 leptos_meta = { version = "0.8", default-features = false }

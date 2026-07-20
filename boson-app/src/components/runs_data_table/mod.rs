@@ -22,9 +22,13 @@ pub enum RunsTableScope {
 /// Runs list DataTable with search, filters, and table layout.
 #[component]
 pub fn RunsDataTable(
+    /// Scope to filter by.
     scope: RunsTableScope,
+    /// Page size.
     #[prop(default = RUNS_TABLE_PAGE_SIZE)] page_size: u32,
+    /// Whether fill height is enabled.
     #[prop(default = true)] fill_height: bool,
+    /// Optional empty description.
     #[prop(optional)] empty_description: Option<&'static str>,
 ) -> impl IntoView {
     let navigate = use_navigate();
