@@ -49,7 +49,9 @@ use orbital::components::{
     LayoutMain, LayoutSidebar, LayoutSidebarToggle, MaterialCorners, MaterialElevation,
     MaterialVariant,
 };
-use orbital::primitives::*;
+use orbital::primitives::{
+    Avatar, AvatarColor, AvatarConfig, AvatarShape, Breadcrumb, BreadcrumbButton, BreadcrumbItem,
+};
 
 /// When true, [`UnifiedFieldAppBar`] should render the sidebar toggle.
 ///
@@ -135,7 +137,7 @@ pub fn UnifiedFieldShellLayout(
 }
 
 /// A single breadcrumb entry rendered by [`UnifiedFieldAppBar`].
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct BreadcrumbLink {
     /// Display text for the breadcrumb.
     pub title: String,
@@ -156,9 +158,8 @@ impl BreadcrumbLink {
 fn product_avatar_letter(app_id: &str) -> char {
     app_id
         .chars()
-        .find(|c| c.is_ascii_alphanumeric())
-        .map(|c| c.to_ascii_uppercase())
-        .unwrap_or('?')
+        .find(char::is_ascii_alphanumeric)
+        .map_or('?', |c| c.to_ascii_uppercase())
 }
 
 #[component]
@@ -226,7 +227,7 @@ fn AppBarBreadcrumbs(
             {breadcrumbs.into_iter().map(|breadcrumb| {
                 view! {
                     <BreadcrumbItem>
-                        <a href=breadcrumb.url.clone() style="text-decoration: none; color: inherit;">
+                        <a href=breadcrumb.url style="text-decoration: none; color: inherit;">
                             <BreadcrumbButton>{breadcrumb.title}</BreadcrumbButton>
                         </a>
                     </BreadcrumbItem>
@@ -265,8 +266,7 @@ pub fn UnifiedFieldAppBar(
             app_name
                 .chars()
                 .next()
-                .map(|c| c.to_uppercase().to_string())
-                .unwrap_or_else(|| "?".to_string())
+                .map_or_else(|| "?".to_string(), |c| c.to_uppercase().to_string())
         });
     let homepage_url = homepage_url.unwrap_or_else(|| "/".to_string());
     let breadcrumbs = breadcrumbs.unwrap_or_default();
