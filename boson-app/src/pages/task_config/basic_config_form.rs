@@ -1,22 +1,26 @@
 use leptos::prelude::*;
 use orbital::components::{Card, FormHint, SpacingSize};
-use orbital::primitives::*;
+use orbital::primitives::{
+    Flex, InfoLabel, InfoLabelInfo, Input, InputAppearance, InputType, Label, Select,
+};
 
 use crate::components::{basic_config_help, pool_field_help, BosonHelpCardHeader};
 use crate::server::GluonPoolPickRow;
 
 /// Basic configuration form section (pool and priority).
 #[component]
+#[allow(clippy::needless_pass_by_value)]
 pub fn TaskConfigForm(
     /// Two-way signal holding the resource pool identifier.
     pool: RwSignal<String>,
     /// Two-way signal holding the priority.
     priority_str: RwSignal<String>,
     /// List of pool options.
-    #[prop(default = Vec::new())] pool_options: Vec<GluonPoolPickRow>,
+    #[prop(default = Vec::new())]
+    pool_options: Vec<GluonPoolPickRow>,
 ) -> impl IntoView {
-    let opts_for_select = pool_options.clone();
     let show_select = !pool_options.is_empty();
+    let opts_for_select = pool_options;
 
     view! {
         <Card>
@@ -34,13 +38,7 @@ pub fn TaskConfigForm(
                         </InfoLabelInfo>
                     </InfoLabel>
                     {move || {
-                        if !show_select {
-                            view! {
-                                <Input bind=pool />
-                                <FormHint>"Default: \"global\". Configure Gluon virtual pools to pick from a list."</FormHint>
-                            }
-                            .into_any()
-                        } else {
+                        if show_select {
                             let opts = opts_for_select.clone();
                             let opts_hint = opts.clone();
                             view! {
@@ -51,7 +49,7 @@ pub fn TaskConfigForm(
                                             key=|o| o.id.clone()
                                             children=move |o| {
                                                 let v = o.id.clone();
-                                                let lbl = o.label.clone();
+                                                let lbl = o.label;
                                                 view! { <option value=v>{lbl}</option> }
                                             }
                                         />
@@ -65,6 +63,12 @@ pub fn TaskConfigForm(
                                         .map(|o| o.detail.clone())
                                         .unwrap_or_default()
                                 }}</FormHint>
+                            }
+                            .into_any()
+                        } else {
+                            view! {
+                                <Input bind=pool />
+                                <FormHint>"Default: \"global\". Configure Gluon virtual pools to pick from a list."</FormHint>
                             }
                             .into_any()
                         }

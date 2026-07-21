@@ -8,8 +8,7 @@ pub fn task_to_record(task: TaskSummary) -> DataRecord {
     let id = task.name.clone();
     let success_rate = task
         .success_rate_pct
-        .map(|r| format!("{r:.0}%"))
-        .unwrap_or_else(|| "-".to_string());
+        .map_or_else(|| "-".to_string(), |r| format!("{r:.0}%"));
     let effective_pool = format!(
         "pool=\"{}\", priority={}",
         task.effective_pool, task.effective_priority

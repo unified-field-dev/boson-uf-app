@@ -2,9 +2,7 @@ use leptos::prelude::*;
 use leptos::server_fn::ServerFnError;
 use leptos::task::spawn_local;
 
-use crate::server::{
-    update_task_config, RetryPolicyDto, TaskConfigDto, UpdateTaskConfigRequest,
-};
+use crate::server::{update_task_config, RetryPolicyDto, TaskConfigDto, UpdateTaskConfigRequest};
 
 /// Form field signals and save handler for task configuration.
 pub struct TaskConfigFormState {
@@ -30,7 +28,7 @@ impl TaskConfigFormState {
         let max_attempts = RwSignal::new(3u32);
         let base_delay_ms = RwSignal::new(1000u64);
         let backoff_multiplier = RwSignal::new(2.0f64);
-        let max_delay_ms = RwSignal::new(300000u64);
+        let max_delay_ms = RwSignal::new(300_000u64);
 
         let priority_str = RwSignal::new(priority.get_untracked().to_string());
         let max_attempts_str = RwSignal::new(max_attempts.get_untracked().to_string());

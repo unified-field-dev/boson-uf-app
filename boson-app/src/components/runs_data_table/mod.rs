@@ -4,15 +4,20 @@ mod mapper;
 
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
+use leptos_router::NavigateOptions;
 use orbital::components::{EmptyState, MessageBar, MessageBarIntent};
-use orbital::primitives::*;
+use orbital::primitives::{
+    DataTable, DataTableEmptyView, DataTableEvents, DataTableFeatures,
+    DataTableHeaderChromeConfig, DataTableNoResultsView, DataTableSource,
+    DataTableToolbarConfig, PagingMode,
+};
 
 use crate::components::BosonDataTableShell;
 
 use columns::runs_table_columns;
 use fetcher::{build_runs_fetcher, RUNS_TABLE_PAGE_SIZE};
 
-/// Scope for the Boson runs DataTable.
+/// Scope for the Boson runs `DataTable`.
 #[derive(Clone, PartialEq, Eq)]
 pub enum RunsTableScope {
     All,
@@ -34,7 +39,7 @@ pub fn RunsDataTable(
     let navigate = use_navigate();
 
     let on_row_click = Callback::new(move |(id,): (String,)| {
-        let _ = navigate(&crate::paths::run(&id), Default::default());
+        navigate(&crate::paths::run(&id), NavigateOptions::default());
     });
 
     let data_source = DataTableSource::Server {

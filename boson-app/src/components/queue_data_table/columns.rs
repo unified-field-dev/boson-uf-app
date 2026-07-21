@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use leptos::prelude::*;
 use orbital::components::Body1Strong;
-use orbital::primitives::*;
+use orbital::primitives::{Button, ButtonAppearance, ButtonSize, ColumnType, DataTableColumnDef};
 use orbital_data::DataRecord;
 
 use crate::components::{pool_help, priority_help, BosonHelpColumnHeader, JobStatusBadge};
@@ -64,14 +64,14 @@ pub fn queue_table_columns(
         let can_cancel = status == JobStatusDto::Queued || status == JobStatusDto::Running;
 
         if !can_cancel {
-            return view! {}.into_any();
+            let _: () = view! {};
+            return ().into_any();
         }
 
         let job_id_cancel = job_id.clone();
         let job_id_check = job_id.clone();
         let job_id_btn = job_id.clone();
-        let job_id_label = job_id.clone();
-        let on_cancel = on_cancel.clone();
+        let job_id_label = job_id;
 
         view! {
             <div data-testid=format!("job-cancel-{job_id_btn}") attr:data-skip-row-click="">

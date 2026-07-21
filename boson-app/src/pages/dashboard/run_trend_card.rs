@@ -3,7 +3,7 @@ use orbital::components::{
     Button, Caption1, Card, Flex, FlexGap, FlexWrap, MessageBar, MessageBarIntent,
     Skeleton, SkeletonItem, SpacingSize,
 };
-use orbital::primitives::*;
+use orbital::primitives::{ButtonAppearance, Link};
 
 use super::charts::{line_chart_from_series, run_outcome_series_is_empty};
 use crate::components::{run_outcomes_chart_help, BosonCardContent, BosonHelpCardHeader};
@@ -81,11 +81,11 @@ pub fn BosonRunTrendCard() -> impl IntoView {
                         <Show
                             when=move || res.get().is_some()
                             fallback=move || view! {
-                                <RunTrendChartSkeleton class=chart_skeleton_class.with_value(|c| c.clone()) />
+                                <RunTrendChartSkeleton class=chart_skeleton_class.with_value(Clone::clone) />
                             }
                         >
                             <Transition fallback=move || view! {
-                                <RunTrendChartSkeleton class=chart_skeleton_class.with_value(|c| c.clone()) />
+                                <RunTrendChartSkeleton class=chart_skeleton_class.with_value(Clone::clone) />
                             }>
                                 {move || res.get().map(|r| match r {
                                     Ok(series) if run_outcome_series_is_empty(&series) => view! {

@@ -7,7 +7,7 @@ pub use run_info_grid::RunInfoGrid;
 use leptos::prelude::*;
 use leptos_router::hooks::use_params_map;
 use orbital::components::{Card, ContentContainer, Skeleton, SkeletonItem, SpacingSize, Title3};
-use orbital::primitives::*;
+use orbital::primitives::{Flex, FlexAlign, MessageBar, MessageBarIntent};
 use orbital_motion::OrbitalPresence;
 
 use crate::components::{boson_error_reveal_motion, BosonBackLink, BosonCardContent};
@@ -38,23 +38,14 @@ fn RunDetailSkeleton() -> impl IntoView {
 #[component]
 pub fn BosonRunDetailPage() -> impl IntoView {
     let params = use_params_map();
-    let run_id = move || {
-        params
-            .get()
-            .get("id")
-            .map(|s| s.to_string())
-            .unwrap_or_default()
-    };
+    let run_id = move || params.get().get("id").unwrap_or_default();
 
-    let run_res = Resource::new(
-        move || run_id(),
-        move |id| async move {
-            if id.is_empty() {
-                return Ok(None);
-            }
-            get_run(id).await
-        },
-    );
+    let run_res = Resource::new(run_id, move |id| async move {
+        if id.is_empty() {
+            return Ok(None);
+        }
+        get_run(id).await
+    });
 
     let live = boson_job_run_subscription();
 

@@ -2,7 +2,10 @@ use leptos::prelude::*;
 use orbital::components::{
     Caption1, Skeleton, SkeletonItem, SkeletonItemSize, SpacingSize, StatCard,
 };
-use orbital::primitives::*;
+use orbital::primitives::{
+    Card, DiscussionAdapter, Flex, FlexAlign, Icon, InfoLabel, InfoLabelInfo, MessageBar,
+    MessageBarIntent, SchedulerDataSource,
+};
 use orbital_motion::{MotionDuration, OrbitalPresenceGroup, OrbitalPresenceGroupItem};
 
 use crate::components::{boson_kpi_enter_motion, runs_24h_help, BosonHelpStatCard};
@@ -97,6 +100,7 @@ fn DashboardStatsSkeleton() -> impl IntoView {
 }
 
 /// KPI stat cards with staggered enter on first load; poll refetches keep cards mounted.
+#[allow(clippy::too_many_lines)]
 #[component]
 pub fn DashboardStatsGrid(
     /// Resource that loads the stats data.
@@ -105,7 +109,7 @@ pub fn DashboardStatsGrid(
     let kpi_enter = RwSignal::new(false);
 
     Effect::new(move |_| {
-        if stats_res.get().and_then(|r| r.ok()).is_some() {
+        if stats_res.get().and_then(Result::ok).is_some() {
             kpi_enter.set(true);
         }
     });
@@ -113,28 +117,28 @@ pub fn DashboardStatsGrid(
     let task_count = Memo::new(move |_| {
         stats_res
             .get()
-            .and_then(|r| r.ok())
+            .and_then(Result::ok)
             .map(|s| s.task_count.to_string())
             .unwrap_or_default()
     });
     let jobs_queued = Memo::new(move |_| {
         stats_res
             .get()
-            .and_then(|r| r.ok())
+            .and_then(Result::ok)
             .map(|s| s.jobs_queued.to_string())
             .unwrap_or_default()
     });
     let jobs_running = Memo::new(move |_| {
         stats_res
             .get()
-            .and_then(|r| r.ok())
+            .and_then(Result::ok)
             .map(|s| s.jobs_running.to_string())
             .unwrap_or_default()
     });
     let runs_today = Memo::new(move |_| {
         stats_res
             .get()
-            .and_then(|r| r.ok())
+            .and_then(Result::ok)
             .map(|s| s.runs_today.to_string())
             .unwrap_or_default()
     });

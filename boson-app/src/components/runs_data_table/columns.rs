@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use leptos::prelude::*;
-use orbital::primitives::*;
+use orbital::primitives::{ColumnType, DataTableColumnDef};
 use orbital_data::DataRecord;
 
 use crate::components::{

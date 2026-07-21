@@ -3,7 +3,11 @@
 use leptos::prelude::*;
 use serde_json::Value;
 
+/// Reserved for the future broadcast WS wiring (see `BosonJobsLiveSource`).
+#[allow(dead_code)]
 pub const BOSON_JOBS_WS_PATH: &str = "/ws/boson-jobs";
+/// Reserved for the future per-job WS wiring (see `BosonJobRunLiveSource`).
+#[allow(dead_code)]
 pub const BOSON_JOB_RUN_WS_PREFIX: &str = "/ws/boson-job";
 
 /// Reactive handle to a broadcast job-update subscription.
@@ -70,7 +74,9 @@ pub fn BosonJobRunLiveSource(
     view! {}
 }
 
-/// Interval for dashboard KPI polling (no broadcast WS).
+/// Interval for dashboard KPI polling (no broadcast WS). Only read when the
+/// `hydrate` feature is enabled.
+#[cfg_attr(not(feature = "hydrate"), allow(dead_code))]
 pub const BOSON_POLL_INTERVAL_MS: u64 = 20_000;
 
 /// Bump a tick on an interval for resource refresh (client only).

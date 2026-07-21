@@ -1,7 +1,7 @@
 use leptos::prelude::*;
 
 use crate::server::JobStatusDto;
-use orbital::primitives::*;
+use orbital::primitives::{Badge, BadgeAppearance, BadgeColor};
 
 /// Badge component for displaying job status.
 #[component]

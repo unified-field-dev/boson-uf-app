@@ -20,16 +20,20 @@ pub fn BosonHelpStatCard(
     match label_info {
         None => {
             let card_variant = variant.unwrap_or_default();
-            match icon {
-                Some(icon_data) => view! {
-                    <StatCard label=label value=value icon=icon_data variant=card_variant />
-                }
-                .into_any(),
-                None => view! {
-                    <StatCard label=label value=value variant=card_variant />
-                }
-                .into_any(),
-            }
+            icon.map_or_else(
+                || {
+                    view! {
+                        <StatCard label=label value=value variant=card_variant />
+                    }
+                    .into_any()
+                },
+                |icon_data| {
+                    view! {
+                        <StatCard label=label value=value icon=icon_data variant=card_variant />
+                    }
+                    .into_any()
+                },
+            )
         }
         Some(info_view) => {
             let variant = variant.unwrap_or_default();

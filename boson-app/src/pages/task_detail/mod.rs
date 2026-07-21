@@ -3,8 +3,9 @@ mod skeleton;
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
 use leptos_router::hooks::use_params_map;
+use leptos_router::NavigateOptions;
 use orbital::components::{Card, ContentContainer, SpacingSize, Title3};
-use orbital::primitives::*;
+use orbital::primitives::{Button, ButtonAppearance, Flex, FlexAlign, MessageBar, MessageBarIntent};
 
 use crate::components::{BosonBackLink, BosonCardContent, TaskSummaryPanel};
 use crate::server::get_task;
@@ -17,22 +18,13 @@ pub fn BosonTaskDetailPage() -> impl IntoView {
     let params = use_params_map();
     let navigate = use_navigate();
     let navigate_store = StoredValue::new(navigate);
-    let task_name = move || {
-        params
-            .get()
-            .get("task_name")
-            .map(|s| s.to_string())
-            .unwrap_or_default()
-    };
-    let task_res = Resource::new(
-        move || task_name(),
-        move |name| async move {
-            if name.is_empty() {
-                return Ok(None);
-            }
-            get_task(name).await
-        },
-    );
+    let task_name = move || params.get().get("task_name").unwrap_or_default();
+    let task_res = Resource::new(task_name, move |name| async move {
+        if name.is_empty() {
+            return Ok(None);
+        }
+        get_task(name).await
+    });
 
     view! {
         <ContentContainer data_testid="boson-task-detail">
@@ -46,18 +38,18 @@ pub fn BosonTaskDetailPage() -> impl IntoView {
                     {move || match task_res.get() {
                         Some(Ok(Some(t))) => {
                             let config_path = crate::paths::tasks_config(&t.name);
-                            let nav = navigate_store.with_value(|n| n.clone());
-                            let nav2 = navigate_store.with_value(|n| n.clone());
-                            let nav3 = navigate_store.with_value(|n| n.clone());
+                            let nav = navigate_store.with_value(Clone::clone);
+                            let nav2 = navigate_store.with_value(Clone::clone);
+                            let nav3 = navigate_store.with_value(Clone::clone);
                             view! {
                                 <Card>
                                     <BosonCardContent>
                                         <TaskSummaryPanel task=t show_title=false>
                                             <div data-testid="task-detail-configure">
-                                                <Button appearance=ButtonAppearance::Primary on_click=Callback::new(move |_| nav(&config_path, Default::default()))>"Configure"</Button>
+                                                <Button appearance=ButtonAppearance::Primary on_click=Callback::new(move |_| nav(&config_path, NavigateOptions::default()))>"Configure"</Button>
                                             </div>
-                                            <Button appearance=ButtonAppearance::Subtle on_click=Callback::new(move |_| nav2(crate::paths::QUEUE, Default::default()))>"View Queue"</Button>
-                                            <Button appearance=ButtonAppearance::Subtle on_click=Callback::new(move |_| nav3(crate::paths::RUNS, Default::default()))>"View Runs"</Button>
+                                            <Button appearance=ButtonAppearance::Subtle on_click=Callback::new(move |_| nav2(crate::paths::QUEUE, NavigateOptions::default()))>"View Queue"</Button>
+                                            <Button appearance=ButtonAppearance::Subtle on_click=Callback::new(move |_| nav3(crate::paths::RUNS, NavigateOptions::default()))>"View Runs"</Button>
                                         </TaskSummaryPanel>
                                     </BosonCardContent>
                                 </Card>

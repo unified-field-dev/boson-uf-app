@@ -6,8 +6,13 @@ use std::collections::HashSet;
 
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
+use leptos_router::NavigateOptions;
 use orbital::components::{EmptyState, MessageBar, MessageBarIntent};
-use orbital::primitives::*;
+use orbital::primitives::{
+    DataTable, DataTableEmptyView, DataTableEvents, DataTableFeatures,
+    DataTableHeaderChromeConfig, DataTableNoResultsView, DataTableSource,
+    DataTableToolbarConfig, PagingMode,
+};
 
 use crate::components::BosonDataTableShell;
 
@@ -27,9 +32,9 @@ pub fn QueueDataTable(
     let navigate = use_navigate();
 
     let on_row_click = Callback::new(move |(id,): (String,)| {
-        let _ = navigate(
+        navigate(
             &format!("{}?job={}", crate::paths::RUNS, id),
-            Default::default(),
+            NavigateOptions::default(),
         );
     });
 

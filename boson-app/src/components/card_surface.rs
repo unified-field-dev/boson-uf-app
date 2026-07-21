@@ -27,15 +27,15 @@ pub fn BosonCardContent(
     }
 }
 
-/// Layout classes for list pages whose DataTable should fill the viewport.
+/// Layout classes for list pages whose `DataTable` should fill the viewport.
 pub struct BosonTablePageClasses {
-    pub fill_page: String,
-    pub fill_body: String,
-    pub fill_card: String,
-    pub fill_card_content: String,
+    pub page: String,
+    pub body: String,
+    pub card: String,
+    pub card_content: String,
 }
 
-/// Flex column layout so DataTables can fill remaining viewport below the app chrome.
+/// Flex column layout so `DataTables` can fill remaining viewport below the app chrome.
 pub fn boson_table_page_layout() -> (&'static str, BosonTablePageClasses) {
     let (style_sheet, class_names) = inline_style_sheet_values! {
         .FillPage {
@@ -70,10 +70,10 @@ pub fn boson_table_page_layout() -> (&'static str, BosonTablePageClasses) {
     (
         style_sheet,
         BosonTablePageClasses {
-            fill_page: class_names.fill_page.to_string(),
-            fill_body: class_names.fill_body.to_string(),
-            fill_card: class_names.fill_card.to_string(),
-            fill_card_content: class_names.fill_card_content.to_string(),
+            page: class_names.fill_page.to_string(),
+            body: class_names.fill_body.to_string(),
+            card: class_names.fill_card.to_string(),
+            card_content: class_names.fill_card_content.to_string(),
         },
     )
 }

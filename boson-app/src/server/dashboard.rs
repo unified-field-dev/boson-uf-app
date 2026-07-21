@@ -105,6 +105,10 @@ pub async fn get_run_stats_series(
 }
 
 /// Bucket width for the dashboard run-outcomes chart.
+///
+/// Only referenced from the ssr-only body of `get_run_stats_series`, so it reads as dead
+/// code when checking without the `ssr` feature (matches `BOSON_LIST_FETCH_CAP` above).
+#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
 #[derive(Clone, Copy)]
 enum RunBucketGranularity {
     /// 4-hour buckets for the 24h range (6 x-axis labels).
@@ -113,11 +117,53 @@ enum RunBucketGranularity {
     Daily,
 }
 
-fn run_bucket_granularity(range_secs: i64) -> RunBucketGranularity {
+#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
+const fn run_bucket_granularity(range_secs: i64) -> RunBucketGranularity {
     if range_secs <= 86_400 {
         RunBucketGranularity::FourHourly
     } else {
         RunBucketGranularity::Daily
+    }
+}
+
+#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
+fn align_run_bucket(
+    ts: chrono::DateTime<chrono::Utc>,
+    bucket: RunBucketGranularity,
+) -> chrono::DateTime<chrono::Utc> {
+    let naive = ts.naive_utc();
+    match bucket {
+        RunBucketGranularity::FourHourly => {
+            let aligned_hour = (naive.hour() / 4) * 4;
+            let hour = naive
+                .date()
+                .and_hms_opt(aligned_hour, 0, 0)
+                .unwrap_or(naive);
+            chrono::DateTime::<chrono::Utc>::from_naive_utc_and_offset(hour, chrono::Utc)
+        }
+        RunBucketGranularity::Daily => {
+            let day = naive.date().and_hms_opt(0, 0, 0).unwrap_or(naive);
+            chrono::DateTime::<chrono::Utc>::from_naive_utc_and_offset(day, chrono::Utc)
+        }
+    }
+}
+
+#[cfg(feature = "ssr")]
+fn fill_bucket_range(
+    since: chrono::DateTime<chrono::Utc>,
+    now: chrono::DateTime<chrono::Utc>,
+    bucket: RunBucketGranularity,
+    buckets: &mut BTreeMap<chrono::DateTime<chrono::Utc>, u32>,
+) {
+    let mut cursor = align_run_bucket(since, bucket);
+    let end = align_run_bucket(now, bucket);
+    let step = match bucket {
+        RunBucketGranularity::FourHourly => chrono::Duration::hours(4),
+        RunBucketGranularity::Daily => chrono::Duration::days(1),
+    };
+    while cursor <= end {
+        buckets.entry(cursor).or_insert(0);
+        cursor += step;
     }
 }
 
@@ -152,44 +198,5 @@ mod tests {
         let aligned = align_run_bucket(ts, RunBucketGranularity::Daily);
         assert_eq!(aligned.hour(), 0);
         assert_eq!(aligned.minute(), 0);
-    }
-}
-
-fn align_run_bucket(
-    ts: chrono::DateTime<chrono::Utc>,
-    bucket: RunBucketGranularity,
-) -> chrono::DateTime<chrono::Utc> {
-    let naive = ts.naive_utc();
-    match bucket {
-        RunBucketGranularity::FourHourly => {
-            let aligned_hour = (naive.hour() / 4) * 4;
-            let hour = naive
-                .date()
-                .and_hms_opt(aligned_hour, 0, 0)
-                .expect("valid 4-hour bucket");
-            chrono::DateTime::<chrono::Utc>::from_naive_utc_and_offset(hour, chrono::Utc)
-        }
-        RunBucketGranularity::Daily => {
-            let day = naive.date().and_hms_opt(0, 0, 0).unwrap();
-            chrono::DateTime::<chrono::Utc>::from_naive_utc_and_offset(day, chrono::Utc)
-        }
-    }
-}
-
-fn fill_bucket_range(
-    since: chrono::DateTime<chrono::Utc>,
-    now: chrono::DateTime<chrono::Utc>,
-    bucket: RunBucketGranularity,
-    buckets: &mut BTreeMap<chrono::DateTime<chrono::Utc>, u32>,
-) {
-    let mut cursor = align_run_bucket(since, bucket);
-    let end = align_run_bucket(now, bucket);
-    let step = match bucket {
-        RunBucketGranularity::FourHourly => chrono::Duration::hours(4),
-        RunBucketGranularity::Daily => chrono::Duration::days(1),
-    };
-    while cursor <= end {
-        buckets.entry(cursor).or_insert(0);
-        cursor += step;
     }
 }

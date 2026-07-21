@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use leptos::prelude::*;
 use orbital::components::{Body1Strong, SpacingSize, Text, TextTag};
-use orbital::primitives::*;
+use orbital::primitives::{DataTableColumnDef, Flex, FlexWrap};
 use orbital_data::DataRecord;
 
 use crate::components::{

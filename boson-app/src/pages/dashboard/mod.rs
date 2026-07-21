@@ -11,7 +11,7 @@ pub use stats_grid::DashboardStatsGrid;
 
 use leptos::prelude::*;
 use orbital::components::{ContentContainer, SpacingSize, Subtitle2, Title3};
-use orbital::primitives::*;
+use orbital::primitives::Flex;
 
 use crate::live::use_boson_poll_tick;
 use crate::server::{get_dashboard_stats, get_tasks};
@@ -20,8 +20,8 @@ use crate::server::{get_dashboard_stats, get_tasks};
 #[component]
 pub fn BosonRootPage() -> impl IntoView {
     let poll_tick = use_boson_poll_tick();
-    let stats_res = Resource::new(|| (), |_| async move { get_dashboard_stats().await });
-    let tasks_res = Resource::new(|| (), |_| async move { get_tasks().await });
+    let stats_res = Resource::new(|| (), |()| async move { get_dashboard_stats().await });
+    let tasks_res = Resource::new(|| (), |()| async move { get_tasks().await });
 
     Effect::new(move |_| {
         if poll_tick.get() > 0 {

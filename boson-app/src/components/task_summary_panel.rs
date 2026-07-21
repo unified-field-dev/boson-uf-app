@@ -1,12 +1,13 @@
 use leptos::prelude::*;
 use orbital::components::{Body1, Caption2, SpacingSize, Subtitle2, Text, TextTag};
-use orbital::primitives::*;
+use orbital::primitives::{Flex, FlexAlign, FlexWrap, InfoLabel, InfoLabelInfo};
 
 use crate::components::help::{defaults_help, effective_help, signature_help};
 use crate::server::TaskSummary;
 
 fn effective_config_label(task: &TaskSummary) -> String {
-    if task.effective_priority != task.default_priority || task.effective_pool != task.default_pool {
+    if task.effective_priority != task.default_priority || task.effective_pool != task.default_pool
+    {
         format!(
             "pool=\"{}\", priority={} (UI override)",
             task.effective_pool, task.effective_priority
@@ -21,19 +22,21 @@ fn effective_config_label(task: &TaskSummary) -> String {
 
 fn success_rate_label(task: &TaskSummary) -> String {
     task.success_rate_pct
-        .map(|r| format!("{:.0}%", r))
-        .unwrap_or_else(|| "-".to_string())
+        .map_or_else(|| "-".to_string(), |r| format!("{r:.0}%"))
 }
 
 /// Shared task metadata block for card and detail views.
 #[component]
+#[allow(clippy::needless_pass_by_value)]
 pub fn TaskSummaryPanel(
     /// Task to display.
     task: TaskSummary,
     /// Whether to show title.
-    #[prop(default = false)] show_title: bool,
+    #[prop(default = false)]
+    show_title: bool,
     /// Child content rendered inside the component.
-    #[prop(optional)] children: Option<Children>,
+    #[prop(optional)]
+    children: Option<Children>,
 ) -> impl IntoView {
     let (style_sheet, class_names) = turf::inline_style_sheet_values! {
         .MetaSecondary {

@@ -165,7 +165,7 @@ pub async fn get_tasks_page(
 /// Paginated tasks for DataTable toolbar (quick search via PageRequest).
 #[uf_product_macros::server]
 pub async fn get_tasks_datatable_page(
-    /// DataTable paging/filter/search/sort request from the client.
+    /// `DataTable` paging/filter/search/sort request from the client.
     request: PageRequest,
 ) -> Result<Page<TaskSummary>, ServerFnError> {
     get_tasks_page(

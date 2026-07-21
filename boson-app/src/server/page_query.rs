@@ -1,14 +1,19 @@
-//! PageRequest helpers for Boson DataTable server adapters.
+//! `PageRequest` helpers for Boson `DataTable` server adapters.
 
 use orbital_data::DataValue;
 use orbital_paging::{FilterLogicWire, FilterQuery, FilterRuleParam, PageRequest};
 
 use super::types::{JobStatusDto, JobSummary, RunStatusDto, RunSummary};
 
+// The `DataTable` query helpers below are only invoked from inside the ssr-only bodies of
+// `#[uf_product_macros::server]` fns in `jobs.rs`/`runs.rs` (stripped from non-ssr builds),
+// so they read as dead code when checking without the `ssr` feature.
+#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
 fn filter_rule_text(value: &DataValue) -> String {
     value.display_string()
 }
 
+#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
 fn text_contains(haystack: &str, needle: &str) -> bool {
     let needle = needle.trim();
     if needle.is_empty() {
@@ -17,11 +22,12 @@ fn text_contains(haystack: &str, needle: &str) -> bool {
     haystack.to_lowercase().contains(&needle.to_lowercase())
 }
 
+#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
 fn text_equals(left: &str, right: &str) -> bool {
     left.trim().eq_ignore_ascii_case(right.trim())
 }
 
-pub fn run_status_key(status: RunStatusDto) -> &'static str {
+pub const fn run_status_key(status: RunStatusDto) -> &'static str {
     match status {
         RunStatusDto::Running => "running",
         RunStatusDto::Success => "success",
@@ -31,7 +37,7 @@ pub fn run_status_key(status: RunStatusDto) -> &'static str {
     }
 }
 
-pub fn job_status_key(status: JobStatusDto) -> &'static str {
+pub const fn job_status_key(status: JobStatusDto) -> &'static str {
     match status {
         JobStatusDto::Queued => "queued",
         JobStatusDto::Running => "running",
@@ -42,6 +48,7 @@ pub fn job_status_key(status: JobStatusDto) -> &'static str {
 }
 
 /// Status filter for queue/jobs (`status` column equals rule).
+#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
 pub fn extract_status_filter(request: &PageRequest) -> Option<String> {
     let filter = request.filter.as_ref()?;
     filter
@@ -54,6 +61,7 @@ pub fn extract_status_filter(request: &PageRequest) -> Option<String> {
 }
 
 /// Job id from URL scope or structured filter on `job_id`.
+#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
 pub fn resolve_job_filter(scope_job: Option<String>, request: &PageRequest) -> Option<String> {
     if let Some(job) = scope_job.filter(|s| !s.is_empty()) {
         return Some(job);
@@ -68,6 +76,7 @@ pub fn resolve_job_filter(scope_job: Option<String>, request: &PageRequest) -> O
         .map(|rule| filter_rule_text(&rule.value))
 }
 
+#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
 pub fn quick_search_text(request: &PageRequest) -> Option<String> {
     request
         .quick_search
@@ -76,6 +85,7 @@ pub fn quick_search_text(request: &PageRequest) -> Option<String> {
         .filter(|s| !s.is_empty())
 }
 
+#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
 fn run_matches_filter_rule(run: &RunSummary, rule: &FilterRuleParam) -> bool {
     let value = filter_rule_text(&rule.value);
     match rule.field.as_str() {
@@ -105,6 +115,7 @@ fn run_matches_filter_rule(run: &RunSummary, rule: &FilterRuleParam) -> bool {
     }
 }
 
+#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
 fn apply_run_filter_query(runs: &mut Vec<RunSummary>, filter: &FilterQuery) {
     runs.retain(|run| {
         let matches: Vec<bool> = filter
@@ -119,6 +130,7 @@ fn apply_run_filter_query(runs: &mut Vec<RunSummary>, filter: &FilterQuery) {
     });
 }
 
+#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
 pub fn apply_runs_datatable_query(runs: &mut Vec<RunSummary>, request: &PageRequest) {
     if let Some(ref q) = quick_search_text(request) {
         let q_lower = q.to_lowercase();
@@ -133,6 +145,7 @@ pub fn apply_runs_datatable_query(runs: &mut Vec<RunSummary>, request: &PageRequ
     }
 }
 
+#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
 fn job_matches_filter_rule(job: &JobSummary, rule: &FilterRuleParam) -> bool {
     let value = filter_rule_text(&rule.value);
     match rule.field.as_str() {
@@ -160,6 +173,7 @@ fn job_matches_filter_rule(job: &JobSummary, rule: &FilterRuleParam) -> bool {
     }
 }
 
+#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
 fn apply_job_filter_query(jobs: &mut Vec<JobSummary>, filter: &FilterQuery) {
     jobs.retain(|job| {
         let matches: Vec<bool> = filter
@@ -174,6 +188,7 @@ fn apply_job_filter_query(jobs: &mut Vec<JobSummary>, filter: &FilterQuery) {
     });
 }
 
+#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
 pub fn apply_jobs_datatable_query(jobs: &mut Vec<JobSummary>, request: &PageRequest) {
     if let Some(ref q) = quick_search_text(request) {
         let q_lower = q.to_lowercase();

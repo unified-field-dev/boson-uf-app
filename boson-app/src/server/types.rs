@@ -35,7 +35,7 @@ pub struct TaskSummary {
     pub success_rate_pct: Option<f64>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct JobSummary {
     pub job_id: String,
     pub task_name: String,
@@ -45,7 +45,7 @@ pub struct JobSummary {
     pub created_at: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RunSummary {
     pub run_id: String,
     pub job_id: String,
@@ -106,7 +106,7 @@ pub struct UpdateTaskConfigRequest {
 }
 
 /// Gluon virtual pool row for Boson task-config pool picker.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct GluonPoolPickRow {
     /// Virtual pool id (use as Boson `pool` string).
     pub id: String,
@@ -114,12 +114,13 @@ pub struct GluonPoolPickRow {
     pub detail: String,
 }
 
-/// Page size used by the tasks infinite scroll / DataTable.
+/// Page size used by the tasks infinite scroll / `DataTable`.
 pub const TASKS_PAGE_SIZE: u32 = 20;
-/// Page size used by the jobs/queue infinite scroll / DataTable.
+/// Page size used by the jobs/queue infinite scroll / `DataTable`.
 pub const JOBS_PAGE_SIZE: u32 = 20;
-/// Page size used by the runs infinite scroll / DataTable.
+/// Page size used by the runs infinite scroll / `DataTable`.
 pub const RUNS_PAGE_SIZE: u32 = 20;
 
-/// Upper bound for in-memory list fetches (DataTable filters, chart series). 0.1.n limitation.
+/// Upper bound for in-memory list fetches (`DataTable` filters, chart series). 0.1.n limitation.
+#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
 pub const BOSON_LIST_FETCH_CAP: usize = 50_000;

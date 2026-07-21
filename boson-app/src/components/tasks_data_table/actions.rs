@@ -1,10 +1,12 @@
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
+use leptos_router::NavigateOptions;
 use orbital::components::{Body1Strong, Text, TextTag};
-use orbital::primitives::*;
+use orbital::primitives::{Button, ButtonAppearance, ButtonSize};
 
 /// Action buttons shared by TaskCard and the tasks DataTable actions column.
 #[component]
+#[allow(clippy::needless_pass_by_value)]
 pub fn TaskCardActions(
     /// Task name.
     task_name: String,
@@ -15,7 +17,7 @@ pub fn TaskCardActions(
     let name_view_btn = task_name.clone();
     let name_config = task_name.clone();
     let name_config_btn = task_name.clone();
-    let name_card_testid = task_name.clone();
+    let name_card_testid = task_name;
 
     view! {
         <>
@@ -24,7 +26,7 @@ pub fn TaskCardActions(
                     size=ButtonSize::Small
                     appearance=ButtonAppearance::Subtle
                     on_click=Callback::new(move |_| {
-                        nav_store.with_value(|n| n(&crate::paths::task(&name_view_btn), Default::default()))
+                        nav_store.with_value(|n| n(&crate::paths::task(&name_view_btn), NavigateOptions::default()));
                     })
                 >
                     "View"
@@ -36,8 +38,8 @@ pub fn TaskCardActions(
                     appearance=ButtonAppearance::Subtle
                     on_click=Callback::new(move |_| {
                         nav_store.with_value(|n| {
-                            n(&crate::paths::tasks_config(&name_config_btn), Default::default())
-                        })
+                            n(&crate::paths::tasks_config(&name_config_btn), NavigateOptions::default());
+                        });
                     })
                 >
                     "Configure"
@@ -48,7 +50,7 @@ pub fn TaskCardActions(
                     size=ButtonSize::Small
                     appearance=ButtonAppearance::Subtle
                     on_click=Callback::new(move |_| {
-                        nav_store.with_value(|n| n(crate::paths::QUEUE, Default::default()))
+                        nav_store.with_value(|n| n(crate::paths::QUEUE, NavigateOptions::default()));
                     })
                 >
                     "View Queue"
@@ -59,7 +61,7 @@ pub fn TaskCardActions(
                     size=ButtonSize::Small
                     appearance=ButtonAppearance::Subtle
                     on_click=Callback::new(move |_| {
-                        nav_store.with_value(|n| n(crate::paths::RUNS, Default::default()))
+                        nav_store.with_value(|n| n(crate::paths::RUNS, NavigateOptions::default()));
                     })
                 >
                     "View Runs"

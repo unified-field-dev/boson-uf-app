@@ -1,5 +1,3 @@
-mod job_card;
-
 use std::collections::HashSet;
 
 use crate::components::{boson_table_page_layout, BosonCardContent, QueueDataTable};
@@ -8,7 +6,7 @@ use crate::server::cancel_job;
 use leptos::prelude::*;
 use leptos::task::spawn_local;
 use orbital::components::{Card, ContentContainer, SpacingSize, Title3};
-use orbital::primitives::*;
+use orbital::primitives::Flex;
 
 /// Job queue view: pending/active jobs across all tasks.
 #[component]
@@ -49,12 +47,12 @@ pub fn BosonQueuePage() -> impl IntoView {
     view! {
         <style>{page_style}</style>
         <BosonJobsLiveSource trigger=live.trigger latest_event=live.latest_event />
-        <ContentContainer class=page_classes.fill_page data_testid="boson-queue">
-            <Flex vertical=true gap=SpacingSize::Size240.flex_gap() class=page_classes.fill_body>
+        <ContentContainer class=page_classes.page data_testid="boson-queue">
+            <Flex vertical=true gap=SpacingSize::Size240.flex_gap() class=page_classes.body>
                 <Title3>"Queue"</Title3>
 
-                <Card class=page_classes.fill_card>
-                    <BosonCardContent class=page_classes.fill_card_content>
+                <Card class=page_classes.card>
+                    <BosonCardContent class=page_classes.card_content>
                         <QueueDataTable
                             cancel_pending=cancel_pending.read_only()
                             on_cancel=on_cancel

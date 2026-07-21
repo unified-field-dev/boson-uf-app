@@ -1,6 +1,6 @@
 use leptos::prelude::*;
 use orbital::components::{Text, TextFont};
-use orbital::primitives::*;
+use orbital::primitives::{MessageBar, MessageBarIntent};
 
 /// Error display for failed runs, using MessageBar with monospace text for error output.
 #[component]

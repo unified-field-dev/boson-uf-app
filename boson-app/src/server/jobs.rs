@@ -58,7 +58,7 @@ pub async fn list_jobs_page(
 /// Paginated jobs for DataTable with status + quick search filters.
 #[uf_product_macros::server]
 pub async fn list_jobs_datatable_page(
-    /// DataTable paging/filter/search/sort request from the client.
+    /// `DataTable` paging/filter/search/sort request from the client.
     request: PageRequest,
 ) -> Result<Page<JobSummary>, ServerFnError> {
     let status_filter = page_query::extract_status_filter(&request);

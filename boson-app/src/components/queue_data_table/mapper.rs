@@ -40,7 +40,6 @@ pub fn job_to_record(job: JobSummary) -> DataRecord {
 
 pub fn job_status_from_key(key: &str) -> JobStatusDto {
     match key {
-        "queued" => JobStatusDto::Queued,
         "running" => JobStatusDto::Running,
         "success" => JobStatusDto::Success,
         "failed" => JobStatusDto::Failed,

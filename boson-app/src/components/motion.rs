@@ -1,7 +1,7 @@
 use leptos::prelude::*;
 use orbital_motion::{MotionCurve, MotionDuration, PresenceMotion, SlideFrom};
 
-/// Slide-in preset for run error MessageBar reveal (short, readable immediately).
+/// Slide-in preset for run error `MessageBar` reveal (short, readable immediately).
 pub fn boson_error_reveal_motion() -> Signal<PresenceMotion> {
     Signal::from(
         PresenceMotion::slide(SlideFrom::Bottom)

@@ -1,8 +1,10 @@
 use leptos::prelude::*;
 use orbital::components::{Body1, Caption2, Card};
-use orbital::primitives::*;
+use orbital::primitives::{Grid, GridConfig, GridItem, InfoLabel, InfoLabelInfo};
 
-use crate::components::{attempt_help, duration_help, BosonCardContent, BosonTableLink, RunStatusBadge};
+use crate::components::{
+    attempt_help, duration_help, BosonCardContent, BosonTableLink, RunStatusBadge,
+};
 use crate::server::RunSummary;
 
 /// Metadata grid showing run details (ID, job, task, status, timestamps, etc.).
@@ -63,7 +65,7 @@ pub fn RunInfoGrid(
                             </InfoLabelInfo>
                         </InfoLabel>
                     </GridItem>
-                    <GridItem><Body1>{run.duration_ms.map(|ms| format!("{} ms", ms)).unwrap_or_else(|| "-".to_string())}</Body1></GridItem>
+                    <GridItem><Body1>{run.duration_ms.map_or_else(|| "-".to_string(), |ms| format!("{ms} ms"))}</Body1></GridItem>
                 </Grid>
             </BosonCardContent>
         </Card>

@@ -2,7 +2,7 @@ use leptos::prelude::*;
 
 use crate::components::BosonCardContent;
 use orbital::components::{Body1, Card, CardHeader, SpacingSize, Subtitle2};
-use orbital::primitives::*;
+use orbital::primitives::{Flex, FlexWrap, Link};
 
 /// Quick navigation links to the main Boson pages.
 #[component]

@@ -43,7 +43,7 @@ pub async fn list_runs_page(
 /// Paginated runs for DataTable with in-memory filter/search (bounded fetch).
 #[uf_product_macros::server]
 pub async fn list_runs_datatable_page(
-    /// DataTable paging/filter/search/sort request from the client.
+    /// `DataTable` paging/filter/search/sort request from the client.
     request: PageRequest,
     /// Optional job id to scope results to a single job's runs.
     scope_job_id: Option<String>,

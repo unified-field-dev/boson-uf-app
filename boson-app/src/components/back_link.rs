@@ -1,6 +1,7 @@
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
-use orbital::primitives::*;
+use leptos_router::NavigateOptions;
+use orbital::primitives::{Button, ButtonAppearance};
 
 /// Shared back navigation using Orbital Button (chronon job-create pattern).
 #[component]
@@ -20,7 +21,7 @@ pub fn BosonBackLink(
             appearance=ButtonAppearance::Subtle
             icon=icondata::AiArrowLeftOutlined
             on_click=Callback::new(move |_| {
-                navigate_store.with_value(|n| n(href, Default::default()));
+                navigate_store.with_value(|n| n(href, NavigateOptions::default()));
             })
         >
             {label}

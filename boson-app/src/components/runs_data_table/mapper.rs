@@ -18,7 +18,7 @@ fn format_started_at(iso: &str) -> String {
 }
 
 fn format_duration(ms: Option<i64>) -> String {
-    ms.map(|v| format!("{v}ms")).unwrap_or_else(|| "-".to_string())
+    ms.map_or_else(|| "-".to_string(), |v| format!("{v}ms"))
 }
 
 pub fn run_to_record(run: RunSummary) -> DataRecord {
@@ -48,7 +48,6 @@ pub fn run_to_record(run: RunSummary) -> DataRecord {
 
 pub fn run_status_from_key(key: &str) -> RunStatusDto {
     match key {
-        "running" => RunStatusDto::Running,
         "success" => RunStatusDto::Success,
         "failed" => RunStatusDto::Failed,
         "canceled" => RunStatusDto::Canceled,

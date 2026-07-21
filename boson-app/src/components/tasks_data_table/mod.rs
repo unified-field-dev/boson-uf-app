@@ -7,8 +7,13 @@ pub use actions::TaskCardActions;
 
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
+use leptos_router::NavigateOptions;
 use orbital::components::{EmptyState, MessageBar, MessageBarIntent};
-use orbital::primitives::*;
+use orbital::primitives::{
+    DataTable, DataTableEmptyView, DataTableEvents, DataTableFeatures,
+    DataTableHeaderChromeConfig, DataTableLoadingView, DataTableNoResultsView, DataTableSource,
+    DataTableToolbarConfig, ListViewConfig, PagingMode,
+};
 
 use crate::components::{BosonDataTableRefetchSkeleton, BosonDataTableShell};
 
@@ -21,7 +26,7 @@ pub fn TasksDataTable() -> impl IntoView {
     let navigate = use_navigate();
 
     let on_row_click = Callback::new(move |(id,): (String,)| {
-        let _ = navigate(&crate::paths::task(&id), Default::default());
+        navigate(&crate::paths::task(&id), NavigateOptions::default());
     });
 
     let data_source = DataTableSource::Server {

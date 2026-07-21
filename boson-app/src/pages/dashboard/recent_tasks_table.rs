@@ -1,10 +1,14 @@
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
+use leptos_router::NavigateOptions;
 use orbital::components::{
     Body1, Caption1, Card, EmptyState, Skeleton, SkeletonItem, SkeletonItemSize, SpacingSize,
     Subtitle2,
 };
-use orbital::primitives::*;
+use orbital::primitives::{
+    Flex, FlexAlign, FlexJustify, InfoLabel, InfoLabelInfo, Link, MessageBar, MessageBarIntent,
+    Table, TableBody, TableCell, TableCellLayout, TableHeader, TableHeaderCell, TableRow,
+};
 
 use crate::components::{
     boson_table_link_styles, BosonCardContent, BosonHelpColumnHeader, BosonTruncatedTableCellLink,
@@ -66,6 +70,7 @@ fn RecentTasksTableSkeleton() -> impl IntoView {
 }
 
 /// Table showing the top tasks from the index with navigation.
+#[allow(clippy::too_many_lines)]
 #[component]
 pub fn RecentTasksTable(
     /// Resource that loads the tasks data.
@@ -84,7 +89,7 @@ pub fn RecentTasksTable(
     let top_tasks = Memo::new(move |_| {
         tasks_res
             .get()
-            .and_then(|r| r.ok())
+            .and_then(Result::ok)
             .map(|t| t.into_iter().take(5).collect::<Vec<_>>())
             .unwrap_or_default()
     });
@@ -146,15 +151,14 @@ pub fn RecentTasksTable(
                                                     let name_for_testid = name.clone();
                                                     let href = crate::paths::task(&name);
                                                     let href_nav = href.clone();
-                                                    let nav = nav_store.with_value(|n| n.clone());
+                                                    let nav = nav_store.with_value(Clone::clone);
                                                     let success_rate = t
                                                         .success_rate_pct
-                                                        .map(|r| format!("{:.1}%", r))
-                                                        .unwrap_or_else(|| "-".to_string());
+                                                        .map_or_else(|| "-".to_string(), |r| format!("{r:.1}%"));
                                                     view! {
                                                         <TableRow
-                                                            class=row_class.with_value(|c| c.clone())
-                                                            on:click=move |_| nav(&href_nav, Default::default())
+                                                            class=row_class.with_value(Clone::clone)
+                                                            on:click=move |_| nav(&href_nav, NavigateOptions::default())
                                                         >
                                                             <TableCell class=class_names.task_column>
                                                                 <BosonTruncatedTableCellLink

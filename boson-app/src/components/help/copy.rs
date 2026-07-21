@@ -88,11 +88,11 @@ pub fn priority_help() -> AnyView {
     )
 }
 
-pub fn max_attempts_hint() -> &'static str {
+pub const fn max_attempts_hint() -> &'static str {
     "Total tries including the first run. Set to 1 to disable retries."
 }
 
-pub fn initial_delay_hint() -> &'static str {
+pub const fn initial_delay_hint() -> &'static str {
     "Milliseconds to wait before the first retry after a failure."
 }
 
