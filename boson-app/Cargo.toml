@@ -70,7 +70,7 @@ ssr = [
     "dep:boson-core",
     "dep:boson-runtime",
     "dep:valence",
-    "valence/surreal",
+    "valence/sqlite",
     "dep:higgs",
     "higgs/ssr",
     "dep:uf-ssr",
