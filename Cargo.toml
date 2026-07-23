@@ -2,10 +2,6 @@
 resolver = "2"
 members = [
     "boson-app",
-    "uf-integrations",
-    "uf-product-macros",
-    "uf-ssr",
-    "uf-app-registry",
 ]
 
 [workspace.package]
@@ -69,10 +65,12 @@ orbital-macros = { git = "https://github.com/deathbreakfast/orbital", branch = "
 orbital-motion = { git = "https://github.com/deathbreakfast/orbital", branch = "fix/crates-io-publish" }
 orbital-paging = { git = "https://github.com/deathbreakfast/orbital", branch = "fix/crates-io-publish", default-features = false }
 
-uf-integrations = { path = "uf-integrations", default-features = false }
-uf-product-macros = { path = "uf-product-macros" }
-uf-ssr = { path = "uf-ssr", default-features = false }
-uf-app-registry = { path = "uf-app-registry" }
+uf-integrations = { path = "../unified-field-product/uf-integrations", default-features = false }
+uf-product = { path = "../unified-field-product/uf-product", default-features = false }
+uf-product-macros = { path = "../unified-field-product/uf-product-macros" }
+uf-ssr = { path = "../counter-app/uf-ssr", default-features = false }
+uf-app-registry = { path = "../counter-app/uf-app-registry" }
 inventory = "0.3"
 wasm-bindgen = "=0.2.126"
+lepton-shell = { git = "https://github.com/deathbreakfast/lepton-auth", branch = "feat/crates-io-uf-deps", package = "lepton-shell", default-features = false }
 

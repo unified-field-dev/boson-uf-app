@@ -1,10 +1,11 @@
 use leptos::prelude::*;
 use leptos_router::components::Outlet;
+use lepton_shell::AppBarUserMenu;
 use orbital::components::{
     Navigation, NavigationBody, NavigationConfig, NavigationLink, NavigationMaterial,
 };
 use uf_integrations::{
-    ShellAppBar, ShellLeftNav, UnifiedFieldAppBar, UnifiedFieldShellLayout,
+    ShellAppBar, ShellAuthMenu, ShellLeftNav, UnifiedFieldAppBar, UnifiedFieldShellLayout,
 };
 
 use crate::paths;
@@ -21,14 +22,18 @@ pub fn BosonLayout() -> impl IntoView {
     let open_categories = RwSignal::new(Vec::<String>::new());
 
     view! {
-        <div data-testid="boson-app-root">
+        <div data-testid="boson-app-root" style="height: 100%;">
         <UnifiedFieldShellLayout>
             <ShellAppBar slot>
                 <UnifiedFieldAppBar
                     app_name=app_name
                     app_id=AppMetadata::id()
                     homepage_url="/".to_string()
-                />
+                >
+                    <ShellAuthMenu slot:auth_menu>
+                        <AppBarUserMenu />
+                    </ShellAuthMenu>
+                </UnifiedFieldAppBar>
             </ShellAppBar>
             <ShellLeftNav slot>
                 <Navigation config=NavigationConfig::new().with_selected_value(selected_value).with_open_categories(open_categories)>
