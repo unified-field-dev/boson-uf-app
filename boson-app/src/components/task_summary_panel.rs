@@ -40,7 +40,7 @@ pub fn TaskSummaryPanel(
 ) -> impl IntoView {
     let (style_sheet, class_names) = turf::inline_style_sheet_values! {
         .MetaSecondary {
-            color: var(--colorNeutralForeground3);
+            color: var(--orb-color-text-tertiary);
         }
         .Actions { flex-wrap: wrap; }
     };

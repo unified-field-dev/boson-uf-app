@@ -17,7 +17,7 @@ pub fn RunInfoGrid(
     let job_href = format!("{}?job={}", crate::paths::RUNS, job_id);
 
     let (style_sheet, class_names) = turf::inline_style_sheet_values! {
-        .Label { color: var(--colorNeutralForeground3); }
+        .Label { color: var(--orb-color-text-tertiary); }
     };
 
     view! {

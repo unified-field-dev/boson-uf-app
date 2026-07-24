@@ -11,7 +11,7 @@ pub struct BosonTableLinkClasses {
 pub fn boson_table_link_styles() -> (&'static str, BosonTableLinkClasses) {
     let (style_sheet, class_names) = inline_style_sheet_values! {
         .Row { cursor: pointer; }
-        .Row:hover { background: var(--colorNeutralBackground1Hover); }
+        .Row:hover { background: var(--orb-color-surface-canvas-hover); }
     };
     (
         style_sheet,
