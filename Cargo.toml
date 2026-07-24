@@ -53,10 +53,10 @@ boson = { package = "uf-boson", version = "0.1.1", default-features = false }
 boson-core = { version = "0.1.1", default-features = false }
 boson-runtime = { version = "0.1.1", default-features = false }
 boson-coordinator = { git = "https://github.com/deathbreakfast/boson-coordinator", branch = "main" }
-higgs = { path = "../fleet/repos/valence-platform/higgs-platform", default-features = false }
+higgs = { path = "../fleet/repos/higgs/higgs", default-features = false }
 valence = { package = "uf-valence", version = "0.1.1", default-features = false, features = ["mem", "sqlite"] }
-uf-host = { git = "https://github.com/deathbreakfast/valence-platform", branch = "main", default-features = false }
-uf-identity = { git = "https://github.com/deathbreakfast/valence-platform", branch = "main" }
+uf-host = { path = "../fleet/repos/higgs/uf-host", default-features = false }
+uf-identity = { path = "../fleet/repos/higgs/uf-identity" }
 
 orbital = { package = "orbital-ui", git = "https://github.com/deathbreakfast/orbital", branch = "fix/crates-io-publish", default-features = false }
 orbital-charts = { git = "https://github.com/deathbreakfast/orbital", branch = "fix/crates-io-publish", default-features = false }
@@ -72,5 +72,31 @@ uf-ssr = { path = "../counter-app/uf-ssr", default-features = false }
 uf-app-registry = { path = "../counter-app/uf-app-registry" }
 inventory = "0.3"
 wasm-bindgen = "=0.2.126"
-lepton-shell = { git = "https://github.com/deathbreakfast/lepton-auth", branch = "main", package = "lepton-shell", default-features = false }
+lepton-shell = { path = "../lepton-auth/lepton-shell", default-features = false }
 
+[patch."https://github.com/deathbreakfast/higgs"]
+higgs = { path = "../fleet/repos/higgs/higgs" }
+uf-host = { path = "../fleet/repos/higgs/uf-host" }
+uf-identity = { path = "../fleet/repos/higgs/uf-identity" }
+
+[patch."https://github.com/deathbreakfast/lepton-auth"]
+lepton-shell = { path = "../lepton-auth/lepton-shell" }
+lepton-auth = { path = "../lepton-auth/lepton-auth" }
+lepton-identity = { path = "../lepton-auth/lepton-identity" }
+lepton-host-adapter = { path = "../lepton-auth/lepton-host-adapter" }
+lepton = { path = "../lepton-auth/lepton" }
+
+[patch."https://github.com/deathbreakfast/unified-field-product"]
+uf-product = { path = "../unified-field-product/uf-product" }
+uf-integrations = { path = "../unified-field-product/uf-integrations" }
+uf-product-macros = { path = "../unified-field-product/uf-product-macros" }
+uf-notifications-core = { path = "../unified-field-product/uf-notifications-core" }
+uf-notifications-api = { path = "../unified-field-product/uf-notifications-api" }
+uf-search-core = { path = "../unified-field-product/uf-search-core" }
+
+[patch.crates-io]
+uf-valence = { path = "../valence/valence" }
+uf-valence-core = { path = "../valence/valence-core" }
+uf-valence-codegen = { path = "../valence/valence-codegen" }
+uf-valence-macros = { path = "../valence/valence-macros" }
+uf-valence-telemetry = { path = "../valence/valence-telemetry" }
