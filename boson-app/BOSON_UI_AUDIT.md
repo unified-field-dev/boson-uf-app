@@ -8,7 +8,7 @@
 
 ## Executive summary
 
-Boson-app is **Orbital-first at the shell and page chrome level**: every route uses `ContentContainer`, typography presets (`Title3`, `Subtitle2`, `Body1`, `Caption*`), `Card`/`StatCard`, and `OrbitalInfiniteScroll` for the three main list pages. The app is usable for developers and operators but under-serves the **open-platform audience** with no contextual help (`InfoLabel`), no skeleton loading states, hand-rolled tables instead of `DataTable`, and one **broken navigation path** (`/boson/runs?job=`).
+Boson-app is **Orbital-first at the shell and page chrome level**: every route uses `ContentContainer`, typography presets (`Title3`, `Subtitle2`, `Body1`, `Caption*`), `Card`/`StatCard`, and `OrbitalInfiniteScroll` for the three main list pages. The app is usable for developers and operators but under-serves less technical readers with no contextual help (`InfoLabel`), no skeleton loading states, hand-rolled tables instead of `DataTable`, and one **broken navigation path** (`/boson/runs?job=`).
 
 | Category | Pass | Violations | High severity |
 |---|---:|---:|---:|
@@ -43,17 +43,11 @@ Boson-app is **Orbital-first at the shell and page chrome level**: every route u
 
 ---
 
-## Audience & product intent
+## Product surface & access
 
-Boson is the platform UI for **async background work** — registering Boson tasks, monitoring the job queue, inspecting run history, and tuning task configuration (pool, priority, retry policy). Any **registered authenticated user** can browse; task config updates and job cancellation require **email verification**.
+Boson is the platform UI for **async background work** — registering Boson tasks, monitoring the job queue, inspecting run history, and tuning task configuration (pool, priority, retry policy). Any registered authenticated user can browse; task config updates and job cancellation require **email verification**.
 
-| Persona | Primary goals | UX expectations |
-|---|---|---|
-| **Platform developers** | Register tasks with `#[boson::task]`, debug signatures, tune pool/priority/retry | Dense metadata OK; needs InfoLabels on signature, pool, retry policy, effective vs default config |
-| **Product support / ops** | Monitor queue depth, cancel stuck jobs, trace runs by job/task | Scan-friendly status badges with text, filterable lists, clear error surfaces |
-| **General registered users** | Understand what background work is doing on the platform | Plain-language section intros; avoid unexplained jargon (signature JSON, pool, backoff) |
-
-The app today optimizes for the **developer/ops** persona (metadata-heavy cards, monospace signatures, status badges) but does not explain domain concepts to general users.
+The app today is metadata-heavy (dense cards, monospace signatures, status badges) and assumes familiarity with background-job vocabulary (signature JSON, pool, backoff). Domain jargon (signature, pool, retry policy, effective vs default config) lacks `InfoLabel` coverage — see [InfoLabel rules](#infolabel-rules-concrete) below for where to add it.
 
 ---
 
@@ -277,9 +271,9 @@ Use `OrbitalPresence` + `PresenceMotion` for expand/collapse, dialog enter/exit,
 
 **Files:** [`layout.rs`](src/layout.rs), [`lib.rs`](src/lib.rs)
 
-#### Purpose & audience
+#### Purpose
 
-Provides the Unified Field shell (AppBar + left nav) and route/auth wiring for all Boson pages. All personas interact with this on every visit. Task config route adds email-verification guard via `BosonVerifiedTaskConfigPage`.
+Provides the Unified Field shell (AppBar + left nav) and route/auth wiring for all Boson pages. Every route renders inside this shell. Task config route adds email-verification guard via `BosonVerifiedTaskConfigPage`.
 
 #### Orbital conformance
 
@@ -328,7 +322,7 @@ Provides the Unified Field shell (AppBar + left nav) and route/auth wiring for a
 
 **Files:** [`pages/dashboard/mod.rs`](src/pages/dashboard/mod.rs), [`quick_links.rs`](src/pages/dashboard/quick_links.rs), [`recent_tasks_table.rs`](src/pages/dashboard/recent_tasks_table.rs)
 
-#### Purpose & audience
+#### Purpose
 
 **Purpose:** At-a-glance background-work health — task count, queue depth, running jobs, and 24h run volume, plus shortcuts and a snapshot of recent tasks.
 
@@ -408,7 +402,7 @@ Provides the Unified Field shell (AppBar + left nav) and route/auth wiring for a
 
 **Files:** [`pages/tasks/mod.rs`](src/pages/tasks/mod.rs), [`task_card.rs`](src/pages/tasks/task_card.rs)
 
-#### Purpose & audience
+#### Purpose
 
 **Purpose:** Browse all registered Boson tasks with effective config, queue depth, run stats, and navigation to detail/config/queue/runs.
 
@@ -482,7 +476,7 @@ Provides the Unified Field shell (AppBar + left nav) and route/auth wiring for a
 
 **Files:** [`pages/task_detail.rs`](src/pages/task_detail.rs)
 
-#### Purpose & audience
+#### Purpose
 
 **Purpose:** Inspect a single task's signature, effective/default config, and aggregate stats before configuring or tracing queue/runs.
 
@@ -554,7 +548,7 @@ Provides the Unified Field shell (AppBar + left nav) and route/auth wiring for a
 
 **Files:** [`pages/task_config/mod.rs`](src/pages/task_config/mod.rs), [`basic_config_form.rs`](src/pages/task_config/basic_config_form.rs), [`retry_policy_form.rs`](src/pages/task_config/retry_policy_form.rs)
 
-#### Purpose & audience
+#### Purpose
 
 **Purpose:** Edit per-task routing (pool, priority) and retry policy. Requires email verification.
 
@@ -629,7 +623,7 @@ Provides the Unified Field shell (AppBar + left nav) and route/auth wiring for a
 
 **Files:** [`pages/queue/mod.rs`](src/pages/queue/mod.rs), [`queue_filters.rs`](src/pages/queue/queue_filters.rs), [`job_card.rs`](src/pages/queue/job_card.rs)
 
-#### Purpose & audience
+#### Purpose
 
 **Purpose:** Monitor enqueued and running jobs; filter by status; cancel pending jobs; navigate to related runs.
 
@@ -703,7 +697,7 @@ Provides the Unified Field shell (AppBar + left nav) and route/auth wiring for a
 
 **Files:** [`pages/runs/mod.rs`](src/pages/runs/mod.rs), [`runs_table.rs`](src/pages/runs/runs_table.rs)
 
-#### Purpose & audience
+#### Purpose
 
 **Purpose:** Browse run history with status, timing, and attempt metadata; navigate to run detail.
 
@@ -774,7 +768,7 @@ Provides the Unified Field shell (AppBar + left nav) and route/auth wiring for a
 
 **Files:** [`pages/run_detail/mod.rs`](src/pages/run_detail/mod.rs), [`run_info_grid.rs`](src/pages/run_detail/run_info_grid.rs), [`run_error_display.rs`](src/pages/run_detail/run_error_display.rs)
 
-#### Purpose & audience
+#### Purpose
 
 **Purpose:** Inspect a single run's metadata, status, timing, and error output for troubleshooting.
 

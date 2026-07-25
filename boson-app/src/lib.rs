@@ -12,10 +12,31 @@
 //! - **Dashboard** — [`BosonRootPage`] shows aggregate task/job/run activity and run trends.
 //! - **Tasks** — [`BosonTasksIndexPage`] / [`BosonTaskDetailPage`] /
 //!   [`BosonTaskConfigPage`] for browsing and editing task configuration (priority, pools,
-//!   retry policy).
-//! - **Queue** — [`BosonQueuePage`] for inspecting pending/active jobs.
+//!   retry policy). Task config additionally requires a verified email.
+//! - **Queue** — [`BosonQueuePage`] for inspecting pending/active jobs and cancelling them.
 //! - **Runs** — [`BosonRunsIndexPage`] / [`BosonRunDetailPage`] for historical run
-//!   inspection and troubleshooting, including live updates via [`photon_ws`].
+//!   inspection and troubleshooting.
+//! - **Live updates** — [`live`] holds the client-side poll-tick hook
+//!   (`use_boson_poll_tick`) and placeholder broadcast/per-job live sources; [`photon_ws`]
+//!   is the SSR-side Axum route merge point a host wires up to enable real Photon push
+//!   updates (currently a stub — see crate-level integration notes).
+//! - **Read/write API** — [`server`] exposes the SSR-only server functions and DTOs
+//!   backing the pages above (`server::dashboard`, `server::tasks`, `server::jobs`,
+//!   `server::runs`, `server::gluon_pools`, `server::page_query`).
+//!
+//! ## Routes
+//!
+//! Mounted under `/boson` by [`BosonRoutes`]. Concern → page → key server fn(s):
+//!
+//! | Path | Page | Key server fn(s) |
+//! |---|---|---|
+//! | `/boson` | [`BosonRootPage`] | `get_dashboard_stats`, `get_tasks` |
+//! | `/boson/tasks` | [`BosonTasksIndexPage`] | `get_tasks_page`, `get_tasks_datatable_page` |
+//! | `/boson/tasks/:task_name` | [`BosonTaskDetailPage`] | `get_task` |
+//! | `/boson/tasks/:task_name/config` (email-verified) | [`BosonTaskConfigPage`] | `get_task_config`, `update_task_config`, `list_gluon_pools_for_boson_task_config` |
+//! | `/boson/queue` | [`BosonQueuePage`] | `list_jobs_page`, `list_jobs_datatable_page`, `cancel_job` |
+//! | `/boson/runs` | [`BosonRunsIndexPage`] | `list_runs_page`, `list_runs_datatable_page` |
+//! | `/boson/runs/:id` | [`BosonRunDetailPage`] | `get_run` |
 //!
 //! ## Getting started
 //!
@@ -42,6 +63,9 @@
 //! - [`BosonRoutes`] — the route entrypoint mounted by hosts.
 //! - [`BosonLayout`] — the shared app bar / nav shell wrapping every route.
 //! - [`pages`] — the page components listed under Features above.
+//! - [`server`] — server functions and DTOs backing the UI.
+//! - [`live`] / [`photon_ws`] — client poll-tick and SSR route merge point for live
+//!   updates (Photon push wiring is currently a stub; see module docs).
 
 #![allow(missing_docs)]
 #![allow(clippy::unused_unit, unused_imports)]
@@ -65,11 +89,13 @@ use uf_product_macros::uf_app;
 mod components;
 mod layout;
 mod lazy_routes;
-mod live;
+/// Client-side live-update hooks (poll tick, placeholder broadcast sources).
+pub mod live;
 pub mod pages;
 #[cfg(feature = "ssr")]
 pub mod photon_ws;
-mod server;
+/// SSR server functions and DTOs backing the Boson UI.
+pub mod server;
 
 pub use layout::BosonLayout;
 pub use lazy_routes::{

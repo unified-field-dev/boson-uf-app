@@ -24,16 +24,17 @@ view! {
 
 - Dashboard for aggregate task/job/run activity
 - Task configuration (priority, pools, retry)
-- Queue and run history views (including live updates when Photon WS is wired)
+- Queue and run history views (poll-based refresh today; `photon_ws`/`live` are the
+  stubbed integration points for real Photon push updates once a host wires them)
 
-Host must supply a Boson backend and auth guard context expected by the app. Enable `ssr` / hydrate features to match your host.
+Host must supply a Boson backend and auth guard context expected by the app. Enable `ssr` / hydrate features to match your host. See the `boson-app` crate rustdocs for the full Concern → route → server fn table.
 
 ## Workspace
 
 | Crate | Role |
 |-------|------|
 | `boson-app` | Boson admin UI |
-| `uf-*` | Thin shell / registry helpers shared with other uf-app repos |
+| `uf-*` (top-level `uf-app-registry`, `uf-integrations`, `uf-product-macros`, `uf-ssr`) | Not workspace members and not depended on — the workspace's real `uf-*` crates come from `L3-products-zones-hosts` (see `[workspace.dependencies]` in `Cargo.toml`). These local trees are unused leftovers; do not treat them as source of truth. |
 
 ## Verify
 
