@@ -13,14 +13,10 @@ pub async fn prefetch_family() {
     BosonRootRoute::preload().await;
 }
 
-/// Eager auth-gated layout shell for `/boson/*` ParentRoute.
+/// Eager layout shell for `/boson/*` ParentRoute (auth gate lives inside [`BosonLayout`]).
 #[component]
 pub fn BosonLayoutRouteView() -> impl IntoView {
-    view! {
-        <orbital::routes::RequireAuthenticated>
-            <BosonLayout />
-        </orbital::routes::RequireAuthenticated>
-    }
+    view! { <BosonLayout /> }
 }
 
 /// Lazy `/boson` dashboard.

@@ -1,7 +1,7 @@
 # Boson App UI & Quality Audit
 
 **Audit date:** 2026-06-26  
-**Scope:** All Leptos routes and UI components in `boson-app` (24 Rust source files, ~1,915 lines per Sentrux scan)  
+**Scope:** All Leptos routes and UI components in `boson-app` (24 Rust source files, ~1,915 lines per quality review scan)  
 **Reference canon:** Orbital Introduction (`/orbital`), [`.cursor/rules/20-ui-orbital-principles.mdc`](../.cursor/rules/20-ui-orbital-principles.mdc), [`.cursor/rules/21-ui-implementation-patterns.mdc`](../.cursor/rules/21-ui-implementation-patterns.mdc), [`.cursor/rules/31-async-boson-chronon-photon.mdc`](../.cursor/rules/31-async-boson-chronon-photon.mdc), valence-app schema index + help components, [`chronon-app/CHRONON_UI_AUDIT.md`](../chronon-app/CHRONON_UI_AUDIT.md)
 
 ---
@@ -870,7 +870,7 @@ Provides the Unified Field shell (AppBar + left nav) and route/auth wiring for a
 
 ### Tests
 
-Zero `#[cfg(test)]` modules in boson-app. Sentrux structure grade **D** ([`QUALITY.md`](QUALITY.md)). Server status mappers and DTO serialization are prime unit-test targets **[P6]**.
+Zero `#[cfg(test)]` modules in boson-app. quality review structure grade **D** ([`QUALITY.md`](QUALITY.md)). Server status mappers and DTO serialization are prime unit-test targets **[P6]**.
 
 ---
 

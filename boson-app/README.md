@@ -2,7 +2,7 @@
 
 Leptos admin UI for Boson: queue inspection, runs, task config, and dashboards (typically mounted at `/boson`).
 
-Depends on the Boson facade (enqueue/admin APIs via server functions), Orbital UI components, and optionally Photon for live updates.
+Depends on the Boson crate (enqueue/admin APIs via server functions), Orbital UI components, and optionally Photon for live updates.
 
 ## Pages
 

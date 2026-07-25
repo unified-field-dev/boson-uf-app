@@ -4,6 +4,7 @@ use lepton_shell::AppBarUserMenu;
 use orbital::components::{
     Navigation, NavigationBody, NavigationConfig, NavigationLink, NavigationMaterial,
 };
+use orbital::routes::RequireAuthenticated;
 use uf_integrations::{
     ShellAppBar, ShellAuthMenu, ShellLeftNav, UnifiedFieldAppBar, UnifiedFieldShellLayout,
 };
@@ -46,7 +47,9 @@ pub fn BosonLayout() -> impl IntoView {
                     </NavigationBody>
                 </Navigation>
             </ShellLeftNav>
-            <Outlet />
+            <RequireAuthenticated>
+                <Outlet />
+            </RequireAuthenticated>
         </UnifiedFieldShellLayout>
         </div>
     }
