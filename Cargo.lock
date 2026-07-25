@@ -1048,7 +1048,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -1492,7 +1492,6 @@ dependencies = [
  "async-trait",
  "higgs-core",
  "leptos",
- "log",
  "serde_json",
  "thiserror 2.0.19",
  "uf-host",
@@ -1502,14 +1501,14 @@ dependencies = [
 
 [[package]]
 name = "higgs-core"
-version = "0.2.0"
+version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
  "leptos",
- "log",
  "serde_json",
  "thiserror 2.0.19",
+ "tracing",
  "uf-host",
  "uf-identity",
  "uf-valence",
@@ -5101,7 +5100,7 @@ dependencies = [
 
 [[package]]
 name = "uf-host"
-version = "0.2.0"
+version = "0.1.0"
 dependencies = [
  "anyhow",
  "axum",
@@ -5116,7 +5115,7 @@ dependencies = [
 
 [[package]]
 name = "uf-identity"
-version = "0.2.0"
+version = "0.1.0"
 dependencies = [
  "async-trait",
  "serde",
@@ -5705,7 +5704,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]

@@ -58,12 +58,13 @@
 use leptos::prelude::*;
 use leptos_router::{
     components::{ParentRoute, Route},
-    path,
+    path, Lazy,
 };
 use uf_product_macros::orbital_app;
 
 mod components;
 mod layout;
+mod lazy_routes;
 mod live;
 pub mod pages;
 #[cfg(feature = "ssr")]
@@ -71,28 +72,14 @@ pub mod photon_ws;
 mod server;
 
 pub use layout::BosonLayout;
+pub use lazy_routes::{
+    prefetch_family, BosonLayoutRouteView, BosonQueueRoute, BosonRootRoute, BosonRunDetailRoute,
+    BosonRunsIndexRoute, BosonTaskDetailRoute, BosonTasksIndexRoute, BosonVerifiedTaskConfigRoute,
+};
 pub use pages::{
     BosonQueuePage, BosonRootPage, BosonRunDetailPage, BosonRunsIndexPage, BosonTaskConfigPage,
     BosonTaskDetailPage, BosonTasksIndexPage,
 };
-
-#[component]
-fn BosonAuthGuard() -> impl IntoView {
-    view! {
-        <orbital::routes::RequireAuthenticated>
-            <BosonLayout />
-        </orbital::routes::RequireAuthenticated>
-    }
-}
-
-#[component]
-fn BosonVerifiedTaskConfigPage() -> impl IntoView {
-    view! {
-        <orbital::routes::RequireAuthenticated requires_email_verification=true>
-            <BosonTaskConfigPage />
-        </orbital::routes::RequireAuthenticated>
-    }
-}
 
 orbital_app! {
     name: "Boson",
@@ -106,6 +93,8 @@ orbital_app! {
 
 /// Boson's nested route tree, gated behind an auth guard and mounted at `/boson`.
 ///
+/// Leaf pages are [`LazyRoute`](leptos_router::LazyRoute) views so
+/// `cargo leptos --split` can emit a separate WASM chunk for this family.
 /// Registers dashboard, task, queue, and run routes. The task config route additionally
 /// requires a verified email. Intended to be used inside a host `<Routes>` component, e.g.
 /// `<BosonRoutes />`.
@@ -114,14 +103,14 @@ orbital_app! {
 #[component(transparent)]
 pub fn BosonRoutes() -> impl leptos_router::MatchNestedRoutes + Clone {
     view! {
-        <ParentRoute path=path!("boson") view=BosonAuthGuard>
-            <Route path=path!("") view=BosonRootPage />
-            <Route path=path!("tasks") view=BosonTasksIndexPage />
-            <Route path=path!("tasks/:task_name") view=BosonTaskDetailPage />
-            <Route path=path!("tasks/:task_name/config") view=BosonVerifiedTaskConfigPage />
-            <Route path=path!("queue") view=BosonQueuePage />
-            <Route path=path!("runs") view=BosonRunsIndexPage />
-            <Route path=path!("runs/:id") view=BosonRunDetailPage />
+        <ParentRoute path=path!("boson") view=BosonLayoutRouteView>
+            <Route path=path!("") view={Lazy::<BosonRootRoute>::new()} />
+            <Route path=path!("tasks") view={Lazy::<BosonTasksIndexRoute>::new()} />
+            <Route path=path!("tasks/:task_name") view={Lazy::<BosonTaskDetailRoute>::new()} />
+            <Route path=path!("tasks/:task_name/config") view={Lazy::<BosonVerifiedTaskConfigRoute>::new()} />
+            <Route path=path!("queue") view={Lazy::<BosonQueueRoute>::new()} />
+            <Route path=path!("runs") view={Lazy::<BosonRunsIndexRoute>::new()} />
+            <Route path=path!("runs/:id") view={Lazy::<BosonRunDetailRoute>::new()} />
         </ParentRoute>
     }
     .into_inner()
