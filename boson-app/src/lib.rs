@@ -3,7 +3,7 @@
 //! background work queues under `/boson`.
 //!
 //! Boson itself is a background-job execution crate with no built-in UI; this crate is the
-//! `#[uf_product_macros::orbital_app]`-registered operations surface a host mounts to give
+//! `#[uf_product_macros::uf_app]`-registered operations surface a host mounts to give
 //! operators visibility into (and control over) task configuration, queued jobs, and run
 //! history.
 //!
@@ -20,7 +20,7 @@
 //! ## Getting started
 //!
 //! Mount [`BosonRoutes`] inside your host's `<Routes>`; it registers the `/boson` subtree
-//! (auth-gated) and, via `orbital_app!`, its launcher metadata:
+//! (auth-gated) and, via `uf_app!`, its launcher metadata:
 //!
 //! ```rust,ignore
 //! use leptos::prelude::*;
@@ -60,7 +60,7 @@ use leptos_router::{
     components::{ParentRoute, Route},
     path, Lazy,
 };
-use uf_product_macros::orbital_app;
+use uf_product_macros::uf_app;
 
 mod components;
 mod layout;
@@ -81,7 +81,7 @@ pub use pages::{
     BosonTaskDetailPage, BosonTasksIndexPage,
 };
 
-orbital_app! {
+uf_app! {
     name: "Boson",
     id: "boson",
     description: "Background work management",
