@@ -42,7 +42,7 @@ cargo run -p quality -- check --target boson-app
 ### Cargo quality gates (preferred)
 
 Run in this order:
-1. `scan(path="/home/seanorourke/web-app-template/boson-app")`
+1. `scan(path="boson-app")`
 2. `health()`
 3. `cycles()`
 4. `coupling()`
