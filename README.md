@@ -2,14 +2,31 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Official Unified Field admin UI for Boson (Leptos).
+Leptos admin UI for Boson queues, task config, and run history — mounted under `/boson`.
 
 ```toml
 [dependencies]
 boson-app = { git = "https://github.com/deathbreakfast/boson-uf-app", package = "boson-app", branch = "main" }
 ```
 
-Mount Boson admin routes (queue, runs, task config, dashboards) from your host shell.
+```rust
+use boson_app::BosonRoutes;
+use leptos_router::components::Routes;
+
+view! {
+    <Routes fallback=|| "not found">
+        <BosonRoutes />
+    </Routes>
+}
+```
+
+## About
+
+- Dashboard for aggregate task/job/run activity
+- Task configuration (priority, pools, retry)
+- Queue and run history views (including live updates when Photon WS is wired)
+
+Host must supply a Boson backend and auth guard context expected by the app. Enable `ssr` / hydrate features to match your host.
 
 ## Workspace
 
