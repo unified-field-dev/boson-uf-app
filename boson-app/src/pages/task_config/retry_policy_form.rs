@@ -1,6 +1,8 @@
 use leptos::prelude::*;
 use orbital::components::{Card, FormHint, SpacingSize};
-use orbital::primitives::{Flex, InfoLabel, InfoLabelInfo, Input, InputAppearance, InputType, Label};
+use orbital::primitives::{
+    Flex, InfoLabel, InfoLabelInfo, Input, InputAppearance, InputType, Label,
+};
 
 use crate::components::{
     backoff_multiplier_help, initial_delay_hint, max_attempts_hint, max_delay_help,

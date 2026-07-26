@@ -40,6 +40,7 @@ orbital-paging = { workspace = true }
 orbital-data = { workspace = true }
 orbital-charts = { workspace = true, default-features = false }
 
+boson-backend = { path = "../boson-backend" }
 boson-coordinator = { workspace = true, optional = true, default-features = false }
 boson-core = { workspace = true, optional = true }
 boson-runtime = { workspace = true, optional = true, default-features = false }

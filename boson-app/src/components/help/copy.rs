@@ -14,9 +14,7 @@ pub fn signature_help() -> AnyView {
 }
 
 pub fn defaults_help() -> AnyView {
-    caption(
-        "Pool and priority from task registration before any per-task UI override is applied.",
-    )
+    caption("Pool and priority from task registration before any per-task UI override is applied.")
 }
 
 pub fn effective_help() -> AnyView {
@@ -83,9 +81,7 @@ pub fn pool_help() -> AnyView {
 }
 
 pub fn priority_help() -> AnyView {
-    caption(
-        "Job priority within the pool. Lower numbers run sooner when workers are contended.",
-    )
+    caption("Job priority within the pool. Lower numbers run sooner when workers are contended.")
 }
 
 pub const fn max_attempts_hint() -> &'static str {

@@ -1,7 +1,8 @@
 //! Leptos server functions and DTOs for Boson UI.
 //!
-//! DTOs are used by both server and client. Server functions run on SSR only
-//! and use [`higgs::Higgs::from_request()`] for unified context extraction.
+//! DTOs and pure mapping helpers live in [`boson_backend`] so contracts stay
+//! unit/integration-testable without the host UI graph. Server functions run on
+//! SSR only and use [`higgs::Higgs::from_request()`] for unified context extraction.
 //!
 //! The UI uses paginated list endpoints (`get_tasks_page`, `list_jobs_page`,
 //! `list_runs_page`) and single-record getters (`get_task`, `get_run`, etc.).

@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use orbital_data::{DataRecord, DataValue};
 
-use crate::server::{RunStatusDto, RunSummary};
 use crate::server::page_query::run_status_key;
+use crate::server::{RunStatusDto, RunSummary};
 
 fn format_started_at(iso: &str) -> String {
     if let Some(dt_part) = iso.split('T').nth(1) {

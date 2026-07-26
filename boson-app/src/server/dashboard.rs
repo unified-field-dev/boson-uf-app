@@ -1,11 +1,8 @@
 //! Dashboard statistics and run trend server functions.
 
-use std::collections::BTreeMap;
-
-use chrono::Timelike;
 use leptos::prelude::*;
 
-use super::types::{DashboardChartPoint, DashboardChartSeries, DashboardStats, BOSON_LIST_FETCH_CAP};
+use super::types::{DashboardChartSeries, DashboardStats, BOSON_LIST_FETCH_CAP};
 
 #[cfg(feature = "ssr")]
 use boson_core::JobStatus;
@@ -23,12 +20,12 @@ pub async fn get_dashboard_stats() -> Result<DashboardStats, ServerFnError> {
     let day_ago = chrono::Utc::now() - chrono::Duration::hours(24);
     let runs_today = backend.count_runs_since(day_ago).await as u32;
 
-    Ok(DashboardStats {
+    Ok(boson_backend::dashboard_stats(
         task_count,
         jobs_queued,
         jobs_running,
         runs_today,
-    })
+    ))
 }
 
 /// Time-series run outcome counts for the dashboard chart.
@@ -46,157 +43,8 @@ pub async fn get_run_stats_series(
     let backend = backend.as_ref();
 
     let now = chrono::Utc::now();
-    let since = now - chrono::Duration::seconds(range_secs);
-    let bucket = run_bucket_granularity(range_secs);
-
     let runs = backend.list_runs(None, 0, BOSON_LIST_FETCH_CAP).await;
-
-    let mut success_buckets: BTreeMap<chrono::DateTime<chrono::Utc>, u32> = BTreeMap::new();
-    let mut failed_buckets: BTreeMap<chrono::DateTime<chrono::Utc>, u32> = BTreeMap::new();
-
-    for run in runs.iter().filter(|r| r.started_at >= since) {
-        let bucket_ts = align_run_bucket(run.started_at, bucket);
-
-        match run.status {
-            boson_core::RunStatus::Success => {
-                *success_buckets.entry(bucket_ts).or_insert(0) += 1;
-            }
-            boson_core::RunStatus::Failed
-            | boson_core::RunStatus::Timeout
-            | boson_core::RunStatus::Canceled => {
-                *failed_buckets.entry(bucket_ts).or_insert(0) += 1;
-            }
-            boson_core::RunStatus::Running => {}
-        }
-    }
-
-    fill_bucket_range(since, now, bucket, &mut success_buckets);
-    fill_bucket_range(since, now, bucket, &mut failed_buckets);
-
-    let success_points: Vec<DashboardChartPoint> = success_buckets
-        .into_iter()
-        .map(|(ts, value)| DashboardChartPoint {
-            ts,
-            value: value as f64,
-        })
-        .collect();
-    let failed_points: Vec<DashboardChartPoint> = failed_buckets
-        .into_iter()
-        .map(|(ts, value)| DashboardChartPoint {
-            ts,
-            value: value as f64,
-        })
-        .collect();
-
-    let mut series = vec![DashboardChartSeries {
-        id: "successful".into(),
-        label: "Successful".into(),
-        points: success_points,
-    }];
-    if failed_points.iter().any(|p| p.value > 0.0) {
-        series.push(DashboardChartSeries {
-            id: "failed".into(),
-            label: "Failed".into(),
-            points: failed_points,
-        });
-    }
-
-    Ok(series)
-}
-
-/// Bucket width for the dashboard run-outcomes chart.
-///
-/// Only referenced from the ssr-only body of `get_run_stats_series`, so it reads as dead
-/// code when checking without the `ssr` feature (matches `BOSON_LIST_FETCH_CAP` above).
-#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
-#[derive(Clone, Copy)]
-enum RunBucketGranularity {
-    /// 4-hour buckets for the 24h range (6 x-axis labels).
-    FourHourly,
-    /// Daily buckets for the 7d range.
-    Daily,
-}
-
-#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
-const fn run_bucket_granularity(range_secs: i64) -> RunBucketGranularity {
-    if range_secs <= 86_400 {
-        RunBucketGranularity::FourHourly
-    } else {
-        RunBucketGranularity::Daily
-    }
-}
-
-#[cfg_attr(not(feature = "ssr"), allow(dead_code))]
-fn align_run_bucket(
-    ts: chrono::DateTime<chrono::Utc>,
-    bucket: RunBucketGranularity,
-) -> chrono::DateTime<chrono::Utc> {
-    let naive = ts.naive_utc();
-    match bucket {
-        RunBucketGranularity::FourHourly => {
-            let aligned_hour = (naive.hour() / 4) * 4;
-            let hour = naive
-                .date()
-                .and_hms_opt(aligned_hour, 0, 0)
-                .unwrap_or(naive);
-            chrono::DateTime::<chrono::Utc>::from_naive_utc_and_offset(hour, chrono::Utc)
-        }
-        RunBucketGranularity::Daily => {
-            let day = naive.date().and_hms_opt(0, 0, 0).unwrap_or(naive);
-            chrono::DateTime::<chrono::Utc>::from_naive_utc_and_offset(day, chrono::Utc)
-        }
-    }
-}
-
-#[cfg(feature = "ssr")]
-fn fill_bucket_range(
-    since: chrono::DateTime<chrono::Utc>,
-    now: chrono::DateTime<chrono::Utc>,
-    bucket: RunBucketGranularity,
-    buckets: &mut BTreeMap<chrono::DateTime<chrono::Utc>, u32>,
-) {
-    let mut cursor = align_run_bucket(since, bucket);
-    let end = align_run_bucket(now, bucket);
-    let step = match bucket {
-        RunBucketGranularity::FourHourly => chrono::Duration::hours(4),
-        RunBucketGranularity::Daily => chrono::Duration::days(1),
-    };
-    while cursor <= end {
-        buckets.entry(cursor).or_insert(0);
-        cursor += step;
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::{align_run_bucket, run_bucket_granularity, RunBucketGranularity};
-    use chrono::{TimeZone, Timelike, Utc};
-
-    #[test]
-    fn run_bucket_granularity_switches_at_one_day() {
-        assert!(matches!(
-            run_bucket_granularity(86_400),
-            RunBucketGranularity::FourHourly
-        ));
-        assert!(matches!(
-            run_bucket_granularity(86_401),
-            RunBucketGranularity::Daily
-        ));
-    }
-
-    #[test]
-    fn align_run_bucket_four_hourly_floors_to_block() {
-        let ts = Utc.with_ymd_and_hms(2026, 1, 1, 10, 45, 0).unwrap();
-        let aligned = align_run_bucket(ts, RunBucketGranularity::FourHourly);
-        assert_eq!(aligned.hour(), 8);
-        assert_eq!(aligned.minute(), 0);
-    }
-
-    #[test]
-    fn align_run_bucket_daily_floors_to_midnight() {
-        let ts = Utc.with_ymd_and_hms(2026, 1, 1, 10, 45, 0).unwrap();
-        let aligned = align_run_bucket(ts, RunBucketGranularity::Daily);
-        assert_eq!(aligned.hour(), 0);
-        assert_eq!(aligned.minute(), 0);
-    }
+    Ok(boson_backend::run_stats_series_from_runs(
+        &runs, now, range_secs,
+    ))
 }

@@ -8,9 +8,11 @@ pub fn BosonHelpCardHeader(
     /// Title text.
     title: &'static str,
     /// Description text.
-    #[prop(optional)] description: Option<&'static str>,
+    #[prop(optional)]
+    description: Option<&'static str>,
     /// Supplementary info/help content.
-    #[prop(optional)] info: Option<AnyView>,
+    #[prop(optional)]
+    info: Option<AnyView>,
 ) -> impl IntoView {
     let title_row = move || {
         if let Some(info_view) = info {

@@ -9,13 +9,17 @@ pub fn BosonHelpStatCard(
     /// Label text.
     label: &'static str,
     /// Reactive signal for the current value.
-    #[prop(into)] value: Signal<String>,
+    #[prop(into)]
+    value: Signal<String>,
     /// Icon to display.
-    #[prop(optional)] icon: Option<icondata_core::Icon>,
+    #[prop(optional)]
+    icon: Option<icondata_core::Icon>,
     /// Visual variant to render.
-    #[prop(optional)] variant: Option<StatCardVariant>,
+    #[prop(optional)]
+    variant: Option<StatCardVariant>,
     /// Supplementary info/help content for the label.
-    #[prop(optional)] label_info: Option<AnyView>,
+    #[prop(optional)]
+    label_info: Option<AnyView>,
 ) -> impl IntoView {
     match label_info {
         None => {

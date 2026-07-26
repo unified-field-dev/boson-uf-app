@@ -1,7 +1,9 @@
 use std::collections::BTreeMap;
 
 use leptos::prelude::*;
-use orbital_charts::{AxisDef, ChartType, GridConfig, LegendConfig, LineChart, ScaleType, SeriesDef};
+use orbital_charts::{
+    AxisDef, ChartType, GridConfig, LegendConfig, LineChart, ScaleType, SeriesDef,
+};
 
 use crate::server::DashboardChartSeries;
 

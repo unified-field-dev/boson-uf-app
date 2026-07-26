@@ -1,10 +1,8 @@
-use crate::components::{
-    boson_table_page_layout, BosonCardContent, RunsDataTable, RunsTableScope,
-};
+use crate::components::{boson_table_page_layout, BosonCardContent, RunsDataTable, RunsTableScope};
 use leptos::prelude::*;
 use leptos_router::hooks::{use_navigate, use_query_map};
 use leptos_router::NavigateOptions;
-use orbital::components::{Card, Caption1, ContentContainer, SpacingSize, Tag, Title3};
+use orbital::components::{Caption1, Card, ContentContainer, SpacingSize, Tag, Title3};
 use orbital::primitives::{Button, ButtonAppearance, ButtonSize, Flex, FlexAlign};
 
 /// Run history index: paginated list of past runs across all tasks.
@@ -14,9 +12,7 @@ pub fn BosonRunsIndexPage() -> impl IntoView {
     let navigate = use_navigate();
     let navigate_store = StoredValue::new(navigate);
 
-    let job_filter = Memo::new(move |_| {
-        query.with(|q| q.get("job").filter(|s| !s.is_empty()))
-    });
+    let job_filter = Memo::new(move |_| query.with(|q| q.get("job").filter(|s| !s.is_empty())));
 
     let scope = Memo::new(move |_| {
         job_filter

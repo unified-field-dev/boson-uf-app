@@ -23,9 +23,6 @@ pub fn build_tasks_fetcher() -> PageFetcher {
                 total_count: page.total_count,
                 next_request_offset: page.next_request_offset,
             })
-        })
-            as Pin<
-                Box<dyn Future<Output = Result<Page<DataRecord>, ServerFnError>> + Send>,
-            >
+        }) as Pin<Box<dyn Future<Output = Result<Page<DataRecord>, ServerFnError>> + Send>>
     })
 }

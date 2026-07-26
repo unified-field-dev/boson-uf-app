@@ -4,10 +4,10 @@ use leptos::prelude::*;
 use orbital::primitives::{ColumnType, DataTableColumnDef};
 use orbital_data::DataRecord;
 
+use super::mapper::run_status_from_key;
 use crate::components::{
     attempt_help, duration_help, BosonHelpColumnHeader, BosonTableLink, RunStatusBadge,
 };
-use super::mapper::run_status_from_key;
 
 pub fn runs_table_columns() -> Vec<DataTableColumnDef> {
     let status_view = Arc::new(|record: DataRecord| {

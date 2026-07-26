@@ -7,7 +7,8 @@ use orbital::primitives::{Badge, BadgeAppearance, BadgeColor};
 #[component]
 pub fn JobStatusBadge(
     /// Current status value.
-    #[prop(into)] status: JobStatusDto,
+    #[prop(into)]
+    status: JobStatusDto,
 ) -> impl IntoView {
     let (label, appearance, color) = match status {
         JobStatusDto::Queued => ("Queued", BadgeAppearance::Outline, BadgeColor::Informative),

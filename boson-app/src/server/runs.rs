@@ -81,6 +81,7 @@ pub async fn get_run(
     /// Unique identifier of the run to look up.
     run_id: String,
 ) -> Result<Option<RunSummary>, ServerFnError> {
+    boson_backend::validate_run_id(&run_id).map_err(ServerFnError::new)?;
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
     Ok(backend.get_run(&run_id).await.map(run_to_summary))

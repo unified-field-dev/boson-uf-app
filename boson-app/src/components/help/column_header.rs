@@ -15,7 +15,8 @@ pub fn BosonHelpColumnHeader(
     /// Label text.
     label: &'static str,
     /// Supplementary info/help content.
-    #[prop(optional)] info: Option<AnyView>,
+    #[prop(optional)]
+    info: Option<AnyView>,
 ) -> impl IntoView {
     view! {
         {if let Some(info_view) = info {

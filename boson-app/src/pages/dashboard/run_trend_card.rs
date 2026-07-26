@@ -1,7 +1,7 @@
 use leptos::prelude::*;
 use orbital::components::{
-    Button, Caption1, Card, Flex, FlexGap, FlexWrap, MessageBar, MessageBarIntent,
-    Skeleton, SkeletonItem, SpacingSize,
+    Button, Caption1, Card, Flex, FlexGap, FlexWrap, MessageBar, MessageBarIntent, Skeleton,
+    SkeletonItem, SpacingSize,
 };
 use orbital::primitives::{ButtonAppearance, Link};
 
@@ -15,7 +15,8 @@ const RANGE_7D: i64 = 604_800;
 #[component]
 fn RunTrendChartSkeleton(
     /// Additional CSS class(es) to apply.
-    #[prop(into)] class: String,
+    #[prop(into)]
+    class: String,
 ) -> impl IntoView {
     view! {
         <Skeleton>

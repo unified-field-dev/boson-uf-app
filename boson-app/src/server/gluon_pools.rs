@@ -11,9 +11,5 @@ use super::types::GluonPoolPickRow;
 #[uf_product_macros::server]
 pub async fn list_gluon_pools_for_boson_task_config() -> Result<Vec<GluonPoolPickRow>, ServerFnError>
 {
-    Ok(vec![GluonPoolPickRow {
-        id: "global".to_string(),
-        label: "global (default)".to_string(),
-        detail: "Default in-process pool name when no Gluon pool is used.".to_string(),
-    }])
+    Ok(boson_backend::default_gluon_pool_rows())
 }

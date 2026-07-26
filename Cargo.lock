@@ -342,6 +342,7 @@ name = "boson-app"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "boson-backend",
  "boson-coordinator",
  "boson-core",
  "boson-runtime",
@@ -375,6 +376,18 @@ dependencies = [
  "uf-product-macros",
  "uf-ssr",
  "uf-valence",
+]
+
+[[package]]
+name = "boson-backend"
+version = "0.1.0"
+dependencies = [
+ "boson-core",
+ "chrono",
+ "orbital-data",
+ "orbital-paging",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

@@ -11,7 +11,8 @@ use turf::inline_style_sheet_values;
 #[component]
 pub fn BosonCardContent(
     /// Additional CSS class(es) to apply.
-    #[prop(optional, into)] class: MaybeProp<String>,
+    #[prop(optional, into)]
+    class: MaybeProp<String>,
     /// Child content rendered inside the component.
     children: Children,
 ) -> impl IntoView {
@@ -85,7 +86,8 @@ pub fn boson_table_page_layout() -> (&'static str, BosonTablePageClasses) {
 #[component]
 pub fn BosonDataTableShell(
     /// Data testid.
-    #[prop(optional, into)] data_testid: MaybeProp<String>,
+    #[prop(optional, into)]
+    data_testid: MaybeProp<String>,
     /// Child content rendered inside the component.
     children: Children,
 ) -> impl IntoView {

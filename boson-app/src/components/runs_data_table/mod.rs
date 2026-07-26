@@ -7,9 +7,8 @@ use leptos_router::hooks::use_navigate;
 use leptos_router::NavigateOptions;
 use orbital::components::{EmptyState, MessageBar, MessageBarIntent};
 use orbital::primitives::{
-    DataTable, DataTableEmptyView, DataTableEvents, DataTableFeatures,
-    DataTableHeaderChromeConfig, DataTableNoResultsView, DataTableSource,
-    DataTableToolbarConfig, PagingMode,
+    DataTable, DataTableEmptyView, DataTableEvents, DataTableFeatures, DataTableHeaderChromeConfig,
+    DataTableNoResultsView, DataTableSource, DataTableToolbarConfig, PagingMode,
 };
 
 use crate::components::BosonDataTableShell;
@@ -30,11 +29,14 @@ pub fn RunsDataTable(
     /// Scope to filter by.
     scope: RunsTableScope,
     /// Page size.
-    #[prop(default = RUNS_TABLE_PAGE_SIZE)] page_size: u32,
+    #[prop(default = RUNS_TABLE_PAGE_SIZE)]
+    page_size: u32,
     /// Whether fill height is enabled.
-    #[prop(default = true)] fill_height: bool,
+    #[prop(default = true)]
+    fill_height: bool,
     /// Optional empty description.
-    #[prop(optional)] empty_description: Option<&'static str>,
+    #[prop(optional)]
+    empty_description: Option<&'static str>,
 ) -> impl IntoView {
     let navigate = use_navigate();
 
@@ -47,8 +49,7 @@ pub fn RunsDataTable(
         page_size,
     };
 
-    let empty_desc = empty_description
-        .unwrap_or("Run history will appear here when jobs execute.");
+    let empty_desc = empty_description.unwrap_or("Run history will appear here when jobs execute.");
 
     view! {
         <BosonDataTableShell data_testid="boson-runs-data-table">

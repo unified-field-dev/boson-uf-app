@@ -10,9 +10,9 @@ use leptos_router::hooks::use_navigate;
 use leptos_router::NavigateOptions;
 use orbital::components::{EmptyState, MessageBar, MessageBarIntent};
 use orbital::primitives::{
-    DataTable, DataTableEmptyView, DataTableEvents, DataTableFeatures,
-    DataTableHeaderChromeConfig, DataTableLoadingView, DataTableNoResultsView, DataTableSource,
-    DataTableToolbarConfig, ListViewConfig, PagingMode,
+    DataTable, DataTableEmptyView, DataTableEvents, DataTableFeatures, DataTableHeaderChromeConfig,
+    DataTableLoadingView, DataTableNoResultsView, DataTableSource, DataTableToolbarConfig,
+    ListViewConfig, PagingMode,
 };
 
 use crate::components::{BosonDataTableRefetchSkeleton, BosonDataTableShell};

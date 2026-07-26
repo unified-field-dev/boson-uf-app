@@ -14,6 +14,7 @@ pub async fn cancel_job(
     /// Unique identifier of the job to cancel.
     job_id: String,
 ) -> Result<(), ServerFnError> {
+    boson_backend::validate_job_id(&job_id).map_err(ServerFnError::new)?;
     let ctx = higgs::Higgs::from_request().await?;
     ensure_verified_user(&ctx)?;
     let backend = super::helpers::boson_backend()?;
@@ -36,9 +37,7 @@ pub async fn list_jobs_page(
 ) -> Result<Page<JobSummary>, ServerFnError> {
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
-    let status = status_filter
-        .as_deref()
-        .and_then(parse_job_status_filter);
+    let status = status_filter.as_deref().and_then(parse_job_status_filter);
 
     let jobs = backend
         .list_jobs(status, offset as usize, (limit + 1) as usize)
@@ -71,14 +70,10 @@ pub async fn list_jobs_datatable_page(
     if needs_memory_filter {
         let ctx = higgs::Higgs::from_request().await?;
         let backend = super::helpers::boson_backend()?;
-    let backend = backend.as_ref();
-        let status = status_filter
-            .as_deref()
-            .and_then(parse_job_status_filter);
+        let backend = backend.as_ref();
+        let status = status_filter.as_deref().and_then(parse_job_status_filter);
 
-        let jobs = backend
-            .list_jobs(status, 0, BOSON_LIST_FETCH_CAP)
-            .await;
+        let jobs = backend.list_jobs(status, 0, BOSON_LIST_FETCH_CAP).await;
         let mut dtos: Vec<JobSummary> = jobs.into_iter().map(job_to_summary).collect();
 
         page_query::apply_jobs_datatable_query(&mut dtos, &request);

@@ -9,9 +9,8 @@ use leptos_router::hooks::use_navigate;
 use leptos_router::NavigateOptions;
 use orbital::components::{EmptyState, MessageBar, MessageBarIntent};
 use orbital::primitives::{
-    DataTable, DataTableEmptyView, DataTableEvents, DataTableFeatures,
-    DataTableHeaderChromeConfig, DataTableNoResultsView, DataTableSource,
-    DataTableToolbarConfig, PagingMode,
+    DataTable, DataTableEmptyView, DataTableEvents, DataTableFeatures, DataTableHeaderChromeConfig,
+    DataTableNoResultsView, DataTableSource, DataTableToolbarConfig, PagingMode,
 };
 
 use crate::components::BosonDataTableShell;
@@ -27,7 +26,8 @@ pub fn QueueDataTable(
     /// Callback invoked when the action is cancelled.
     on_cancel: Callback<String>,
     /// Optional refresh signal.
-    #[prop(optional)] refresh_signal: Option<Signal<u32>>,
+    #[prop(optional)]
+    refresh_signal: Option<Signal<u32>>,
 ) -> impl IntoView {
     let navigate = use_navigate();
 

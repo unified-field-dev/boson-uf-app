@@ -5,8 +5,8 @@ use orbital_paging::{Page, PageRequest};
 
 #[cfg(feature = "ssr")]
 use super::helpers::{
-    aggregate_task_stats, build_task_summary, ensure_verified_user, retry_policy_to_dto,
-    task_summary_from_parts,
+    aggregate_task_stats, apply_task_config_update, build_task_summary, ensure_verified_user,
+    task_config_to_dto, task_summary_from_parts,
 };
 use super::types::{TaskConfigDto, TaskSummary, UpdateTaskConfigRequest};
 
@@ -31,9 +31,16 @@ pub async fn get_tasks() -> Result<Vec<TaskSummary>, ServerFnError> {
             .await
             .unwrap_or_else(|_| TaskConfig::default_for(&name));
         let stats = stats_by_task.get(&name).copied().unwrap_or_default();
-        tasks.push(task_summary_from_parts(desc, &config, stats));
+        tasks.push(task_summary_from_parts(
+            desc.name,
+            desc.signature_json,
+            desc.default_priority,
+            desc.default_pool,
+            &config,
+            stats,
+        ));
     }
-    tasks.sort_by(|a, b| a.name.cmp(&b.name));
+    boson_backend::sort_tasks_by_name(&mut tasks);
     Ok(tasks)
 }
 
@@ -43,6 +50,7 @@ pub async fn get_task(
     /// Registry name of the task to look up.
     task_name: String,
 ) -> Result<Option<TaskSummary>, ServerFnError> {
+    boson_backend::validate_task_name(&task_name).map_err(ServerFnError::new)?;
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
     let desc = match backend.registry().get(&task_name) {
@@ -58,19 +66,14 @@ pub async fn get_task_config(
     /// Registry name of the task whose config should be fetched.
     task_name: String,
 ) -> Result<TaskConfigDto, ServerFnError> {
+    boson_backend::validate_task_name(&task_name).map_err(ServerFnError::new)?;
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
     let config = backend
         .get_task_config(&task_name)
         .await
         .map_err(|e| ServerFnError::new(format!("Task config not found: {}", e)))?;
-    Ok(TaskConfigDto {
-        task_name: config.task_name,
-        priority: config.priority,
-        pool: config.pool,
-        retry_policy: retry_policy_to_dto(&config.retry_policy),
-        updated_at: config.updated_at.to_rfc3339(),
-    })
+    Ok(task_config_to_dto(&config))
 }
 
 /// Update task config.
@@ -81,6 +84,7 @@ pub async fn update_task_config(
     /// Partial update request with the fields to change.
     req: UpdateTaskConfigRequest,
 ) -> Result<TaskConfigDto, ServerFnError> {
+    boson_backend::validate_task_name(&task_name).map_err(ServerFnError::new)?;
     let ctx = higgs::Higgs::from_request().await?;
     ensure_verified_user(&ctx)?;
     let backend = super::helpers::boson_backend()?;
@@ -90,33 +94,13 @@ pub async fn update_task_config(
         .await
         .map_err(|e| ServerFnError::new(format!("Task config not found: {}", e)))?;
 
-    if let Some(p) = req.priority {
-        config.priority = p;
-    }
-    if let Some(p) = req.pool {
-        config.pool = p;
-    }
-    if let Some(r) = req.retry_policy {
-        config.retry_policy = boson_core::RetryPolicy {
-            max_attempts: r.max_attempts,
-            base_delay_ms: r.base_delay_ms,
-            backoff_multiplier: r.backoff_multiplier,
-            max_delay_ms: r.max_delay_ms,
-        };
-    }
-    config.updated_at = chrono::Utc::now();
+    apply_task_config_update(&mut config, &req, chrono::Utc::now());
     backend
         .upsert_task_config(config.clone())
         .await
         .map_err(|e| ServerFnError::new(format!("Failed to update config: {}", e)))?;
 
-    Ok(TaskConfigDto {
-        task_name: config.task_name,
-        priority: config.priority,
-        pool: config.pool,
-        retry_policy: retry_policy_to_dto(&config.retry_policy),
-        updated_at: config.updated_at.to_rfc3339(),
-    })
+    Ok(task_config_to_dto(&config))
 }
 
 /// Paginated tasks endpoint.
@@ -134,18 +118,8 @@ pub async fn get_tasks_page(
     query: Option<String>,
 ) -> Result<Page<TaskSummary>, ServerFnError> {
     let mut tasks = get_tasks().await?;
-    tasks.sort_by(|a, b| a.name.cmp(&b.name));
-
-    if let Some(ref q) = query {
-        let q_lower = q.trim().to_lowercase();
-        if !q_lower.is_empty() {
-            tasks.retain(|t| {
-                t.name.to_lowercase().contains(&q_lower)
-                    || t.signature_json.to_lowercase().contains(&q_lower)
-                    || t.effective_pool.to_lowercase().contains(&q_lower)
-            });
-        }
-    }
+    boson_backend::sort_tasks_by_name(&mut tasks);
+    boson_backend::filter_tasks_by_query(&mut tasks, query.as_deref());
 
     let total_count: Option<u64> = if offset == 0 {
         Some(tasks.len() as u64)

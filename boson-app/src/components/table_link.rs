@@ -44,7 +44,8 @@ pub fn BosonTruncatedTableCellLink(
     /// Label text.
     label: String,
     /// Optional data testid.
-    #[prop(optional, into)] data_testid: Option<String>,
+    #[prop(optional, into)]
+    data_testid: Option<String>,
 ) -> impl IntoView {
     view! {
         <TableCellLayout config=TableCellLayoutConfig { truncate: true }>

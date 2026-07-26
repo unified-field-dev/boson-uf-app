@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use orbital_data::{DataRecord, DataValue};
 
-use crate::server::{JobStatusDto, JobSummary};
 use crate::server::page_query::job_status_key;
+use crate::server::{JobStatusDto, JobSummary};
 
 fn format_enqueued(iso: &str) -> String {
     if let Some(dt_part) = iso.split('T').nth(1) {

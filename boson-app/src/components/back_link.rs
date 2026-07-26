@@ -11,7 +11,8 @@ pub fn BosonBackLink(
     /// Label text.
     label: &'static str,
     /// Optional data testid.
-    #[prop(optional)] data_testid: Option<&'static str>,
+    #[prop(optional)]
+    data_testid: Option<&'static str>,
 ) -> impl IntoView {
     let navigate = use_navigate();
     let navigate_store = StoredValue::new(navigate);
