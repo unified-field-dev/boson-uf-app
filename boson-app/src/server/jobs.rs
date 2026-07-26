@@ -4,19 +4,19 @@ use leptos::prelude::*;
 use orbital_paging::{Page, PageRequest};
 
 #[cfg(feature = "ssr")]
-use super::helpers::{ensure_verified_user, job_to_summary, parse_job_status_filter};
+use super::helpers::{job_to_summary, parse_job_status_filter, require_session};
 use super::page_query;
 use super::types::{JobSummary, BOSON_LIST_FETCH_CAP};
 
 /// Cancel a job.
-#[uf_product_macros::server]
+#[uf_product_macros::server(permission = "BosonAdmin")]
 pub async fn cancel_job(
     /// Unique identifier of the job to cancel.
     job_id: String,
 ) -> Result<(), ServerFnError> {
     boson_backend::validate_job_id(&job_id).map_err(ServerFnError::new)?;
     let ctx = higgs::Higgs::from_request().await?;
-    ensure_verified_user(&ctx)?;
+    require_session(&ctx)?;
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
     backend
@@ -35,6 +35,8 @@ pub async fn list_jobs_page(
     /// Optional job status name to filter by (e.g. "queued", "running").
     status_filter: Option<String>,
 ) -> Result<Page<JobSummary>, ServerFnError> {
+    let ctx = higgs::Higgs::from_request().await?;
+    require_session(&ctx)?;
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
     let status = status_filter.as_deref().and_then(parse_job_status_filter);
@@ -60,6 +62,8 @@ pub async fn list_jobs_datatable_page(
     /// `DataTable` paging/filter/search/sort request from the client.
     request: PageRequest,
 ) -> Result<Page<JobSummary>, ServerFnError> {
+    let ctx = higgs::Higgs::from_request().await?;
+    require_session(&ctx)?;
     let status_filter = page_query::extract_status_filter(&request);
     let needs_memory_filter = page_query::quick_search_text(&request).is_some()
         || request
@@ -68,7 +72,6 @@ pub async fn list_jobs_datatable_page(
             .is_some_and(|f| f.items.iter().any(|r| r.field != "status"));
 
     if needs_memory_filter {
-        let ctx = higgs::Higgs::from_request().await?;
         let backend = super::helpers::boson_backend()?;
         let backend = backend.as_ref();
         let status = status_filter.as_deref().and_then(parse_job_status_filter);

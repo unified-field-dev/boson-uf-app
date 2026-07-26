@@ -4,7 +4,7 @@ use leptos::prelude::*;
 use orbital_paging::{Page, PageRequest};
 
 #[cfg(feature = "ssr")]
-use super::helpers::run_to_summary;
+use super::helpers::{require_session, run_to_summary};
 use super::page_query;
 use super::types::{RunSummary, BOSON_LIST_FETCH_CAP};
 
@@ -18,6 +18,8 @@ pub async fn list_runs_page(
     /// Optional job id to restrict results to runs of a single job.
     job_id_filter: Option<String>,
 ) -> Result<Page<RunSummary>, ServerFnError> {
+    let ctx = higgs::Higgs::from_request().await?;
+    require_session(&ctx)?;
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
 
@@ -48,6 +50,8 @@ pub async fn list_runs_datatable_page(
     /// Optional job id to scope results to a single job's runs.
     scope_job_id: Option<String>,
 ) -> Result<Page<RunSummary>, ServerFnError> {
+    let ctx = higgs::Higgs::from_request().await?;
+    require_session(&ctx)?;
     let job_filter = page_query::resolve_job_filter(scope_job_id, &request);
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
@@ -82,6 +86,8 @@ pub async fn get_run(
     run_id: String,
 ) -> Result<Option<RunSummary>, ServerFnError> {
     boson_backend::validate_run_id(&run_id).map_err(ServerFnError::new)?;
+    let ctx = higgs::Higgs::from_request().await?;
+    require_session(&ctx)?;
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
     Ok(backend.get_run(&run_id).await.map(run_to_summary))

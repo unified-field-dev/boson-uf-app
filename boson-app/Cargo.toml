@@ -46,6 +46,8 @@ boson-core = { workspace = true, optional = true }
 boson-runtime = { workspace = true, optional = true, default-features = false }
 valence = { workspace = true, optional = true }
 higgs = { workspace = true, optional = true }
+gauge = { workspace = true, optional = true }
+lepton-auth = { workspace = true, optional = true }
 leptos-use = { workspace = true, default-features = false, features = ["use_interval_fn"], optional = true }
 
 [features]
@@ -81,6 +83,10 @@ ssr = [
     "valence/sqlite",
     "dep:higgs",
     "higgs/ssr",
+    "dep:gauge",
+    "gauge/ssr",
+    "dep:lepton-auth",
+    "lepton-auth/ssr",
     "dep:uf-ssr",
     "uf-ssr/ssr",
     "dep:uf-product",

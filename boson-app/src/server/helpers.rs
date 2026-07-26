@@ -18,13 +18,33 @@ pub(super) fn boson_backend(
         .ok_or_else(|| ServerFnError::new("Boson backend not in request context"))
 }
 
+/// Require an authenticated session (`SessionSnapshot` / `session_user_id`).
+///
+/// `SessionSnapshot` does not carry `email_verified`; use
+/// [`require_email_verified`] for the task-config UI gate.
 #[cfg(feature = "ssr")]
-pub(super) fn ensure_verified_user(ctx: &higgs::Higgs) -> Result<(), ServerFnError> {
+pub(super) fn require_session(ctx: &higgs::Higgs) -> Result<(), ServerFnError> {
     if ctx.session_user_id().is_some() {
         Ok(())
     } else {
         Err(ServerFnError::new(
             "Authentication is required for this action",
+        ))
+    }
+}
+
+/// Mirror the task-config UI `requires_email_verification` gate server-side.
+///
+/// Uses axum-login's auth user (via lepton-auth) because `SessionSnapshot`
+/// only stores `user_id` + `auth_hash`.
+#[cfg(feature = "ssr")]
+pub(super) async fn require_email_verified() -> Result<(), ServerFnError> {
+    let user = lepton_auth::extract_auth_user().await?;
+    if user.email_verified {
+        Ok(())
+    } else {
+        Err(ServerFnError::new(
+            "Email verification is required for this action",
         ))
     }
 }

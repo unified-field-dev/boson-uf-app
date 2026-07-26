@@ -2,7 +2,10 @@
 //!
 //! DTOs and pure mapping helpers live in [`boson_backend`] so contracts stay
 //! unit/integration-testable without the host UI graph. Server functions run on
-//! SSR only and use [`higgs::Higgs::from_request()`] for unified context extraction.
+//! SSR only and use [`higgs::Higgs::from_request()`] plus [`helpers::require_session`]
+//! on every endpoint. Mutators `cancel_job` / `update_task_config` also require
+//! Gauge permission `BosonAdmin`. Task-config reads/writes additionally mirror the
+//! UI email-verification gate via [`helpers::require_email_verified`].
 //!
 //! The UI uses paginated list endpoints (`get_tasks_page`, `list_jobs_page`,
 //! `list_runs_page`) and single-record getters (`get_task`, `get_run`, etc.).

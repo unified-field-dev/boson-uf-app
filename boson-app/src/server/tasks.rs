@@ -5,8 +5,8 @@ use orbital_paging::{Page, PageRequest};
 
 #[cfg(feature = "ssr")]
 use super::helpers::{
-    aggregate_task_stats, apply_task_config_update, build_task_summary, ensure_verified_user,
-    task_config_to_dto, task_summary_from_parts,
+    aggregate_task_stats, apply_task_config_update, build_task_summary, require_email_verified,
+    require_session, task_config_to_dto, task_summary_from_parts,
 };
 use super::types::{TaskConfigDto, TaskSummary, UpdateTaskConfigRequest};
 
@@ -16,6 +16,8 @@ use boson_core::TaskConfig;
 /// Get all tasks with effective config and stats.
 #[uf_product_macros::server]
 pub async fn get_tasks() -> Result<Vec<TaskSummary>, ServerFnError> {
+    let ctx = higgs::Higgs::from_request().await?;
+    require_session(&ctx)?;
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
     let registry = backend.registry();
@@ -51,6 +53,8 @@ pub async fn get_task(
     task_name: String,
 ) -> Result<Option<TaskSummary>, ServerFnError> {
     boson_backend::validate_task_name(&task_name).map_err(ServerFnError::new)?;
+    let ctx = higgs::Higgs::from_request().await?;
+    require_session(&ctx)?;
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
     let desc = match backend.registry().get(&task_name) {
@@ -67,6 +71,9 @@ pub async fn get_task_config(
     task_name: String,
 ) -> Result<TaskConfigDto, ServerFnError> {
     boson_backend::validate_task_name(&task_name).map_err(ServerFnError::new)?;
+    let ctx = higgs::Higgs::from_request().await?;
+    require_session(&ctx)?;
+    require_email_verified().await?;
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
     let config = backend
@@ -77,7 +84,7 @@ pub async fn get_task_config(
 }
 
 /// Update task config.
-#[uf_product_macros::server]
+#[uf_product_macros::server(permission = "BosonAdmin")]
 pub async fn update_task_config(
     /// Registry name of the task whose config should be updated.
     task_name: String,
@@ -86,7 +93,8 @@ pub async fn update_task_config(
 ) -> Result<TaskConfigDto, ServerFnError> {
     boson_backend::validate_task_name(&task_name).map_err(ServerFnError::new)?;
     let ctx = higgs::Higgs::from_request().await?;
-    ensure_verified_user(&ctx)?;
+    require_session(&ctx)?;
+    require_email_verified().await?;
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
     let mut config = backend
@@ -117,6 +125,8 @@ pub async fn get_tasks_page(
     /// Optional case-insensitive search string matched against name, signature, and pool.
     query: Option<String>,
 ) -> Result<Page<TaskSummary>, ServerFnError> {
+    let ctx = higgs::Higgs::from_request().await?;
+    require_session(&ctx)?;
     let mut tasks = get_tasks().await?;
     boson_backend::sort_tasks_by_name(&mut tasks);
     boson_backend::filter_tasks_by_query(&mut tasks, query.as_deref());
@@ -142,6 +152,8 @@ pub async fn get_tasks_datatable_page(
     /// `DataTable` paging/filter/search/sort request from the client.
     request: PageRequest,
 ) -> Result<Page<TaskSummary>, ServerFnError> {
+    let ctx = higgs::Higgs::from_request().await?;
+    require_session(&ctx)?;
     get_tasks_page(
         request.offset,
         request.limit,

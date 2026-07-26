@@ -73,7 +73,9 @@ uf-ssr = { path = "../../L3-products-zones-hosts/counter-app/uf-ssr", default-fe
 uf-app-registry = { path = "../../L3-products-zones-hosts/counter-app/uf-app-registry" }
 inventory = "0.3"
 wasm-bindgen = "=0.2.126"
+gauge = { path = "../../L3-products-zones-hosts/gauge/gauge", default-features = false }
 lepton-shell = { path = "../../L1-host-stack-kits/lepton-auth/lepton-shell", default-features = false }
+lepton-auth = { path = "../../L1-host-stack-kits/lepton-auth/lepton-auth", default-features = false }
 
 [patch."https://github.com/deathbreakfast/higgs"]
 higgs = { path = "../../L1-host-stack-kits/higgs/higgs" }

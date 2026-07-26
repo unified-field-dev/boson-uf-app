@@ -11,5 +11,8 @@ use super::types::GluonPoolPickRow;
 #[uf_product_macros::server]
 pub async fn list_gluon_pools_for_boson_task_config() -> Result<Vec<GluonPoolPickRow>, ServerFnError>
 {
+    let ctx = higgs::Higgs::from_request().await?;
+    super::helpers::require_session(&ctx)?;
+    super::helpers::require_email_verified().await?;
     Ok(boson_backend::default_gluon_pool_rows())
 }

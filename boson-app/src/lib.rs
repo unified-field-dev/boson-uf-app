@@ -92,6 +92,8 @@ mod lazy_routes;
 /// Client-side live-update hooks (poll tick, placeholder broadcast sources).
 pub mod live;
 pub mod pages;
+/// Permission manifest for Boson admin server functions.
+pub mod permissions;
 #[cfg(feature = "ssr")]
 pub mod photon_ws;
 /// SSR server functions and DTOs backing the Boson UI.
@@ -115,6 +117,7 @@ uf_app! {
     version: "0.1.0",
     routes: BosonRoutes,
     route_path: "/boson",
+    permission_manifest: permissions::BosonPermission,
 }
 
 /// Boson's nested route tree, gated behind an auth guard and mounted at `/boson`.

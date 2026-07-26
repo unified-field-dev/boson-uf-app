@@ -10,6 +10,8 @@ use boson_core::JobStatus;
 /// Get dashboard statistics.
 #[uf_product_macros::server]
 pub async fn get_dashboard_stats() -> Result<DashboardStats, ServerFnError> {
+    let ctx = higgs::Higgs::from_request().await?;
+    super::helpers::require_session(&ctx)?;
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
     let task_count = backend.registry().len() as u32;
@@ -39,6 +41,8 @@ pub async fn get_run_stats_series(
     /// Width of the trailing time window, in seconds, to aggregate run outcomes over.
     range_secs: i64,
 ) -> Result<Vec<DashboardChartSeries>, ServerFnError> {
+    let ctx = higgs::Higgs::from_request().await?;
+    super::helpers::require_session(&ctx)?;
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
 

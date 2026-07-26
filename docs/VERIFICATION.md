@@ -51,7 +51,7 @@ cargo test -p boson-app --features ssr
 | `apply_task_config_update` / `task_config_to_dto` | unit+integ | partial merge | — | update_task_config |
 | `apply_*_datatable_query` / filters | unit+integ | search + status equals/OR | non-status → no status filter; blank search → `None` | DataTable adapters |
 | `dashboard_stats` / `run_stats_series_from_runs` | unit+integ | KPI shape / success+failed series | outside window → zero buckets | dashboard |
-| Higgs `#[server]` fns + coordinator context | — | — | — | deferred — needs host SSR |
+| Higgs `#[server]` fns + session / `BosonAdmin` / email-verified gates | — | — | — | deferred — needs host SSR |
 | Leptos UI / Playwright / `cargo leptos` e2e | e2e | — | — | **waived** — covering integ named below |
 | IsolatedLab job/run/task e2e | e2e | — | — | **waived** — covered by boson coordinator + Layer 1 integ |
 | AWS / soak | AWS | — | — | **waived** — L2 app; no cloud resources |
