@@ -33,7 +33,8 @@ pub use page_query::{
 pub use types::{
     DashboardChartPoint, DashboardChartSeries, DashboardStats, GluonPoolPickRow, JobStatusDto,
     JobSummary, RetryPolicyDto, RunStatusDto, RunSummary, TaskConfigDto, TaskSummary,
-    UpdateTaskConfigRequest, BOSON_LIST_FETCH_CAP, JOBS_PAGE_SIZE, RUNS_PAGE_SIZE, TASKS_PAGE_SIZE,
+    clamp_page_list_limit, UpdateTaskConfigRequest, BOSON_LIST_FETCH_CAP, JOBS_PAGE_SIZE,
+    MAX_PAGE_LIST_LIMIT, RUNS_PAGE_SIZE, TASKS_PAGE_SIZE,
 };
 pub use validate::{validate_job_id, validate_run_id, validate_task_name};
 
@@ -483,6 +484,18 @@ mod tests {
         let rows = default_gluon_pool_rows();
         assert_eq!(rows.len(), 1);
         assert_eq!(rows[0].id, "global");
+    }
+
+    #[test]
+    fn clamp_page_list_limit_caps_oversized_sad() {
+        assert_eq!(clamp_page_list_limit(10_000), MAX_PAGE_LIST_LIMIT);
+        assert_eq!(clamp_page_list_limit(MAX_PAGE_LIST_LIMIT), MAX_PAGE_LIST_LIMIT);
+    }
+
+    #[test]
+    fn clamp_page_list_limit_preserves_small_happy_path() {
+        assert_eq!(clamp_page_list_limit(20), 20);
+        assert_eq!(clamp_page_list_limit(0), 0);
     }
 
     #[test]

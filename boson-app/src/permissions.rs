@@ -14,7 +14,7 @@ use uf_product_macros::UfPermissionManifest;
     domain_description = "Boson background-work administration"
 )]
 pub enum BosonPermission {
-    /// Cancel jobs and update task configuration.
+    /// Cancel jobs and read/update task configuration.
     #[permission(description = "Administer Boson job cancellation and task configuration")]
     BosonAdmin,
 }

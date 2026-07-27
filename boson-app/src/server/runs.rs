@@ -6,7 +6,7 @@ use orbital_paging::{Page, PageRequest};
 #[cfg(feature = "ssr")]
 use super::helpers::{require_session, run_to_summary};
 use super::page_query;
-use super::types::{RunSummary, BOSON_LIST_FETCH_CAP};
+use super::types::{RunSummary, BOSON_LIST_FETCH_CAP, clamp_page_list_limit};
 
 /// Paginated runs endpoint.
 #[uf_product_macros::server]
@@ -20,6 +20,7 @@ pub async fn list_runs_page(
 ) -> Result<Page<RunSummary>, ServerFnError> {
     let ctx = higgs::Higgs::from_request().await?;
     require_session(&ctx)?;
+    let limit = clamp_page_list_limit(limit);
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
 
@@ -52,6 +53,7 @@ pub async fn list_runs_datatable_page(
 ) -> Result<Page<RunSummary>, ServerFnError> {
     let ctx = higgs::Higgs::from_request().await?;
     require_session(&ctx)?;
+    let limit = clamp_page_list_limit(request.limit);
     let job_filter = page_query::resolve_job_filter(scope_job_id, &request);
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
@@ -73,10 +75,10 @@ pub async fn list_runs_datatable_page(
     let sliced: Vec<RunSummary> = dtos
         .into_iter()
         .skip(request.offset as usize)
-        .take((request.limit + 1) as usize)
+        .take((limit + 1) as usize)
         .collect();
 
-    Ok(Page::from_oversized(sliced, request.limit, total_count))
+    Ok(Page::from_oversized(sliced, limit, total_count))
 }
 
 /// Get a single run by id.

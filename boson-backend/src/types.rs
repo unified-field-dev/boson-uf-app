@@ -189,3 +189,12 @@ pub const RUNS_PAGE_SIZE: u32 = 20;
 
 /// Upper bound for in-memory list fetches (`DataTable` filters, chart series).
 pub const BOSON_LIST_FETCH_CAP: usize = 50_000;
+
+/// Maximum rows returned by a single paginated list server fn.
+pub const MAX_PAGE_LIST_LIMIT: u32 = 100;
+
+/// Cap requested page list limits to [`MAX_PAGE_LIST_LIMIT`].
+#[must_use]
+pub fn clamp_page_list_limit(limit: u32) -> u32 {
+    limit.min(MAX_PAGE_LIST_LIMIT)
+}

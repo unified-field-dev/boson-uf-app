@@ -6,7 +6,7 @@ use orbital_paging::{Page, PageRequest};
 #[cfg(feature = "ssr")]
 use super::helpers::{job_to_summary, parse_job_status_filter, require_session};
 use super::page_query;
-use super::types::{JobSummary, BOSON_LIST_FETCH_CAP};
+use super::types::{JobSummary, BOSON_LIST_FETCH_CAP, clamp_page_list_limit};
 
 /// Cancel a job.
 #[uf_product_macros::server(permission = "BosonAdmin")]
@@ -37,6 +37,7 @@ pub async fn list_jobs_page(
 ) -> Result<Page<JobSummary>, ServerFnError> {
     let ctx = higgs::Higgs::from_request().await?;
     require_session(&ctx)?;
+    let limit = clamp_page_list_limit(limit);
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
     let status = status_filter.as_deref().and_then(parse_job_status_filter);
@@ -64,6 +65,7 @@ pub async fn list_jobs_datatable_page(
 ) -> Result<Page<JobSummary>, ServerFnError> {
     let ctx = higgs::Higgs::from_request().await?;
     require_session(&ctx)?;
+    let limit = clamp_page_list_limit(request.limit);
     let status_filter = page_query::extract_status_filter(&request);
     let needs_memory_filter = page_query::quick_search_text(&request).is_some()
         || request
@@ -90,11 +92,11 @@ pub async fn list_jobs_datatable_page(
         let sliced: Vec<JobSummary> = dtos
             .into_iter()
             .skip(request.offset as usize)
-            .take((request.limit + 1) as usize)
+            .take((limit + 1) as usize)
             .collect();
 
-        Ok(Page::from_oversized(sliced, request.limit, total_count))
+        Ok(Page::from_oversized(sliced, limit, total_count))
     } else {
-        list_jobs_page(request.offset, request.limit, status_filter).await
+        list_jobs_page(request.offset, limit, status_filter).await
     }
 }

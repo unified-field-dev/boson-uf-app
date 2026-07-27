@@ -8,7 +8,7 @@ use leptos::prelude::*;
 use super::types::GluonPoolPickRow;
 
 /// Lists Gluon virtual pools suitable for Boson task routing.
-#[uf_product_macros::server]
+#[uf_product_macros::server(permission = "BosonAdmin")]
 pub async fn list_gluon_pools_for_boson_task_config() -> Result<Vec<GluonPoolPickRow>, ServerFnError>
 {
     let ctx = higgs::Higgs::from_request().await?;

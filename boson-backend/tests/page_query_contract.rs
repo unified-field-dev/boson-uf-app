@@ -5,9 +5,9 @@
 #![allow(clippy::unwrap_used, clippy::expect_used)]
 
 use boson_backend::{
-    apply_jobs_datatable_query, apply_runs_datatable_query, extract_status_filter, job_status_key,
-    quick_search_text, resolve_job_filter, run_status_key, JobStatusDto, JobSummary, RunStatusDto,
-    RunSummary,
+    apply_jobs_datatable_query, apply_runs_datatable_query, clamp_page_list_limit,
+    extract_status_filter, job_status_key, quick_search_text, resolve_job_filter, run_status_key,
+    JobStatusDto, JobSummary, MAX_PAGE_LIST_LIMIT, RunStatusDto, RunSummary,
 };
 use orbital_data::DataValue;
 use orbital_paging::{FilterLogicWire, FilterQuery, FilterRuleParam, PageRequest};
@@ -241,4 +241,13 @@ fn quick_search_text_rejects_blank_sad() {
 fn status_keys_map_variants_happy_path() {
     assert_eq!(job_status_key(JobStatusDto::Queued), "queued");
     assert_eq!(run_status_key(RunStatusDto::Timeout), "timeout");
+}
+
+#[test]
+fn clamp_page_list_limit_caps_at_max_happy_path() {
+    assert_eq!(clamp_page_list_limit(50), 50);
+    assert_eq!(
+        clamp_page_list_limit(MAX_PAGE_LIST_LIMIT + 500),
+        MAX_PAGE_LIST_LIMIT
+    );
 }

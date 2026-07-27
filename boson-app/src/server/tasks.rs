@@ -5,13 +5,10 @@ use orbital_paging::{Page, PageRequest};
 
 #[cfg(feature = "ssr")]
 use super::helpers::{
-    aggregate_task_stats, apply_task_config_update, build_task_summary, require_email_verified,
-    require_session, task_config_to_dto, task_summary_from_parts,
+    build_task_summary, require_email_verified, require_session, task_config_to_dto,
+    apply_task_config_update,
 };
-use super::types::{TaskConfigDto, TaskSummary, UpdateTaskConfigRequest};
-
-#[cfg(feature = "ssr")]
-use boson_core::TaskConfig;
+use super::types::{clamp_page_list_limit, TaskConfigDto, TaskSummary, UpdateTaskConfigRequest};
 
 /// Get all tasks with effective config and stats.
 #[uf_product_macros::server]
@@ -21,26 +18,10 @@ pub async fn get_tasks() -> Result<Vec<TaskSummary>, ServerFnError> {
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
     let registry = backend.registry();
-    let jobs = backend.list_jobs(None, 0, usize::MAX).await;
-    let runs = backend.list_runs(None, 0, usize::MAX).await;
-    let stats_by_task = aggregate_task_stats(&jobs, &runs);
 
     let mut tasks = Vec::new();
     for desc in registry.iter() {
-        let name = desc.name.to_string();
-        let config = backend
-            .get_task_config(&name)
-            .await
-            .unwrap_or_else(|_| TaskConfig::default_for(&name));
-        let stats = stats_by_task.get(&name).copied().unwrap_or_default();
-        tasks.push(task_summary_from_parts(
-            desc.name,
-            desc.signature_json,
-            desc.default_priority,
-            desc.default_pool,
-            &config,
-            stats,
-        ));
+        tasks.push(build_task_summary(backend, desc).await?);
     }
     boson_backend::sort_tasks_by_name(&mut tasks);
     Ok(tasks)
@@ -65,7 +46,7 @@ pub async fn get_task(
 }
 
 /// Get task config.
-#[uf_product_macros::server]
+#[uf_product_macros::server(permission = "BosonAdmin")]
 pub async fn get_task_config(
     /// Registry name of the task whose config should be fetched.
     task_name: String,
@@ -127,6 +108,7 @@ pub async fn get_tasks_page(
 ) -> Result<Page<TaskSummary>, ServerFnError> {
     let ctx = higgs::Higgs::from_request().await?;
     require_session(&ctx)?;
+    let limit = clamp_page_list_limit(limit);
     let mut tasks = get_tasks().await?;
     boson_backend::sort_tasks_by_name(&mut tasks);
     boson_backend::filter_tasks_by_query(&mut tasks, query.as_deref());
@@ -154,9 +136,10 @@ pub async fn get_tasks_datatable_page(
 ) -> Result<Page<TaskSummary>, ServerFnError> {
     let ctx = higgs::Higgs::from_request().await?;
     require_session(&ctx)?;
+    let limit = clamp_page_list_limit(request.limit);
     get_tasks_page(
         request.offset,
-        request.limit,
+        limit,
         super::page_query::quick_search_text(&request),
     )
     .await
