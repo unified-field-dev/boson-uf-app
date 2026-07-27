@@ -29,6 +29,14 @@ view! {
 
 Host must supply a Boson backend and auth guard context expected by the app. Enable `ssr` / hydrate features to match your host. See the `boson-app` crate rustdocs for the full Concern → route → server fn table.
 
+## Examples
+
+| Host | When to use | Command | Success | Look next |
+|------|-------------|---------|---------|-----------|
+| [`protected-boson-host`](examples/protected-boson-host/) | Auth + `/boson` dashboard API | `CARGO_BUILD_JOBS=1 CARGO_TARGET_DIR=target-boson-uf-app cargo run -p protected-boson-host` | Deny/allow + KPI JSON | Product host with `BosonRoutes` |
+
+Full ladder: [`examples/README.md`](examples/README.md).
+
 ## Workspace
 
 | Crate | Role |

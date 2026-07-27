@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "boson-app",
     "boson-backend",
+    "examples/protected-boson-host",
 ]
 
 [workspace.package]

@@ -1662,7 +1662,6 @@ dependencies = [
  "log",
  "serde_json",
  "thiserror 2.0.19",
- "tokio",
  "uf-host",
  "uf-identity",
  "uf-valence",
@@ -3727,6 +3726,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "protected-boson-host"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "boson-backend",
+ "http-body-util",
+ "serde_json",
+ "tokio",
+ "tower",
+]
+
+[[package]]
 name = "pulldown-cmark"
 version = "0.13.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5301,6 +5312,7 @@ version = "0.2.0"
 dependencies = [
  "async-trait",
  "serde",
+ "subtle",
 ]
 
 [[package]]
