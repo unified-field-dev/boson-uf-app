@@ -54,7 +54,7 @@ turf = "0.10"
 boson = { package = "uf-boson", version = "0.1.1", default-features = false }
 boson-core = { version = "0.1.1", default-features = false }
 boson-runtime = { version = "0.1.1", default-features = false }
-boson-coordinator = { git = "https://github.com/deathbreakfast/boson-coordinator", branch = "main" }
+boson-coordinator = { git = "https://github.com/unified-field-dev/boson-coordinator", branch = "main" }
 higgs = { path = "../../L1-host-stack-kits/higgs/higgs", default-features = false }
 valence = { package = "uf-valence", version = "0.1.1", default-features = false, features = ["mem", "sqlite"] }
 uf-host = { path = "../../L1-host-stack-kits/higgs/uf-host", default-features = false }
