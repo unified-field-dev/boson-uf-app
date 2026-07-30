@@ -89,7 +89,7 @@ Correctness is in-process against Boson UF app DTO/mapping contracts only.
   compile — report that separately from Boson contract results.
 - Tests may `unwrap`/`expect`; production server fns map failures to `ServerFnError`
   (no ordinary-path unwrap).
-- Sad-path assertions check message content or `None` / empty — not smoke-only `is_err()`.
+- Sad-path assertions check message content or `None` / empty — (stronger than `is_err()` alone).
 - Happy-path tests are named `*_happy_path` so audits detect them.
 - `BosonRoutes` data loaders call the `#[server]` fns; those fns are thin Higgs
   wrappers over the helpers listed in the TEST_MAP.
