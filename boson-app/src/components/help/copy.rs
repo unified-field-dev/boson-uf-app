@@ -40,7 +40,7 @@ pub fn run_outcomes_chart_help() -> AnyView {
 
 pub fn tasks_overview_help() -> AnyView {
     caption(
-        "Top five tasks from the task index ordering. This is not a live activity feed sorted by recent execution.",
+        "Top five tasks from the task index ordering.",
     )
 }
 
