@@ -1,10 +1,9 @@
 # boson-uf-app verification
 
-Re-run after code or doc changes. This workspace is the L2 Boson operations app
+Re-run after code or doc changes. This workspace is the Boson operations app
 (`boson-app` Leptos UI + `boson-backend` pure server contracts). Layer 1 unit +
 integration tests cover job/run/task/dashboard helpers backing the `#[server]`
-surface. No Leptos UI e2e, `*-e2e` crate, or AWS campaign is required for this
-L2 app. Boson coordinator / IsolatedLab contracts own persistence and execution;
+surface. No Leptos UI e2e, `*-e2e` crate, or AWS campaign is required for this workspace. Boson coordinator / IsolatedLab contracts own persistence and execution;
 this repo verifies the UF app mapping layer.
 
 ## Environment
@@ -54,7 +53,7 @@ cargo test -p boson-app --features ssr
 | Higgs `#[server]` fns + session / `BosonAdmin` / email-verified gates | — | — | — | deferred — needs host SSR |
 | Leptos UI / Playwright / `cargo leptos` e2e | e2e | — | — | **waived** — covering integ named below |
 | IsolatedLab job/run/task e2e | e2e | — | — | **waived** — covered by boson coordinator + Layer 1 integ |
-| AWS / soak | AWS | — | — | **waived** — L2 app; no cloud resources |
+| AWS / soak | AWS | — | — | **waived** — no cloud resources |
 | Micro-benchmarks | bench | — | — | **waived** — no hot-path campaign |
 
 ## Layer 2 — E2E
@@ -62,7 +61,7 @@ cargo test -p boson-app --features ssr
 **Waived.** Task/job/run list+detail, status filters, DataTable query adapters,
 dashboard KPI/trend shapes, and id/name validation are exercised by Layer 1
 integration tests named below. A Leptos/UI browser suite or IsolatedLab `*-e2e`
-crate is out of scope for this backend-first L2 remediation; live Boson
+crate is out of scope for this backend-first remediation; live Boson
 execution/persistence IsolatedLab belongs in boson coordinator / core.
 
 Covering integ tests for the e2e waiver:
@@ -79,7 +78,7 @@ Covering integ tests for the e2e waiver:
 
 ## Layer 3 — AWS campaigns + performance
 
-**Waived.** L2 application workspace; no cloud resources or Criterion benches.
+**Waived.** This application workspace; no cloud resources or Criterion benches.
 Correctness is in-process against Boson UF app DTO/mapping contracts only.
 
 ## Notes
