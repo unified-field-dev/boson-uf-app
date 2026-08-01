@@ -60,12 +60,12 @@ valence = { package = "uf-valence", version = "0.1.1", default-features = false,
 higgs-host = { path = "../../L1-host-stack-kits/higgs/higgs-host", default-features = false }
 higgs-identity = { path = "../../L1-host-stack-kits/higgs/higgs-identity" }
 
-orbital = { package = "orbital-ui", git = "https://github.com/deathbreakfast/orbital", branch = "fix/crates-io-publish", default-features = false }
-orbital-charts = { git = "https://github.com/deathbreakfast/orbital", branch = "fix/crates-io-publish", default-features = false }
-orbital-data = { git = "https://github.com/deathbreakfast/orbital", branch = "fix/crates-io-publish" }
-orbital-macros = { git = "https://github.com/deathbreakfast/orbital", branch = "fix/crates-io-publish" }
-orbital-motion = { git = "https://github.com/deathbreakfast/orbital", branch = "fix/crates-io-publish" }
-orbital-paging = { git = "https://github.com/deathbreakfast/orbital", branch = "fix/crates-io-publish", default-features = false }
+orbital = { package = "orbital-ui", git = "https://github.com/deathbreakfast/orbital", branch = "main", default-features = false }
+orbital-charts = { git = "https://github.com/deathbreakfast/orbital", branch = "main", default-features = false }
+orbital-data = { git = "https://github.com/deathbreakfast/orbital", branch = "main" }
+orbital-macros = { git = "https://github.com/deathbreakfast/orbital", branch = "main" }
+orbital-motion = { git = "https://github.com/deathbreakfast/orbital", branch = "main" }
+orbital-paging = { git = "https://github.com/deathbreakfast/orbital", branch = "main", default-features = false }
 
 uf-integrations = { path = "../../L2-product-platform/unified-field-product/uf-integrations", default-features = false }
 uf-product = { path = "../../L2-product-platform/unified-field-product/uf-product", default-features = false }
@@ -75,8 +75,8 @@ uf-app-registry = { path = "../../L3-zone-products/counter-app/uf-app-registry" 
 inventory = "0.3"
 wasm-bindgen = "=0.2.126"
 gauge = { path = "../../L3-zone-products/gauge/gauge", default-features = false }
-lepton-shell = { path = "../../L1-host-stack-kits/lepton-auth/lepton-shell", default-features = false }
-lepton-auth = { path = "../../L1-host-stack-kits/lepton-auth/lepton-auth", default-features = false }
+lepton-shell = { path = "../../L2-product-platform/lepton-uf-app/lepton-shell", default-features = false }
+lepton-auth = { path = "../../L1-host-stack-kits/lepton/lepton-auth", default-features = false }
 
 [patch."https://github.com/deathbreakfast/higgs"]
 higgs = { path = "../../L1-host-stack-kits/higgs/higgs" }
@@ -84,11 +84,11 @@ higgs-host = { path = "../../L1-host-stack-kits/higgs/higgs-host" }
 higgs-identity = { path = "../../L1-host-stack-kits/higgs/higgs-identity" }
 
 [patch."https://github.com/deathbreakfast/lepton-auth"]
-lepton-shell = { path = "../../L1-host-stack-kits/lepton-auth/lepton-shell" }
-lepton-auth = { path = "../../L1-host-stack-kits/lepton-auth/lepton-auth" }
-lepton-identity = { path = "../../L1-host-stack-kits/lepton-auth/lepton-identity" }
-lepton-host-adapter = { path = "../../L1-host-stack-kits/lepton-auth/lepton-host-adapter" }
-lepton = { path = "../../L1-host-stack-kits/lepton-auth/lepton" }
+lepton-shell = { path = "../../L2-product-platform/lepton-uf-app/lepton-shell" }
+lepton-auth = { path = "../../L1-host-stack-kits/lepton/lepton-auth" }
+lepton-identity = { path = "../../L1-host-stack-kits/lepton/lepton-identity" }
+lepton-host-adapter = { path = "../../L1-host-stack-kits/lepton/lepton-host-adapter" }
+lepton = { path = "../../L1-host-stack-kits/lepton/lepton" }
 
 [patch."https://github.com/deathbreakfast/unified-field-product"]
 uf-product = { path = "../../L2-product-platform/unified-field-product/uf-product" }
