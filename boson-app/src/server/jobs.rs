@@ -6,7 +6,7 @@ use orbital_paging::{Page, PageRequest};
 #[cfg(feature = "ssr")]
 use super::helpers::{job_to_summary, parse_job_status_filter, require_session};
 use super::page_query;
-use super::types::{JobSummary, BOSON_LIST_FETCH_CAP, clamp_page_list_limit};
+use super::types::{clamp_page_list_limit, JobSummary, BOSON_LIST_FETCH_CAP};
 
 /// Cancel a job.
 #[uf_product_macros::server(permission = "BosonAdmin")]

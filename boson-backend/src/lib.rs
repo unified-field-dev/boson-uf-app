@@ -3,6 +3,48 @@
 //! Leptos `#[server]` entrypoints in `boson-app` resolve Higgs / coordinator
 //! request context, then call these helpers so job, run, task, and dashboard
 //! shapes stay unit- and integration-testable without a full host or UI graph.
+//!
+//! ## Organized by task
+//!
+//! | Task | Start here |
+//! |------|------------|
+//! | **Validate list/detail ids** | [`validate_task_name`], [`validate_job_id`], [`validate_run_id`] |
+//! | **Task list/detail mapping** | [`TaskSummary`], [`find_task_by_name`], [`sort_tasks_by_name`], [`filter_tasks_by_query`] |
+//! | **Job / queue mapping** | [`JobSummary`], [`find_job_by_id`], [`job_to_summary`], [`parse_job_status_filter`] |
+//! | **Run list/detail mapping** | [`RunSummary`], [`find_run_by_id`], [`run_to_summary`] |
+//! | **Task config update** | [`TaskConfigDto`], [`apply_task_config_update`], [`task_config_to_dto`] |
+//! | **Dashboard KPIs / trends** | [`DashboardStats`], [`dashboard_stats`], [`run_stats_series_from_runs`] |
+//! | **`DataTable` query adapters** | [`apply_jobs_datatable_query`], [`apply_runs_datatable_query`] |
+//! | **UI pages / `#[server]` wrappers** | `boson-app` (not this crate) |
+//!
+//! ## Owns / does not own
+//!
+//! **Owns:** DTO shapes and pure mapping/validation helpers used by the Boson
+//! ops UI server surface.
+//!
+//! **Does not own:** Leptos pages, Higgs `#[server]` wrappers, or route registration
+//! (`boson-app`); Boson coordinator execution or `IsolatedLab` persistence (Boson core).
+//!
+//! ## Concern → API
+//!
+//! | Concern | API | Owner |
+//! |---------|-----|-------|
+//! | Id / name validation | [`validate_task_name`], [`validate_job_id`], [`validate_run_id`] | this crate |
+//! | Task summaries / filters | [`TaskSummary`], [`find_task_by_name`], [`sort_tasks_by_name`], [`filter_tasks_by_query`] | this crate |
+//! | Job summaries / status filter | [`JobSummary`], [`find_job_by_id`], [`job_to_summary`], [`parse_job_status_filter`] | this crate |
+//! | Run summaries | [`RunSummary`], [`find_run_by_id`], [`run_to_summary`] | this crate |
+//! | Task config DTOs | [`TaskConfigDto`], [`apply_task_config_update`], [`task_config_to_dto`] | this crate |
+//! | Dashboard aggregates | [`DashboardStats`], [`dashboard_stats`], [`run_stats_series_from_runs`] | this crate |
+//! | `DataTable` adapters | [`apply_jobs_datatable_query`], [`apply_runs_datatable_query`] | this crate |
+//! | Pages, routes, server fns | `boson-app` (`BosonRoutes`) | `boson-app` |
+//!
+//! ## Examples ladder
+//!
+//! | Level | Where |
+//! |-------|--------|
+//! | Highlight | Concern → API table above |
+//! | Mid | This crate's unit + integ suites (`docs/VERIFICATION.md`) |
+//! | Detailed | `examples/protected-boson-host` |
 
 #![cfg_attr(test, allow(clippy::unwrap_used, clippy::expect_used))]
 
@@ -31,9 +73,9 @@ pub use page_query::{
     quick_search_text, resolve_job_filter, run_status_key,
 };
 pub use types::{
-    DashboardChartPoint, DashboardChartSeries, DashboardStats, GluonPoolPickRow, JobStatusDto,
-    JobSummary, RetryPolicyDto, RunStatusDto, RunSummary, TaskConfigDto, TaskSummary,
-    clamp_page_list_limit, UpdateTaskConfigRequest, BOSON_LIST_FETCH_CAP, JOBS_PAGE_SIZE,
+    clamp_page_list_limit, DashboardChartPoint, DashboardChartSeries, DashboardStats,
+    GluonPoolPickRow, JobStatusDto, JobSummary, RetryPolicyDto, RunStatusDto, RunSummary,
+    TaskConfigDto, TaskSummary, UpdateTaskConfigRequest, BOSON_LIST_FETCH_CAP, JOBS_PAGE_SIZE,
     MAX_PAGE_LIST_LIMIT, RUNS_PAGE_SIZE, TASKS_PAGE_SIZE,
 };
 pub use validate::{validate_job_id, validate_run_id, validate_task_name};
@@ -489,7 +531,10 @@ mod tests {
     #[test]
     fn clamp_page_list_limit_caps_oversized_sad() {
         assert_eq!(clamp_page_list_limit(10_000), MAX_PAGE_LIST_LIMIT);
-        assert_eq!(clamp_page_list_limit(MAX_PAGE_LIST_LIMIT), MAX_PAGE_LIST_LIMIT);
+        assert_eq!(
+            clamp_page_list_limit(MAX_PAGE_LIST_LIMIT),
+            MAX_PAGE_LIST_LIMIT
+        );
     }
 
     #[test]

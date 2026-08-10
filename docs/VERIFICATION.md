@@ -81,6 +81,20 @@ Covering integ tests for the e2e waiver:
 **Waived.** This application workspace; no cloud resources or Criterion benches.
 Correctness is in-process against Boson UF app DTO/mapping contracts only.
 
+## Rustdoc policy
+
+Preferred deny gate (no UI graph):
+
+```bash
+RUSTDOCFLAGS="-D rustdoc::broken-intra-doc-links" cargo doc -p boson-backend --no-deps
+```
+
+Workspace `rustdoc::broken_intra_doc_links` is `allow` in `Cargo.toml` because
+sibling/cfg-gated links often fail under `--no-deps`. Prefer the
+`RUSTDOCFLAGS` deny form above for the backend contract crate. `boson-app`
+rustdoc with deny flags is pin-dependent on Orbital / host graphs.
+`boson-app` still uses `#![allow(missing_docs)]` on macro-heavy UI surfaces.
+
 ## Notes
 
 - Prefer `cargo test -p boson-backend` for backend contract CI when the UI

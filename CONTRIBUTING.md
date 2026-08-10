@@ -4,11 +4,13 @@ Thank you for improving this project.
 
 ## Development setup
 
-1. Clone [unified-field-dev/boson-uf-app](https://github.com/unified-field-dev/boson-uf-app)
+1. Clone [deathbreakfast/boson-uf-app](https://github.com/deathbreakfast/boson-uf-app)
 2. Install Rust stable
 3. From the repository root:
 
 ```bash
+export CARGO_BUILD_JOBS=1
+export CARGO_TARGET_DIR=target-boson-uf-app
 cargo check --workspace
 cargo check -p boson-app --features ssr
 ```

@@ -7,26 +7,34 @@
 //! operators visibility into (and control over) task configuration, queued jobs, and run
 //! history.
 //!
-//! ## Features
+//! Orbital inventory macros (`uf_app!`, `orbital_routes_extract`) emit undocumented
+//! associated items, so this crate allows `missing_docs` at the crate root while keeping
+//! hand-written modules and items documented.
 //!
-//! - **Dashboard** — [`BosonRootPage`] shows aggregate task/job/run activity and run trends.
-//! - **Tasks** — [`BosonTasksIndexPage`] / [`BosonTaskDetailPage`] /
-//!   [`BosonTaskConfigPage`] for browsing and editing task configuration (priority, pools,
-//!   retry policy). Task config additionally requires a verified email.
-//! - **Queue** — [`BosonQueuePage`] for inspecting pending/active jobs and cancelling them.
-//! - **Runs** — [`BosonRunsIndexPage`] / [`BosonRunDetailPage`] for historical run
-//!   inspection and troubleshooting.
-//! - **Live updates** — [`live`] holds the client-side poll-tick hook
-//!   (`use_boson_poll_tick`) and placeholder broadcast/per-job live sources; [`photon_ws`]
-//!   is the SSR-side Axum route merge point a host wires up to enable real Photon push
-//!   updates (currently a stub — see crate-level integration notes).
-//! - **Read/write API** — [`server`] exposes the SSR-only server functions and DTOs
-//!   backing the pages above (`server::dashboard`, `server::tasks`, `server::jobs`,
-//!   `server::runs`, `server::gluon_pools`, `server::page_query`).
+//! ## Organized by task
 //!
-//! ## Routes
+//! | Task | Start here |
+//! |------|------------|
+//! | **Mount `/boson` routes** | [`BosonRoutes`] |
+//! | **Dashboard KPIs / run trends** | [`BosonRootPage`], [`mod@server`] |
+//! | **Browse / edit tasks** | [`BosonTasksIndexPage`], [`BosonTaskDetailPage`], [`BosonTaskConfigPage`] |
+//! | **Inspect / cancel queue jobs** | [`BosonQueuePage`] |
+//! | **Browse run history** | [`BosonRunsIndexPage`], [`BosonRunDetailPage`] |
+//! | **Poll / Photon live stubs** | [`live`], [`photon_ws`] |
+//! | **Pure DTO / mapping helpers** | `boson-backend` (not this crate) |
 //!
-//! Mounted under `/boson` by [`BosonRoutes`]. Concern → page → key server fn(s):
+//! ## Owns / does not own
+//!
+//! **Owns:** Leptos pages, Higgs `#[server]` wrappers, layout/nav shell, permission
+//! manifest, poll-tick / live stubs, and `uf_app!` / [`BosonRoutes`] registration.
+//!
+//! **Does not own:** Job/run/task/dashboard mapping helpers (`boson-backend`); Boson
+//! coordinator execution or `IsolatedLab` persistence (Boson core); full Leptos SSR host
+//! binaries (live outside this repository).
+//!
+//! ## Routes (Concern → page → server fn)
+//!
+//! Mounted under `/boson` by [`BosonRoutes`]. Task config requires a verified email.
 //!
 //! | Path | Page | Key server fn(s) |
 //! |---|---|---|
@@ -58,12 +66,20 @@
 //! }
 //! ```
 //!
+//! ## Examples ladder
+//!
+//! | Level | Where |
+//! |-------|--------|
+//! | Highlight | Getting started above |
+//! | Mid | `boson-backend` unit + integ suites (`docs/VERIFICATION.md`) |
+//! | Detailed | `examples/protected-boson-host` (deny/allow + dashboard KPIs) |
+//!
 //! ## Where to look next
 //!
 //! - [`BosonRoutes`] — the route entrypoint mounted by hosts.
 //! - [`BosonLayout`] — the shared app bar / nav shell wrapping every route.
-//! - [`pages`] — the page components listed under Features above.
-//! - [`server`] — server functions and DTOs backing the UI.
+//! - [`pages`] — the page components listed under Organized by task above.
+//! - [`mod@server`] — server functions and DTOs backing the UI.
 //! - [`live`] / [`photon_ws`] — client poll-tick and SSR route merge point for live
 //!   updates (Photon push wiring is currently a stub; see module docs).
 
