@@ -69,16 +69,14 @@ fn RecentTasksTableSkeleton() -> impl IntoView {
     }
 }
 
-/// Table showing the top tasks from the index with navigation.
-#[allow(clippy::too_many_lines)]
+/// Filled tasks overview table (non-empty).
 #[component]
-pub fn RecentTasksTable(
-    /// Resource that loads the tasks data.
-    tasks_res: Resource<Result<Vec<TaskSummary>, ServerFnError>>,
+fn RecentTasksFilledTable(
+    /// Top tasks to render.
+    top_tasks: Memo<Vec<TaskSummary>>,
 ) -> impl IntoView {
     let navigate = use_navigate();
     let nav_store = StoredValue::new(navigate);
-
     let (row_style_sheet, row_classes) = boson_table_link_styles();
     let row_class = StoredValue::new(row_classes.row);
     let (style_sheet, class_names) = turf::inline_style_sheet_values! {
@@ -86,6 +84,84 @@ pub fn RecentTasksTable(
         .TaskColumn { width: 42%; }
     };
 
+    view! {
+        <style>{row_style_sheet}</style>
+        <style>{style_sheet}</style>
+        <Card>
+            <Table class=class_names.table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHeaderCell class=class_names.task_column>
+                            <Caption1>"Task"</Caption1>
+                        </TableHeaderCell>
+                        <TableHeaderCell><Caption1>"Queued"</Caption1></TableHeaderCell>
+                        <TableHeaderCell><Caption1>"Runs"</Caption1></TableHeaderCell>
+                        <TableHeaderCell>
+                            <BosonHelpColumnHeader
+                                label="Success Rate"
+                                info=success_rate_help()
+                            />
+                        </TableHeaderCell>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    <For
+                        each=move || top_tasks.get()
+                        key=|t| t.name.clone()
+                        let:t
+                    >
+                        {
+                            let name = t.name.clone();
+                            let name_for_testid = name.clone();
+                            let href = crate::paths::task(&name);
+                            let href_nav = href.clone();
+                            let nav = nav_store.with_value(Clone::clone);
+                            let success_rate = t
+                                .success_rate_pct
+                                .map_or_else(|| "-".to_string(), |r| format!("{r:.1}%"));
+                            view! {
+                                <TableRow
+                                    class=row_class.with_value(Clone::clone)
+                                    on:click=move |_| nav(&href_nav, NavigateOptions::default())
+                                >
+                                    <TableCell class=class_names.task_column>
+                                        <BosonTruncatedTableCellLink
+                                            href=href
+                                            label=name
+                                            data_testid=format!("dashboard-recent-task-row-{}", name_for_testid)
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <TableCellLayout>
+                                            <Body1>{t.jobs_queued}</Body1>
+                                        </TableCellLayout>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TableCellLayout>
+                                            <Body1>{t.runs_total}</Body1>
+                                        </TableCellLayout>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TableCellLayout>
+                                            <Body1>{success_rate}</Body1>
+                                        </TableCellLayout>
+                                    </TableCell>
+                                </TableRow>
+                            }
+                        }
+                    </For>
+                </TableBody>
+            </Table>
+        </Card>
+    }
+}
+
+/// Table showing the top tasks from the index with navigation.
+#[component]
+pub fn RecentTasksTable(
+    /// Resource that loads the tasks data.
+    tasks_res: Resource<Result<Vec<TaskSummary>, ServerFnError>>,
+) -> impl IntoView {
     let top_tasks = Memo::new(move |_| {
         tasks_res
             .get()
@@ -95,8 +171,6 @@ pub fn RecentTasksTable(
     });
 
     view! {
-        <style>{row_style_sheet}</style>
-        <style>{style_sheet}</style>
         <Flex vertical=true gap=SpacingSize::Size160.flex_gap()>
             <Flex justify=FlexJustify::SpaceBetween align=FlexAlign::Center>
                 <InfoLabel>
@@ -125,70 +199,7 @@ pub fn RecentTasksTable(
                             }.into_any()
                         } else {
                             view! {
-                                <Card>
-                                    <Table class=class_names.table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHeaderCell class=class_names.task_column><Caption1>"Task"</Caption1></TableHeaderCell>
-                                                <TableHeaderCell><Caption1>"Queued"</Caption1></TableHeaderCell>
-                                                <TableHeaderCell><Caption1>"Runs"</Caption1></TableHeaderCell>
-                                                <TableHeaderCell>
-                                                    <BosonHelpColumnHeader
-                                                        label="Success Rate"
-                                                        info=success_rate_help()
-                                                    />
-                                                </TableHeaderCell>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            <For
-                                                each=move || top_tasks.get()
-                                                key=|t| t.name.clone()
-                                                let:t
-                                            >
-                                                {
-                                                    let name = t.name.clone();
-                                                    let name_for_testid = name.clone();
-                                                    let href = crate::paths::task(&name);
-                                                    let href_nav = href.clone();
-                                                    let nav = nav_store.with_value(Clone::clone);
-                                                    let success_rate = t
-                                                        .success_rate_pct
-                                                        .map_or_else(|| "-".to_string(), |r| format!("{r:.1}%"));
-                                                    view! {
-                                                        <TableRow
-                                                            class=row_class.with_value(Clone::clone)
-                                                            on:click=move |_| nav(&href_nav, NavigateOptions::default())
-                                                        >
-                                                            <TableCell class=class_names.task_column>
-                                                                <BosonTruncatedTableCellLink
-                                                                    href=href
-                                                                    label=name
-                                                                    data_testid=format!("dashboard-recent-task-row-{}", name_for_testid)
-                                                                />
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                <TableCellLayout>
-                                                                    <Body1>{t.jobs_queued}</Body1>
-                                                                </TableCellLayout>
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                <TableCellLayout>
-                                                                    <Body1>{t.runs_total}</Body1>
-                                                                </TableCellLayout>
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                <TableCellLayout>
-                                                                    <Body1>{success_rate}</Body1>
-                                                                </TableCellLayout>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    }
-                                                }
-                                            </For>
-                                        </TableBody>
-                                    </Table>
-                                </Card>
+                                <RecentTasksFilledTable top_tasks=top_tasks />
                             }.into_any()
                         }
                     }

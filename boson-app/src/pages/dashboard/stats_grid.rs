@@ -3,13 +3,12 @@ use orbital::components::{
     Caption1, Skeleton, SkeletonItem, SkeletonItemSize, SpacingSize, StatCard,
 };
 use orbital::primitives::{
-    Card, DiscussionAdapter, Flex, FlexAlign, Icon, InfoLabel, InfoLabelInfo, MessageBar,
-    MessageBarIntent, SchedulerDataSource,
+    Card, Flex, FlexAlign, FlexWrap, Icon, InfoLabel, InfoLabelInfo, MessageBar, MessageBarIntent,
 };
-use orbital_motion::{MotionDuration, OrbitalPresenceGroup, OrbitalPresenceGroupItem};
 
 use crate::components::{boson_kpi_enter_motion, runs_24h_help, BosonHelpStatCard};
 use crate::server::DashboardStats;
+use orbital_motion::{MotionDuration, OrbitalPresenceGroup, OrbitalPresenceGroupItem};
 
 /// Stat card shell with a skeleton placeholder for the value only.
 #[component]
@@ -76,13 +75,8 @@ fn DashboardHelpStatCardSkeleton() -> impl IntoView {
 /// Skeleton row matching the four dashboard KPI cards.
 #[component]
 fn DashboardStatsSkeleton() -> impl IntoView {
-    let (style_sheet, class_names) = turf::inline_style_sheet_values! {
-        .Wrap { flex-wrap: wrap; }
-    };
-
     view! {
-        <style>{style_sheet}</style>
-        <Flex gap=SpacingSize::Size160.flex_gap() class=class_names.wrap>
+        <Flex gap=SpacingSize::Size160.flex_gap() wrap=FlexWrap::Wrap>
             <div data-testid="dashboard-stat-tasks">
                 <DashboardStatCardSkeleton label="Tasks" icon=icondata::AiAppstoreOutlined />
             </div>
@@ -99,8 +93,81 @@ fn DashboardStatsSkeleton() -> impl IntoView {
     }
 }
 
+/// Loaded KPI cards with staggered enter motion.
+#[component]
+fn DashboardStatsCards(
+    /// Whether enter motion should show.
+    kpi_enter: ReadSignal<bool>,
+    /// Tasks KPI text.
+    task_count: Memo<String>,
+    /// Queued jobs KPI text.
+    jobs_queued: Memo<String>,
+    /// Running jobs KPI text.
+    jobs_running: Memo<String>,
+    /// Runs-today KPI text.
+    runs_today: Memo<String>,
+) -> impl IntoView {
+    view! {
+        <OrbitalPresenceGroup
+            motion=boson_kpi_enter_motion()
+            stagger=Signal::from(MotionDuration::Normal)
+        >
+            <Flex gap=SpacingSize::Size160.flex_gap() wrap=FlexWrap::Wrap>
+                <OrbitalPresenceGroupItem
+                    show=kpi_enter
+                    index=Signal::from(0usize)
+                >
+                    <div data-testid="dashboard-stat-tasks">
+                        <StatCard
+                            label="Tasks"
+                            value=Signal::derive(move || task_count.get())
+                            icon=icondata::AiAppstoreOutlined
+                        />
+                    </div>
+                </OrbitalPresenceGroupItem>
+                <OrbitalPresenceGroupItem
+                    show=kpi_enter
+                    index=Signal::from(1usize)
+                >
+                    <div data-testid="dashboard-stat-queued">
+                        <StatCard
+                            label="Jobs Queued"
+                            value=Signal::derive(move || jobs_queued.get())
+                            icon=icondata::AiUnorderedListOutlined
+                        />
+                    </div>
+                </OrbitalPresenceGroupItem>
+                <OrbitalPresenceGroupItem
+                    show=kpi_enter
+                    index=Signal::from(2usize)
+                >
+                    <div data-testid="dashboard-stat-running">
+                        <StatCard
+                            label="Jobs Running"
+                            value=Signal::derive(move || jobs_running.get())
+                            icon=icondata::AiThunderboltOutlined
+                        />
+                    </div>
+                </OrbitalPresenceGroupItem>
+                <OrbitalPresenceGroupItem
+                    show=kpi_enter
+                    index=Signal::from(3usize)
+                >
+                    <div data-testid="dashboard-stat-runs-today">
+                        <BosonHelpStatCard
+                            label="Runs (24h)"
+                            value=Signal::derive(move || runs_today.get())
+                            icon=icondata::AiHistoryOutlined
+                            label_info=runs_24h_help()
+                        />
+                    </div>
+                </OrbitalPresenceGroupItem>
+            </Flex>
+        </OrbitalPresenceGroup>
+    }
+}
+
 /// KPI stat cards with staggered enter on first load; poll refetches keep cards mounted.
-#[allow(clippy::too_many_lines)]
 #[component]
 pub fn DashboardStatsGrid(
     /// Resource that loads the stats data.
@@ -143,71 +210,17 @@ pub fn DashboardStatsGrid(
             .unwrap_or_default()
     });
 
-    let (style_sheet, class_names) = turf::inline_style_sheet_values! {
-        .Wrap { flex-wrap: wrap; }
-    };
-
     view! {
-        <style>{style_sheet}</style>
         <Transition fallback=move || view! { <DashboardStatsSkeleton /> }>
             {move || stats_res.get().map(|r| match r {
                 Ok(_) => view! {
-                    <OrbitalPresenceGroup
-                        motion=boson_kpi_enter_motion()
-                        stagger=Signal::from(MotionDuration::Normal)
-                    >
-                        <Flex gap=SpacingSize::Size160.flex_gap() class=class_names.wrap>
-                            <OrbitalPresenceGroupItem
-                                show=kpi_enter.read_only()
-                                index=Signal::from(0usize)
-                            >
-                                <div data-testid="dashboard-stat-tasks">
-                                    <StatCard
-                                        label="Tasks"
-                                        value=Signal::derive(move || task_count.get())
-                                        icon=icondata::AiAppstoreOutlined
-                                    />
-                                </div>
-                            </OrbitalPresenceGroupItem>
-                            <OrbitalPresenceGroupItem
-                                show=kpi_enter.read_only()
-                                index=Signal::from(1usize)
-                            >
-                                <div data-testid="dashboard-stat-queued">
-                                    <StatCard
-                                        label="Jobs Queued"
-                                        value=Signal::derive(move || jobs_queued.get())
-                                        icon=icondata::AiUnorderedListOutlined
-                                    />
-                                </div>
-                            </OrbitalPresenceGroupItem>
-                            <OrbitalPresenceGroupItem
-                                show=kpi_enter.read_only()
-                                index=Signal::from(2usize)
-                            >
-                                <div data-testid="dashboard-stat-running">
-                                    <StatCard
-                                        label="Jobs Running"
-                                        value=Signal::derive(move || jobs_running.get())
-                                        icon=icondata::AiThunderboltOutlined
-                                    />
-                                </div>
-                            </OrbitalPresenceGroupItem>
-                            <OrbitalPresenceGroupItem
-                                show=kpi_enter.read_only()
-                                index=Signal::from(3usize)
-                            >
-                                <div data-testid="dashboard-stat-runs-today">
-                                    <BosonHelpStatCard
-                                        label="Runs (24h)"
-                                        value=Signal::derive(move || runs_today.get())
-                                        icon=icondata::AiHistoryOutlined
-                                        label_info=runs_24h_help()
-                                    />
-                                </div>
-                            </OrbitalPresenceGroupItem>
-                        </Flex>
-                    </OrbitalPresenceGroup>
+                    <DashboardStatsCards
+                        kpi_enter=kpi_enter.read_only()
+                        task_count=task_count
+                        jobs_queued=jobs_queued
+                        jobs_running=jobs_running
+                        runs_today=runs_today
+                    />
                 }.into_any(),
                 Err(e) => view! {
                     <MessageBar intent=MessageBarIntent::Error>

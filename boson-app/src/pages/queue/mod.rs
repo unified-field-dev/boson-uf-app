@@ -4,7 +4,7 @@ use crate::components::{boson_table_page_layout, BosonCardContent, QueueDataTabl
 use crate::live::{boson_job_event_is_status, boson_jobs_subscription, BosonJobsLiveSource};
 use crate::server::cancel_job;
 use leptos::prelude::*;
-use leptos::task::spawn_local;
+use leptos::task::spawn_local_scoped;
 use orbital::components::{Card, ContentContainer, SpacingSize, Title3};
 use orbital::primitives::Flex;
 
@@ -33,7 +33,7 @@ pub fn BosonQueuePage() -> impl IntoView {
         cancel_pending.update(|s| {
             s.insert(job_id.clone());
         });
-        spawn_local(async move {
+        spawn_local_scoped(async move {
             let _ = cancel_job(job_id.clone()).await;
             cancel_pending.update(|s| {
                 s.remove(&job_id);

@@ -1,6 +1,6 @@
 use leptos::prelude::*;
 use leptos::server_fn::ServerFnError;
-use leptos::task::spawn_local;
+use leptos::task::spawn_local_scoped;
 
 use crate::server::{update_task_config, RetryPolicyDto, TaskConfigDto, UpdateTaskConfigRequest};
 
@@ -157,7 +157,7 @@ impl TaskConfigFormState {
                     max_delay_ms: max_delay_ms.get(),
                 }),
             };
-            spawn_local(async move {
+            spawn_local_scoped(async move {
                 match update_task_config(name, req).await {
                     Ok(_) => {
                         save_pending.set(false);

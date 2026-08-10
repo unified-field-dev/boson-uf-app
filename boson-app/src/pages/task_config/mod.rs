@@ -21,17 +21,17 @@ use crate::server::{get_task_config, list_gluon_pools_for_boson_task_config};
 /// Skeleton placeholder while task config form loads.
 #[component]
 fn TaskConfigSkeleton() -> impl IntoView {
-    let (style_sheet, class_names) = turf::inline_style_sheet_values! {
-        .Panel { width: 100%; height: 160px; }
-        .Actions { width: 30%; height: 32px; }
-    };
-
     view! {
-        <style>{style_sheet}</style>
         <Flex vertical=true gap=SpacingSize::Size160.flex_gap()>
-            <Skeleton><SkeletonItem class=class_names.panel /></Skeleton>
-            <Skeleton><SkeletonItem class=class_names.panel /></Skeleton>
-            <Skeleton><SkeletonItem class=class_names.actions /></Skeleton>
+            <Skeleton>
+                <SkeletonItem width="100%".to_string() height="160px".to_string() />
+            </Skeleton>
+            <Skeleton>
+                <SkeletonItem width="100%".to_string() height="160px".to_string() />
+            </Skeleton>
+            <Skeleton>
+                <SkeletonItem width="30%".to_string() height="32px".to_string() />
+            </Skeleton>
         </Flex>
     }
 }

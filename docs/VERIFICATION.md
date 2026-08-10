@@ -66,6 +66,29 @@ cargo test --workspace
 cargo test -p boson-app --features ssr
 ```
 
+### leptos-lints (local; hydrate UI)
+
+Needs `cargo-dylint` / `dylint-link` 6.0.1 and toolchain `nightly-2025-05-14`
+(see `leptos-lints@v0.1.2`). Workspace `[workspace.metadata.dylint]` pins the
+library; rustc deny names are declared under `[workspace.lints.rust]`.
+
+```bash
+# cargo install cargo-dylint --locked --version 6.0.1
+# cargo install dylint-link --locked --version 6.0.1
+# rustup toolchain install nightly-2025-05-14 --component rustc-dev,llvm-tools-preview
+
+export CARGO_BUILD_JOBS=1
+export CARGO_TARGET_DIR=target-boson-uf-app
+export CARGO_RESOLVER_INCOMPATIBLE_RUST_VERSIONS=fallback
+export RUSTFLAGS="-D warnings -Zcrate-attr=feature(stdarch_x86_avx512)"
+
+cargo dylint --all -p boson-app --no-deps -- --features hydrate
+```
+
+Hard CI job deferred: `boson-app` hydrate still depends on the Orbital / host
+graph (same pin risk as UI compile in Layer 1). Run locally when that graph is
+green.
+
 ## Layer 2 — E2E
 
 **Waived.** Task/job/run list+detail, status filters, DataTable query adapters,

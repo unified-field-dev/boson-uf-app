@@ -20,15 +20,12 @@ use crate::server::{get_run, RunStatusDto};
 /// Skeleton placeholder while run detail loads.
 #[component]
 fn RunDetailSkeleton() -> impl IntoView {
-    let (style_sheet, class_names) = turf::inline_style_sheet_values! {
-        .Panel { width: 100%; height: 240px; }
-    };
-
     view! {
-        <style>{style_sheet}</style>
         <Card>
             <BosonCardContent>
-                <Skeleton><SkeletonItem class=class_names.panel /></Skeleton>
+                <Skeleton>
+                    <SkeletonItem width="100%".to_string() height="240px".to_string() />
+                </Skeleton>
             </BosonCardContent>
         </Card>
     }
