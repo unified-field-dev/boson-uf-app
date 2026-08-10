@@ -4,7 +4,7 @@ Thank you for improving this project.
 
 ## Development setup
 
-1. Clone [deathbreakfast/boson-uf-app](https://github.com/deathbreakfast/boson-uf-app)
+1. Clone [unified-field-dev/boson-uf-app](https://github.com/unified-field-dev/boson-uf-app)
 2. Install Rust stable
 3. From the repository root:
 

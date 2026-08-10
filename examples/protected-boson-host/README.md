@@ -31,8 +31,8 @@ matches the Orbital app id/path (`boson` / `/boson`).
 
 ```toml
 [dependencies]
-boson-app = { git = "https://github.com/deathbreakfast/boson-uf-app", package = "boson-app", rev = "REPLACE_WITH_PIN", default-features = false }
-boson-backend = { git = "https://github.com/deathbreakfast/boson-uf-app", package = "boson-backend", rev = "REPLACE_WITH_PIN" }
+boson-app = { git = "https://github.com/unified-field-dev/boson-uf-app", package = "boson-app", rev = "REPLACE_WITH_PIN", default-features = false }
+boson-backend = { git = "https://github.com/unified-field-dev/boson-uf-app", package = "boson-backend", rev = "REPLACE_WITH_PIN" }
 uf-product = { /* your pin */, default-features = false }
 uf-integrations = { /* your pin */, default-features = false }
 
@@ -77,7 +77,7 @@ Wire Higgs + Boson coordinator + session extractors in host bootstrap before
 mounting the routes.
 
 For shell chrome (layout, fonts, Axum + Leptos boot), copy
-[`shell-chrome-host`](https://github.com/deathbreakfast/unified-field-product/tree/main/examples/shell-chrome-host)
+[`shell-chrome-host`](https://github.com/unified-field-dev/unified-field-product/tree/main/examples/shell-chrome-host)
 from unified-field-product, then mount `BosonRoutes`.
 
 ## Run (documented gate)

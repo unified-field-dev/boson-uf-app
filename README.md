@@ -1,9 +1,9 @@
 # Boson UF App
 
-[![CI](https://github.com/deathbreakfast/boson-uf-app/actions/workflows/ci.yml/badge.svg)](https://github.com/deathbreakfast/boson-uf-app/actions/workflows/ci.yml)
+[![CI](https://github.com/unified-field-dev/boson-uf-app/actions/workflows/ci.yml/badge.svg)](https://github.com/unified-field-dev/boson-uf-app/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-[GitHub](https://github.com/deathbreakfast/boson-uf-app) · `cargo doc -p boson-backend --open` · distributed via git (not crates.io)
+[GitHub](https://github.com/unified-field-dev/boson-uf-app) · `cargo doc -p boson-backend --open` · distributed via git (not crates.io)
 
 ## About
 
@@ -28,8 +28,8 @@ host wires them.
 ```toml
 [dependencies]
 # Pin tag or rev — do not use branch = "main".
-boson-app = { git = "https://github.com/deathbreakfast/boson-uf-app", package = "boson-app", rev = "REPLACE_WITH_PIN", default-features = false }
-boson-backend = { git = "https://github.com/deathbreakfast/boson-uf-app", package = "boson-backend", rev = "REPLACE_WITH_PIN" }
+boson-app = { git = "https://github.com/unified-field-dev/boson-uf-app", package = "boson-app", rev = "REPLACE_WITH_PIN", default-features = false }
+boson-backend = { git = "https://github.com/unified-field-dev/boson-uf-app", package = "boson-backend", rev = "REPLACE_WITH_PIN" }
 ```
 
 ```rust,ignore

@@ -5,7 +5,7 @@ Leptos operations UI for Boson: queues, runs, task config, and dashboards under
 
 ```toml
 # Pin tag or rev — do not use branch = "main".
-boson-app = { git = "https://github.com/deathbreakfast/boson-uf-app", package = "boson-app", rev = "REPLACE_WITH_PIN", default-features = false }
+boson-app = { git = "https://github.com/unified-field-dev/boson-uf-app", package = "boson-app", rev = "REPLACE_WITH_PIN", default-features = false }
 ```
 
 ```rust,ignore

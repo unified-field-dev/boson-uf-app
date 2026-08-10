@@ -2,7 +2,11 @@
 name = "boson-backend"
 version = "0.1.0"
 edition = "2021"
-license = "MIT"
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
 description = "Pure job/run/task contracts backing boson-app server functions"
 readme = "README.md"
 
