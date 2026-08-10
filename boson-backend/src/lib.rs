@@ -8,7 +8,7 @@
 //!
 //! | Task | Start here |
 //! |------|------------|
-//! | **Validate list/detail ids** | [`validate_task_name`], [`validate_job_id`], [`validate_run_id`] |
+//! | **Validate list/detail ids** | [`BosonIdError`], [`validate_task_name`], [`validate_job_id`], [`validate_run_id`] |
 //! | **Task list/detail mapping** | [`TaskSummary`], [`find_task_by_name`], [`sort_tasks_by_name`], [`filter_tasks_by_query`] |
 //! | **Job / queue mapping** | [`JobSummary`], [`find_job_by_id`], [`job_to_summary`], [`parse_job_status_filter`] |
 //! | **Run list/detail mapping** | [`RunSummary`], [`find_run_by_id`], [`run_to_summary`] |
@@ -29,7 +29,7 @@
 //!
 //! | Concern | API | Owner |
 //! |---------|-----|-------|
-//! | Id / name validation | [`validate_task_name`], [`validate_job_id`], [`validate_run_id`] | this crate |
+//! | Id / name validation | [`BosonIdError`], [`validate_task_name`], [`validate_job_id`], [`validate_run_id`] | this crate |
 //! | Task summaries / filters | [`TaskSummary`], [`find_task_by_name`], [`sort_tasks_by_name`], [`filter_tasks_by_query`] | this crate |
 //! | Job summaries / status filter | [`JobSummary`], [`find_job_by_id`], [`job_to_summary`], [`parse_job_status_filter`] | this crate |
 //! | Run summaries | [`RunSummary`], [`find_run_by_id`], [`run_to_summary`] | this crate |
@@ -78,7 +78,7 @@ pub use types::{
     TaskConfigDto, TaskSummary, UpdateTaskConfigRequest, BOSON_LIST_FETCH_CAP, JOBS_PAGE_SIZE,
     MAX_PAGE_LIST_LIMIT, RUNS_PAGE_SIZE, TASKS_PAGE_SIZE,
 };
-pub use validate::{validate_job_id, validate_run_id, validate_task_name};
+pub use validate::{validate_job_id, validate_run_id, validate_task_name, BosonIdError};
 
 #[cfg(test)]
 mod tests {
@@ -142,22 +142,31 @@ mod tests {
 
     #[test]
     fn validate_task_name_rejects_blank_sad() {
-        let err = validate_task_name("").expect_err("blank");
-        assert!(err.contains("required"), "{err}");
-        let err = validate_task_name("   ").expect_err("whitespace");
-        assert!(err.contains("required"), "{err}");
+        assert_eq!(
+            validate_task_name("").expect_err("blank"),
+            BosonIdError::EmptyTaskName
+        );
+        assert_eq!(
+            validate_task_name("   ").expect_err("whitespace"),
+            BosonIdError::EmptyTaskName
+        );
+        assert!(BosonIdError::EmptyTaskName.to_string().contains("required"));
     }
 
     #[test]
     fn validate_job_id_rejects_blank_sad() {
-        let err = validate_job_id("").expect_err("blank");
-        assert!(err.contains("required"), "{err}");
+        assert_eq!(
+            validate_job_id("").expect_err("blank"),
+            BosonIdError::EmptyJobId
+        );
     }
 
     #[test]
     fn validate_run_id_rejects_blank_sad() {
-        let err = validate_run_id("  ").expect_err("whitespace");
-        assert!(err.contains("required"), "{err}");
+        assert_eq!(
+            validate_run_id("  ").expect_err("whitespace"),
+            BosonIdError::EmptyRunId
+        );
     }
 
     #[test]

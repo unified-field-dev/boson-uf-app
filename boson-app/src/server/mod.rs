@@ -10,6 +10,14 @@
 //!
 //! The UI uses paginated list endpoints (`get_tasks_page`, `list_jobs_page`,
 //! `list_runs_page`) and single-record getters (`get_task`, `get_run`, etc.).
+//!
+//! ## Errors
+//!
+//! Fallible ops return [`ServerFnError`](leptos::prelude::ServerFnError) (Leptos
+//! boundary). Blank path/query ids are rejected by `boson_backend::validate_*` as
+//! [`boson_backend::BosonIdError`] and mapped with operation context. Missing
+//! session, missing Boson coordinator context, and coordinator IO failures are
+//! also `ServerFnError` strings at this boundary.
 
 mod dashboard;
 mod gluon_pools;
@@ -21,6 +29,10 @@ mod tasks;
 mod types;
 
 pub use types::*;
+
+/// Permission name required for Boson admin mutators / task-config reads
+/// (manifest: [`crate::permissions::BosonPermission::BosonAdmin`]).
+pub const BOSON_ADMIN_PERMISSION: &str = "BosonAdmin";
 
 pub use dashboard::{get_dashboard_stats, get_run_stats_series};
 pub use gluon_pools::list_gluon_pools_for_boson_task_config;

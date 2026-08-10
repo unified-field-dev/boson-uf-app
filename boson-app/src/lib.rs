@@ -16,10 +16,10 @@
 //! | Task | Start here |
 //! |------|------------|
 //! | **Mount `/boson` routes** | [`BosonRoutes`] |
-//! | **Dashboard KPIs / run trends** | [`BosonRootPage`], [`mod@server`] |
-//! | **Browse / edit tasks** | [`BosonTasksIndexPage`], [`BosonTaskDetailPage`], [`BosonTaskConfigPage`] |
-//! | **Inspect / cancel queue jobs** | [`BosonQueuePage`] |
-//! | **Browse run history** | [`BosonRunsIndexPage`], [`BosonRunDetailPage`] |
+//! | **Dashboard KPIs / run trends** | [`BosonRootPage`], [`get_dashboard_stats`], [`get_run_stats_series`] |
+//! | **Browse / edit tasks** | [`BosonTasksIndexPage`], [`BosonTaskDetailPage`], [`BosonTaskConfigPage`], [`get_tasks`], [`get_task`], [`update_task_config`] |
+//! | **Inspect / cancel queue jobs** | [`BosonQueuePage`], [`list_jobs_page`], [`cancel_job`] |
+//! | **Browse run history** | [`BosonRunsIndexPage`], [`BosonRunDetailPage`], [`list_runs_page`], [`get_run`] |
 //! | **Poll / Photon live stubs** | [`live`], [`photon_ws`] |
 //! | **Pure DTO / mapping helpers** | `boson-backend` (not this crate) |
 //!
@@ -32,19 +32,29 @@
 //! coordinator execution or `IsolatedLab` persistence (Boson core); full Leptos SSR host
 //! binaries (live outside this repository).
 //!
+//! ## Concern → API
+//!
+//! | Concern | API | Owner |
+//! |---------|-----|-------|
+//! | Mount `/boson` | [`BosonRoutes`], [`BosonLayout`] | this crate |
+//! | Ops pages | [`BosonRootPage`], [`BosonTasksIndexPage`], [`BosonTaskDetailPage`], [`BosonTaskConfigPage`], [`BosonQueuePage`], [`BosonRunsIndexPage`], [`BosonRunDetailPage`] | this crate |
+//! | Server fns / DTOs | [`get_dashboard_stats`], [`get_tasks`], [`get_run`], [`cancel_job`], [`DashboardStats`], [`TaskSummary`], [`BOSON_ADMIN_PERMISSION`] | this crate ([`mod@server`]) |
+//! | Id validation / pure mapping | `boson_backend::BosonIdError`, `boson_backend::validate_*` | `boson-backend` |
+//! | Permission manifest | [`permissions::BosonPermission`] | this crate |
+//!
 //! ## Routes (Concern → page → server fn)
 //!
 //! Mounted under `/boson` by [`BosonRoutes`]. Task config requires a verified email.
 //!
 //! | Path | Page | Key server fn(s) |
 //! |---|---|---|
-//! | `/boson` | [`BosonRootPage`] | `get_dashboard_stats`, `get_tasks` |
-//! | `/boson/tasks` | [`BosonTasksIndexPage`] | `get_tasks_page`, `get_tasks_datatable_page` |
-//! | `/boson/tasks/:task_name` | [`BosonTaskDetailPage`] | `get_task` |
-//! | `/boson/tasks/:task_name/config` (email-verified) | [`BosonTaskConfigPage`] | `get_task_config`, `update_task_config`, `list_gluon_pools_for_boson_task_config` |
-//! | `/boson/queue` | [`BosonQueuePage`] | `list_jobs_page`, `list_jobs_datatable_page`, `cancel_job` |
-//! | `/boson/runs` | [`BosonRunsIndexPage`] | `list_runs_page`, `list_runs_datatable_page` |
-//! | `/boson/runs/:id` | [`BosonRunDetailPage`] | `get_run` |
+//! | `/boson` | [`BosonRootPage`] | [`get_dashboard_stats`], [`get_tasks`] |
+//! | `/boson/tasks` | [`BosonTasksIndexPage`] | [`get_tasks_page`], [`get_tasks_datatable_page`] |
+//! | `/boson/tasks/:task_name` | [`BosonTaskDetailPage`] | [`get_task`] |
+//! | `/boson/tasks/:task_name/config` (email-verified) | [`BosonTaskConfigPage`] | [`get_task_config`], [`update_task_config`], [`list_gluon_pools_for_boson_task_config`] |
+//! | `/boson/queue` | [`BosonQueuePage`] | [`list_jobs_page`], [`list_jobs_datatable_page`], [`cancel_job`] |
+//! | `/boson/runs` | [`BosonRunsIndexPage`] | [`list_runs_page`], [`list_runs_datatable_page`] |
+//! | `/boson/runs/:id` | [`BosonRunDetailPage`] | [`get_run`] |
 //!
 //! ## Getting started
 //!
@@ -82,6 +92,7 @@
 //! - [`mod@server`] — server functions and DTOs backing the UI.
 //! - [`live`] / [`photon_ws`] — client poll-tick and SSR route merge point for live
 //!   updates (Photon push wiring is currently a stub; see module docs).
+//! - `boson_backend::BosonIdError` — typed blank-id rejection before coordinator IO.
 
 #![allow(missing_docs)]
 #![allow(clippy::unused_unit, unused_imports)]
@@ -123,6 +134,13 @@ pub use lazy_routes::{
 pub use pages::{
     BosonQueuePage, BosonRootPage, BosonRunDetailPage, BosonRunsIndexPage, BosonTaskConfigPage,
     BosonTaskDetailPage, BosonTasksIndexPage,
+};
+pub use server::{
+    cancel_job, get_dashboard_stats, get_run, get_run_stats_series, get_task, get_task_config,
+    get_tasks, get_tasks_datatable_page, get_tasks_page, list_gluon_pools_for_boson_task_config,
+    list_jobs_datatable_page, list_jobs_page, list_runs_datatable_page, list_runs_page,
+    update_task_config, DashboardStats, JobSummary, RunSummary, TaskConfigDto, TaskSummary,
+    BOSON_ADMIN_PERMISSION,
 };
 
 uf_app! {

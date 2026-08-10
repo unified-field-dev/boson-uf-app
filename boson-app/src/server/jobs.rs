@@ -14,7 +14,7 @@ pub async fn cancel_job(
     /// Unique identifier of the job to cancel.
     job_id: String,
 ) -> Result<(), ServerFnError> {
-    boson_backend::validate_job_id(&job_id).map_err(ServerFnError::new)?;
+    boson_backend::validate_job_id(&job_id).map_err(|e| ServerFnError::new(e.to_string()))?;
     let ctx = higgs::Higgs::from_request().await?;
     require_session(&ctx)?;
     let backend = super::helpers::boson_backend()?;

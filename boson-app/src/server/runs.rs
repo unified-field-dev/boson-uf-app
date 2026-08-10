@@ -87,7 +87,7 @@ pub async fn get_run(
     /// Unique identifier of the run to look up.
     run_id: String,
 ) -> Result<Option<RunSummary>, ServerFnError> {
-    boson_backend::validate_run_id(&run_id).map_err(ServerFnError::new)?;
+    boson_backend::validate_run_id(&run_id).map_err(|e| ServerFnError::new(e.to_string()))?;
     let ctx = higgs::Higgs::from_request().await?;
     require_session(&ctx)?;
     let backend = super::helpers::boson_backend()?;

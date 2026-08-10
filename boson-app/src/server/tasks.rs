@@ -33,7 +33,7 @@ pub async fn get_task(
     /// Registry name of the task to look up.
     task_name: String,
 ) -> Result<Option<TaskSummary>, ServerFnError> {
-    boson_backend::validate_task_name(&task_name).map_err(ServerFnError::new)?;
+    boson_backend::validate_task_name(&task_name).map_err(|e| ServerFnError::new(e.to_string()))?;
     let ctx = higgs::Higgs::from_request().await?;
     require_session(&ctx)?;
     let backend = super::helpers::boson_backend()?;
@@ -51,7 +51,7 @@ pub async fn get_task_config(
     /// Registry name of the task whose config should be fetched.
     task_name: String,
 ) -> Result<TaskConfigDto, ServerFnError> {
-    boson_backend::validate_task_name(&task_name).map_err(ServerFnError::new)?;
+    boson_backend::validate_task_name(&task_name).map_err(|e| ServerFnError::new(e.to_string()))?;
     let ctx = higgs::Higgs::from_request().await?;
     require_session(&ctx)?;
     require_email_verified().await?;
@@ -72,7 +72,7 @@ pub async fn update_task_config(
     /// Partial update request with the fields to change.
     req: UpdateTaskConfigRequest,
 ) -> Result<TaskConfigDto, ServerFnError> {
-    boson_backend::validate_task_name(&task_name).map_err(ServerFnError::new)?;
+    boson_backend::validate_task_name(&task_name).map_err(|e| ServerFnError::new(e.to_string()))?;
     let ctx = higgs::Higgs::from_request().await?;
     require_session(&ctx)?;
     require_email_verified().await?;

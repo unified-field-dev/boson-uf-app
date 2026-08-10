@@ -220,7 +220,7 @@ fn validate_task_name_accepts_table_happy_path() {
 #[test]
 fn validate_task_name_rejects_blank_sad() {
     let err = validate_task_name("").expect_err("blank");
-    assert!(err.contains("required"), "{err}");
+    assert_eq!(err, boson_backend::BosonIdError::EmptyTaskName);
 }
 
 #[test]
@@ -231,7 +231,7 @@ fn validate_job_id_accepts_id_happy_path() {
 #[test]
 fn validate_job_id_rejects_blank_sad() {
     let err = validate_job_id(" ").expect_err("blank");
-    assert!(err.contains("required"), "{err}");
+    assert_eq!(err, boson_backend::BosonIdError::EmptyJobId);
 }
 
 #[test]
@@ -242,7 +242,7 @@ fn validate_run_id_accepts_id_happy_path() {
 #[test]
 fn validate_run_id_rejects_blank_sad() {
     let err = validate_run_id("").expect_err("blank");
-    assert!(err.contains("required"), "{err}");
+    assert_eq!(err, boson_backend::BosonIdError::EmptyRunId);
 }
 
 #[test]
