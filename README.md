@@ -61,10 +61,6 @@ cargo test -p boson-backend
 | [`boson-backend`](boson-backend/) | Pure DTO/mapping helpers for job/run/task/dashboard |
 | [`protected-boson-host`](examples/protected-boson-host/) | Teaching host: deny/allow + dashboard KPIs |
 
-Top-level `uf-*` directories in this checkout (if present) are unused leftovers.
-Real `uf-integrations` / `uf-product-macros` / `uf-ssr` / `uf-app-registry` pins
-live in workspace `[workspace.dependencies]` (see `Cargo.toml`).
-
 ## Examples
 
 | Host | When to use | Command | Success | Look next |
@@ -110,8 +106,8 @@ RUSTDOCFLAGS="-D rustdoc::broken-intra-doc-links" cargo doc -p boson-backend --n
 
 Teaching host success line:
 `protected_boson_host: OK — /boson deny/allow + dashboard KPIs`.
-`boson-app` compile/doc can fail when the path-patched Orbital / host graph is
-broken upstream — treat that as host-product debt, not a Boson mapping gap.
+`boson-app` compile/doc can fail when the sibling Orbital / host graph does
+not compile — treat that as host-product debt, not a Boson mapping gap.
 Full command block: [`docs/VERIFICATION.md`](docs/VERIFICATION.md). Contribute:
 [`CONTRIBUTING.md`](CONTRIBUTING.md).
 

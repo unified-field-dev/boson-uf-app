@@ -4,7 +4,7 @@ Re-run after code or doc changes. This workspace is the Boson operations app
 (`boson-app` Leptos UI + `boson-backend` pure server contracts). Layer 1 unit +
 integration tests cover job/run/task/dashboard helpers backing the `#[server]`
 surface, plus sibling-source UI surface contracts for `boson-app`. No Leptos UI
-e2e, `*-e2e` crate, or AWS campaign is required for this workspace. Boson
+e2e, `*-e2e` crate, or cloud fleet is required for this workspace. Boson
 coordinator / IsolatedLab contracts own persistence and execution; this repo
 verifies the UF app mapping layer.
 
@@ -15,7 +15,7 @@ export CARGO_BUILD_JOBS=1
 export CARGO_TARGET_DIR=target-boson-uf-app
 ```
 
-## Teaching host (Pass 3 gate)
+## Teaching host
 
 Axum oneshot under [`examples/protected-boson-host`](../examples/protected-boson-host/).
 Copy table + product mount sketches live in that host README.
@@ -50,12 +50,12 @@ cargo clippy -p protected-boson-host --all-targets -- -D warnings
 cargo test -p boson-backend
 ```
 
-`cargo fmt --all` can fail in this monorepo checkout when a path-patched
-member sits outside that workspace; package-scoped fmt is the honest local gate.
+`cargo fmt --all` can fail when a sibling checkout sits outside this workspace;
+package-scoped fmt is the honest local gate.
 
-Full workspace (includes `boson-app` UI). May fail when the path-patched
-`uf-product` / `uf-integrations` UI graph is broken upstream — that is a
-pre-existing host-product UI compile issue, not a Boson backend contract gap.
+Full workspace (includes `boson-app` UI). May fail when the sibling
+`uf-product` / `uf-integrations` UI graph does not compile — that is a
+host-product UI issue, not a Boson backend contract gap.
 Surface needles for routes, nav testids, `RequireAuthenticated`, and
 `BosonAdmin` live in `product_surface`.
 
@@ -111,7 +111,7 @@ Covering integ tests for the e2e waiver:
 - `boson_product_workspace_members_happy_path`
 - `boson_routes_mount_happy_path` / `layout_auth_gate_and_nav_happy_path` / `admin_mutators_require_boson_admin_happy_path`
 
-## Layer 3 — AWS campaigns + performance
+## Layer 3 — Cloud + performance
 
 **Waived.** This application workspace; no cloud resources or Criterion benches.
 Correctness is in-process against Boson UF app DTO/mapping contracts only.

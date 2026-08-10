@@ -95,5 +95,5 @@ cargo run -p protected-boson-host
 
 Out of gate for this host. Full ops UI needs a product binary with
 `cargo-leptos`, `wasm32`, session chrome, Higgs + Boson coordinator, and a
-working Orbital / `uf-product` graph. Prefer the oneshot above for Pass 3;
-treat `boson-app` compile failures from broken path patches as host-product debt.
+working Orbital / `uf-product` graph. Prefer the oneshot above for local gates;
+treat `boson-app` compile failures from broken sibling pins as host-product debt.
