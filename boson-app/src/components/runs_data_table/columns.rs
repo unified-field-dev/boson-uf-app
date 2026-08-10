@@ -24,7 +24,7 @@ pub fn runs_table_columns() -> Vec<DataTableColumnDef> {
             .map(orbital_data::DataValue::display_string)
             .unwrap_or_default();
         let testid = format!("runs-row-{run_id}");
-        let href = crate::paths::run(&run_id);
+        let href = boson_backend::boson_run_path(&run_id);
         view! {
             <div data-testid=testid>
                 <BosonTableLink href=href>

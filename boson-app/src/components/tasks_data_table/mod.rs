@@ -26,7 +26,10 @@ pub fn TasksDataTable() -> impl IntoView {
     let navigate = use_navigate();
 
     let on_row_click = Callback::new(move |(id,): (String,)| {
-        navigate(&crate::paths::task(&id), NavigateOptions::default());
+        navigate(
+            &boson_backend::boson_task_path(&id),
+            NavigateOptions::default(),
+        );
     });
 
     let data_source = DataTableSource::Server {

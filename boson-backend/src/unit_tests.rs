@@ -54,6 +54,7 @@ fn sample_task(name: &str) -> TaskSummary {
 fn validate_task_name_accepts_non_empty_happy_path() {
     validate_task_name("alpha").expect("non-empty");
     validate_task_name("  beta  ").expect("trimmed non-empty");
+    validate_task_name("orders.sync").expect("dot in name");
 }
 
 #[test]
@@ -70,10 +71,51 @@ fn validate_task_name_rejects_blank_sad() {
 }
 
 #[test]
+fn validate_task_name_rejects_slash_control_dotdot_sad() {
+    assert_eq!(
+        validate_task_name("a/b").expect_err("slash"),
+        BosonIdError::UnsafeTaskName
+    );
+    assert_eq!(
+        validate_task_name("a\\b").expect_err("backslash"),
+        BosonIdError::UnsafeTaskName
+    );
+    assert_eq!(
+        validate_task_name("a\tb").expect_err("control"),
+        BosonIdError::UnsafeTaskName
+    );
+    assert_eq!(
+        validate_task_name("..").expect_err("dotdot"),
+        BosonIdError::UnsafeTaskName
+    );
+    assert_eq!(
+        validate_task_name(".").expect_err("dot"),
+        BosonIdError::UnsafeTaskName
+    );
+}
+
+#[test]
+fn validate_task_name_rejects_oversized_sad() {
+    let oversized = "a".repeat(MAX_BOSON_ID_CHARS + 1);
+    assert_eq!(
+        validate_task_name(&oversized).expect_err("too long"),
+        BosonIdError::TaskNameTooLong
+    );
+}
+
+#[test]
 fn validate_job_id_rejects_blank_sad() {
     assert_eq!(
         validate_job_id("").expect_err("blank"),
         BosonIdError::EmptyJobId
+    );
+}
+
+#[test]
+fn validate_job_id_rejects_slash_sad() {
+    assert_eq!(
+        validate_job_id("job/1").expect_err("slash"),
+        BosonIdError::UnsafeJobId
     );
 }
 
@@ -86,6 +128,14 @@ fn validate_run_id_rejects_blank_sad() {
 }
 
 #[test]
+fn validate_run_id_rejects_control_sad() {
+    assert_eq!(
+        validate_run_id("run\nid").expect_err("control"),
+        BosonIdError::UnsafeRunId
+    );
+}
+
+#[test]
 fn validate_job_id_accepts_id_happy_path() {
     validate_job_id("job-1").expect("id");
 }
@@ -93,6 +143,22 @@ fn validate_job_id_accepts_id_happy_path() {
 #[test]
 fn validate_run_id_accepts_id_happy_path() {
     validate_run_id("run-1").expect("id");
+}
+
+#[test]
+fn encode_ops_path_segment_encodes_slash_and_space_happy_path() {
+    assert_eq!(encode_ops_path_segment("orders"), "orders");
+    assert_eq!(encode_ops_path_segment("a/b"), "a%2Fb");
+    assert_eq!(encode_ops_path_segment("a b"), "a%20b");
+    assert_eq!(encode_ops_path_segment("a\\b"), "a%5Cb");
+}
+
+#[test]
+fn boson_ops_paths_encode_segments_happy_path() {
+    assert_eq!(boson_task_path("a/b"), "/boson/tasks/a%2Fb");
+    assert_eq!(boson_task_config_path("a/b"), "/boson/tasks/a%2Fb/config");
+    assert_eq!(boson_run_path("r/1"), "/boson/runs/r%2F1");
+    assert_eq!(boson_runs_job_filter_path("j 1"), "/boson/runs?job=j%201");
 }
 
 #[test]

@@ -14,7 +14,7 @@ pub fn RunInfoGrid(
     run: RunSummary,
 ) -> impl IntoView {
     let job_id = run.job_id.clone();
-    let job_href = format!("{}?job={}", crate::paths::RUNS, job_id);
+    let job_href = boson_backend::boson_runs_job_filter_path(&job_id);
 
     let (style_sheet, class_names) = turf::inline_style_sheet_values! {
         .Label { color: var(--orb-color-text-tertiary); }

@@ -224,6 +224,15 @@ fn validate_task_name_rejects_blank_sad() {
 }
 
 #[test]
+fn validate_task_name_rejects_slash_and_oversized_sad() {
+    let err = validate_task_name("a/b").expect_err("slash");
+    assert_eq!(err, boson_backend::BosonIdError::UnsafeTaskName);
+    let oversized = "a".repeat(boson_backend::MAX_BOSON_ID_CHARS + 1);
+    let err = validate_task_name(&oversized).expect_err("too long");
+    assert_eq!(err, boson_backend::BosonIdError::TaskNameTooLong);
+}
+
+#[test]
 fn validate_job_id_accepts_id_happy_path() {
     validate_job_id("job-abc").unwrap();
 }
@@ -232,6 +241,12 @@ fn validate_job_id_accepts_id_happy_path() {
 fn validate_job_id_rejects_blank_sad() {
     let err = validate_job_id(" ").expect_err("blank");
     assert_eq!(err, boson_backend::BosonIdError::EmptyJobId);
+}
+
+#[test]
+fn validate_job_id_rejects_slash_sad() {
+    let err = validate_job_id("reg/key").expect_err("slash");
+    assert_eq!(err, boson_backend::BosonIdError::UnsafeJobId);
 }
 
 #[test]

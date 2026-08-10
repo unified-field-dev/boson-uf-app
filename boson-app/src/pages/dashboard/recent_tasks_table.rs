@@ -113,7 +113,7 @@ fn RecentTasksFilledTable(
                         {
                             let name = t.name.clone();
                             let name_for_testid = name.clone();
-                            let href = crate::paths::task(&name);
+                            let href = boson_backend::boson_task_path(&name);
                             let href_nav = href.clone();
                             let nav = nav_store.with_value(Clone::clone);
                             let success_rate = t

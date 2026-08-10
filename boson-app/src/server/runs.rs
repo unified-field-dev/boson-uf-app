@@ -20,6 +20,9 @@ pub async fn list_runs_page(
 ) -> Result<Page<RunSummary>, ServerFnError> {
     let ctx = higgs::Higgs::from_request().await?;
     require_session(&ctx)?;
+    if let Some(ref job_id) = job_id_filter {
+        boson_backend::validate_job_id(job_id).map_err(|e| ServerFnError::new(e.to_string()))?;
+    }
     let limit = clamp_page_list_limit(limit);
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
@@ -55,6 +58,9 @@ pub async fn list_runs_datatable_page(
     require_session(&ctx)?;
     let limit = clamp_page_list_limit(request.limit);
     let job_filter = page_query::resolve_job_filter(scope_job_id, &request);
+    if let Some(ref job_id) = job_filter {
+        boson_backend::validate_job_id(job_id).map_err(|e| ServerFnError::new(e.to_string()))?;
+    }
     let backend = super::helpers::boson_backend()?;
     let backend = backend.as_ref();
 

@@ -33,7 +33,7 @@ pub fn QueueDataTable(
 
     let on_row_click = Callback::new(move |(id,): (String,)| {
         navigate(
-            &format!("{}?job={}", crate::paths::RUNS, id),
+            &boson_backend::boson_runs_job_filter_path(&id),
             NavigateOptions::default(),
         );
     });

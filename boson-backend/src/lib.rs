@@ -8,7 +8,8 @@
 //!
 //! | Task | Start here |
 //! |------|------------|
-//! | **Validate list/detail ids** | [`BosonIdError`], [`validate_task_name`], [`validate_job_id`], [`validate_run_id`] |
+//! | **Validate list/detail ids** | [`BosonIdError`], [`validate_task_name`], [`validate_job_id`], [`validate_run_id`], [`MAX_BOSON_ID_CHARS`] |
+//! | **Ops path encoding** | [`encode_ops_path_segment`], [`boson_task_path`], [`boson_task_config_path`], [`boson_run_path`], [`boson_runs_job_filter_path`] |
 //! | **Task list/detail mapping** | [`TaskSummary`], [`find_task_by_name`], [`sort_tasks_by_name`], [`filter_tasks_by_query`] |
 //! | **Job / queue mapping** | [`JobSummary`], [`find_job_by_id`], [`job_to_summary`], [`parse_job_status_filter`] |
 //! | **Run list/detail mapping** | [`RunSummary`], [`find_run_by_id`], [`run_to_summary`] |
@@ -29,7 +30,8 @@
 //!
 //! | Concern | API | Owner |
 //! |---------|-----|-------|
-//! | Id / name validation | [`BosonIdError`], [`validate_task_name`], [`validate_job_id`], [`validate_run_id`] | this crate |
+//! | Id / name validation | [`BosonIdError`], [`validate_task_name`], [`validate_job_id`], [`validate_run_id`], [`MAX_BOSON_ID_CHARS`] | this crate |
+//! | Ops path encoding | [`encode_ops_path_segment`], [`boson_task_path`], [`boson_task_config_path`], [`boson_run_path`], [`boson_runs_job_filter_path`] | this crate |
 //! | Task summaries / filters | [`TaskSummary`], [`find_task_by_name`], [`sort_tasks_by_name`], [`filter_tasks_by_query`] | this crate |
 //! | Job summaries / status filter | [`JobSummary`], [`find_job_by_id`], [`job_to_summary`], [`parse_job_status_filter`] | this crate |
 //! | Run summaries | [`RunSummary`], [`find_run_by_id`], [`run_to_summary`] | this crate |
@@ -78,7 +80,11 @@ pub use types::{
     TaskConfigDto, TaskSummary, UpdateTaskConfigRequest, BOSON_LIST_FETCH_CAP, JOBS_PAGE_SIZE,
     MAX_PAGE_LIST_LIMIT, RUNS_PAGE_SIZE, TASKS_PAGE_SIZE,
 };
-pub use validate::{validate_job_id, validate_run_id, validate_task_name, BosonIdError};
+pub use validate::{
+    boson_run_path, boson_runs_job_filter_path, boson_task_config_path, boson_task_path,
+    encode_ops_path_segment, validate_job_id, validate_run_id, validate_task_name, BosonIdError,
+    MAX_BOSON_ID_CHARS,
+};
 
 #[cfg(test)]
 #[path = "unit_tests.rs"]

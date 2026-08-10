@@ -41,7 +41,10 @@ pub fn RunsDataTable(
     let navigate = use_navigate();
 
     let on_row_click = Callback::new(move |(id,): (String,)| {
-        navigate(&crate::paths::run(&id), NavigateOptions::default());
+        navigate(
+            &boson_backend::boson_run_path(&id),
+            NavigateOptions::default(),
+        );
     });
 
     let data_source = DataTableSource::Server {

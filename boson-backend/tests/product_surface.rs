@@ -421,3 +421,59 @@ fn lazy_routes_wire_pages_happy_path() {
         );
     }
 }
+
+#[test]
+fn ops_path_helpers_encode_segments_happy_path() {
+    let recent = read_app("pages/dashboard/recent_tasks_table.rs");
+    let task_detail = read_app("pages/task_detail/mod.rs");
+    let task_actions = read_app("components/tasks_data_table/actions.rs");
+    let tasks_table = read_app("components/tasks_data_table/mod.rs");
+    let runs_cols = read_app("components/runs_data_table/columns.rs");
+    let runs_table = read_app("components/runs_data_table/mod.rs");
+    let queue = read_app("components/queue_data_table/mod.rs");
+    let run_info = read_app("pages/run_detail/run_info_grid.rs");
+    for (label, src) in [
+        ("recent_tasks_table", recent.as_str()),
+        ("task_detail", task_detail.as_str()),
+        ("task_actions", task_actions.as_str()),
+        ("tasks_data_table", tasks_table.as_str()),
+        ("runs_columns", runs_cols.as_str()),
+        ("runs_data_table", runs_table.as_str()),
+        ("queue_data_table", queue.as_str()),
+        ("run_info_grid", run_info.as_str()),
+    ] {
+        assert!(
+            src.contains("boson_backend::boson_")
+                || src.contains("boson_task_path")
+                || src.contains("boson_run_path")
+                || src.contains("boson_task_config_path")
+                || src.contains("boson_runs_job_filter_path"),
+            "{label} must build detail hrefs via boson_backend path helpers"
+        );
+        assert!(
+            !src.contains("crate::paths::task(")
+                && !src.contains("crate::paths::run(")
+                && !src.contains("crate::paths::tasks_config("),
+            "{label} must not interpolate raw ids into orbital paths::*"
+        );
+    }
+}
+
+#[test]
+fn ops_path_helpers_drop_encoding_sad_path() {
+    let recent = read_app("pages/dashboard/recent_tasks_table.rs");
+    assert!(
+        recent.contains("boson_backend::boson_task_path"),
+        "dropping boson_task_path reopens path-segment smuggling via task names"
+    );
+    let runs_cols = read_app("components/runs_data_table/columns.rs");
+    assert!(
+        runs_cols.contains("boson_backend::boson_run_path"),
+        "dropping boson_run_path reopens path-segment smuggling via run ids"
+    );
+    let queue = read_app("components/queue_data_table/mod.rs");
+    assert!(
+        queue.contains("boson_backend::boson_runs_job_filter_path"),
+        "dropping boson_runs_job_filter_path reopens query-value smuggling via job ids"
+    );
+}

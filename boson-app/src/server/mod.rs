@@ -14,8 +14,10 @@
 //! ## Errors
 //!
 //! Fallible ops return [`ServerFnError`](leptos::prelude::ServerFnError) (Leptos
-//! boundary). Blank path/query ids are rejected by `boson_backend::validate_*` as
-//! [`boson_backend::BosonIdError`] and mapped with operation context. Missing
+//! boundary). Blank / oversized / path-unsafe ids are rejected by
+//! `boson_backend::validate_*` as [`boson_backend::BosonIdError`] and mapped with
+//! operation context. Detail hrefs use `boson_backend::boson_*_path` helpers so
+//! Orbital `paths::*` format strings cannot smuggle extra path segments. Missing
 //! session, missing Boson coordinator context, and coordinator IO failures are
 //! also `ServerFnError` strings at this boundary.
 

@@ -26,7 +26,7 @@ pub fn TaskCardActions(
                     size=ButtonSize::Small
                     appearance=ButtonAppearance::Subtle
                     on_click=Callback::new(move |_| {
-                        nav_store.with_value(|n| n(&crate::paths::task(&name_view_btn), NavigateOptions::default()));
+                        nav_store.with_value(|n| n(&boson_backend::boson_task_path(&name_view_btn), NavigateOptions::default()));
                     })
                 >
                     "View"
@@ -38,7 +38,7 @@ pub fn TaskCardActions(
                     appearance=ButtonAppearance::Subtle
                     on_click=Callback::new(move |_| {
                         nav_store.with_value(|n| {
-                            n(&crate::paths::tasks_config(&name_config_btn), NavigateOptions::default());
+                            n(&boson_backend::boson_task_config_path(&name_config_btn), NavigateOptions::default());
                         });
                     })
                 >

@@ -39,7 +39,7 @@ pub fn BosonTaskDetailPage() -> impl IntoView {
                 <Suspense fallback=move || view! { <TaskDetailSkeleton /> }>
                     {move || match task_res.get() {
                         Some(Ok(Some(t))) => {
-                            let config_path = crate::paths::tasks_config(&t.name);
+                            let config_path = boson_backend::boson_task_config_path(&t.name);
                             let nav = navigate_store.with_value(Clone::clone);
                             let nav2 = navigate_store.with_value(Clone::clone);
                             let nav3 = navigate_store.with_value(Clone::clone);
