@@ -31,6 +31,10 @@ Orbital / `uf-product` belong to a composite product host).
 
 ## Layer 1 — Unit + integration (CI)
 
+GitHub Actions (`.github/workflows/ci.yml`) covers this Layer 1 subset plus the
+teaching host and boson-backend rustdoc gate below. It does not build
+`boson-app` (Leptos UI / SSR).
+
 Sibling-source UI contracts (no Orbital / `boson-app` compile):
 
 ```bash
@@ -42,6 +46,7 @@ Backend contracts (preferred path; no UI graph):
 ```bash
 cargo fmt -p boson-backend -p boson-app -p protected-boson-host -- --check
 cargo clippy -p boson-backend --all-targets -- -D warnings
+cargo clippy -p protected-boson-host --all-targets -- -D warnings
 cargo test -p boson-backend
 ```
 

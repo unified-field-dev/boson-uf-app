@@ -1,5 +1,6 @@
 # Boson UF App
 
+[![CI](https://github.com/deathbreakfast/boson-uf-app/actions/workflows/ci.yml/badge.svg)](https://github.com/deathbreakfast/boson-uf-app/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 [GitHub](https://github.com/deathbreakfast/boson-uf-app) · `cargo doc -p boson-backend --open` · distributed via git (not crates.io)
@@ -89,19 +90,25 @@ reports.
 
 ## Verify
 
-Local gates (fmt/clippy/CI workflow not claimed here):
+GitHub Actions (`.github/workflows/ci.yml`) runs the Layer 1 subset from
+[`docs/VERIFICATION.md`](docs/VERIFICATION.md): fmt, clippy `-D warnings` on
+`boson-backend` (+ teaching host), contract tests, `protected-boson-host`
+check/run, and boson-backend rustdoc with broken-intra-doc-link deny.
 
 ```bash
 export CARGO_BUILD_JOBS=1
 export CARGO_TARGET_DIR=target-boson-uf-app
+cargo fmt -p boson-backend -p boson-app -p protected-boson-host -- --check
+cargo clippy -p boson-backend --all-targets -- -D warnings
+cargo clippy -p protected-boson-host --all-targets -- -D warnings
+cargo test -p boson-backend --test workspace_members --test product_surface
+cargo test -p boson-backend
 cargo check -p protected-boson-host
 cargo run -p protected-boson-host
-cargo clippy -p boson-backend --all-targets -- -D warnings
-cargo test -p boson-backend
 RUSTDOCFLAGS="-D rustdoc::broken-intra-doc-links" cargo doc -p boson-backend --no-deps
 ```
 
-Prefer `boson-backend` for contract CI. Teaching host success line:
+Teaching host success line:
 `protected_boson_host: OK — /boson deny/allow + dashboard KPIs`.
 `boson-app` compile/doc can fail when the path-patched Orbital / host graph is
 broken upstream — treat that as host-product debt, not a Boson mapping gap.
