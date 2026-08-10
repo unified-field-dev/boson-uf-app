@@ -1,5 +1,10 @@
 //! Protected `/boson` host: session auth gate + in-memory dashboard happy path.
 //!
+//! Copy surfaces for product hosts: this package's `Cargo.toml` + `main.rs`,
+//! plus the product-mount dependency / Leptos sketches in the host README.
+//! Oneshot path `/boson` matches Orbital app id/path `boson` / `/boson`
+//! (see JSON `inventory`).
+//!
 //! Mirrors what a real host does before mounting [`boson_app::BosonRoutes`]:
 //! deny anonymous traffic under `/boson`, then serve the dashboard KPI shape
 //! the UI's `get_dashboard_stats` server fn builds via `boson-backend`.
@@ -66,6 +71,12 @@ async fn boson_dashboard(Extension(session): Extension<DemoSession>) -> impl Int
         "path": "/boson",
         "user": session.user_id,
         "stats": stats,
+        "inventory": {
+            "app_id": "boson",
+            "route_path": "/boson",
+            "auth_gate": "RequireAuthenticated",
+            "admin_permission": "BosonAdmin",
+        },
     }))
 }
 
@@ -104,7 +115,12 @@ async fn main() {
         .await
         .expect("oneshot");
     assert_eq!(response.status(), StatusCode::OK);
-    let bytes = response.into_body().collect().await.expect("body").to_bytes();
+    let bytes = response
+        .into_body()
+        .collect()
+        .await
+        .expect("body")
+        .to_bytes();
     let body: serde_json::Value = serde_json::from_slice(&bytes).expect("json");
     assert_eq!(body["path"], "/boson");
     assert_eq!(body["user"], "demo-ops");
@@ -112,6 +128,10 @@ async fn main() {
     assert_eq!(body["stats"]["jobs_queued"], 2);
     assert_eq!(body["stats"]["jobs_running"], 1);
     assert_eq!(body["stats"]["runs_today"], 5);
+    assert_eq!(body["inventory"]["app_id"], "boson");
+    assert_eq!(body["inventory"]["route_path"], "/boson");
+    assert_eq!(body["inventory"]["auth_gate"], "RequireAuthenticated");
+    assert_eq!(body["inventory"]["admin_permission"], "BosonAdmin");
 
     println!("protected_boson_host: OK — /boson deny/allow + dashboard KPIs");
 }

@@ -68,15 +68,17 @@ live in workspace `[workspace.dependencies]` (see `Cargo.toml`).
 
 | Host | When to use | Command | Success | Look next |
 |------|-------------|---------|---------|-----------|
-| [`protected-boson-host`](examples/protected-boson-host/) | Auth + `/boson` dashboard API | `CARGO_BUILD_JOBS=1 CARGO_TARGET_DIR=target-boson-uf-app cargo run -p protected-boson-host` | Deny/allow + KPI JSON | Product host with `BosonRoutes` |
+| [`protected-boson-host`](examples/protected-boson-host/) | Auth + `/boson` dashboard API | `CARGO_BUILD_JOBS=1 CARGO_TARGET_DIR=target-boson-uf-app cargo run -p protected-boson-host` | Deny/allow + KPI JSON | Mount `BosonRoutes` |
 
+Copy table + product mount `Cargo.toml`:
+[`examples/protected-boson-host/README.md`](examples/protected-boson-host/README.md).
 Full ladder: [`examples/README.md`](examples/README.md).
 
 | Level | Where |
 |-------|--------|
 | Highlight | Mount snippet above; crate-root Getting started |
 | Mid | `boson-backend` unit + integ suites (see `docs/VERIFICATION.md`) |
-| Detailed | `protected-boson-host` (session gate + dashboard KPIs) |
+| Detailed | `protected-boson-host` (session gate + dashboard KPIs; inventory `boson` / `/boson`) |
 
 ## Security
 
@@ -92,15 +94,18 @@ Local gates (fmt/clippy/CI workflow not claimed here):
 ```bash
 export CARGO_BUILD_JOBS=1
 export CARGO_TARGET_DIR=target-boson-uf-app
+cargo check -p protected-boson-host
+cargo run -p protected-boson-host
 cargo clippy -p boson-backend --all-targets -- -D warnings
 cargo test -p boson-backend
 RUSTDOCFLAGS="-D rustdoc::broken-intra-doc-links" cargo doc -p boson-backend --no-deps
 ```
 
-Prefer `boson-backend` for contract CI. `boson-app` compile/doc can fail when
-the path-patched Orbital / host graph is broken upstream — treat that as
-host-product debt, not a Boson mapping gap. Full command block:
-[`docs/VERIFICATION.md`](docs/VERIFICATION.md). Contribute:
+Prefer `boson-backend` for contract CI. Teaching host success line:
+`protected_boson_host: OK — /boson deny/allow + dashboard KPIs`.
+`boson-app` compile/doc can fail when the path-patched Orbital / host graph is
+broken upstream — treat that as host-product debt, not a Boson mapping gap.
+Full command block: [`docs/VERIFICATION.md`](docs/VERIFICATION.md). Contribute:
 [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## FAQ

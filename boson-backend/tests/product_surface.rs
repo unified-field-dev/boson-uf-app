@@ -369,6 +369,40 @@ fn permission_manifest_boson_admin_happy_path() {
 }
 
 #[test]
+fn protected_boson_host_matches_uf_app_happy_path() {
+    let host =
+        fs::read_to_string(workspace_root().join("examples/protected-boson-host/src/main.rs"))
+            .expect("protected-boson-host main.rs");
+    for needle in [
+        "\"app_id\": \"boson\"",
+        "\"route_path\": \"/boson\"",
+        "\"auth_gate\": \"RequireAuthenticated\"",
+        "\"admin_permission\": \"BosonAdmin\"",
+        "dashboard_stats",
+    ] {
+        assert!(
+            host.contains(needle),
+            "protected-boson-host missing contract `{needle}`"
+        );
+    }
+    let lib = read_app("lib.rs");
+    assert!(
+        lib.contains("id: \"boson\"") && lib.contains("route_path: \"/boson\""),
+        "host inventory must stay aligned with uf_app!"
+    );
+    let layout = read_app("layout.rs");
+    assert!(
+        layout.contains("RequireAuthenticated"),
+        "host auth_gate must stay aligned with BosonLayout guard"
+    );
+    let perms = read_app("permissions.rs");
+    assert!(
+        perms.contains("BosonAdmin"),
+        "host admin_permission must stay aligned with BosonPermission"
+    );
+}
+
+#[test]
 fn lazy_routes_wire_pages_happy_path() {
     let lazy = read_app("lazy_routes.rs");
     for needle in [

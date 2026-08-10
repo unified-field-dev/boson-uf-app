@@ -72,7 +72,7 @@
 //! |-------|--------|
 //! | Highlight | Getting started above |
 //! | Mid | `boson-backend` unit + integ suites (`docs/VERIFICATION.md`) |
-//! | Detailed | `examples/protected-boson-host` (deny/allow + dashboard KPIs) |
+//! | Detailed | `examples/protected-boson-host` (deny/allow + dashboard KPIs; inventory `boson` / `/boson`; copy README) |
 //!
 //! ## Where to look next
 //!

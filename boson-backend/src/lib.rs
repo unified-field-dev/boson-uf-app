@@ -44,7 +44,7 @@
 //! |-------|--------|
 //! | Highlight | Concern → API table above |
 //! | Mid | This crate's unit + integ suites (`docs/VERIFICATION.md`) |
-//! | Detailed | `examples/protected-boson-host` |
+//! | Detailed | `examples/protected-boson-host` (inventory `boson` / `/boson`; copy README) |
 
 #![cfg_attr(test, allow(clippy::unwrap_used, clippy::expect_used))]
 

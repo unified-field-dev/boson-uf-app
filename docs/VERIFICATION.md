@@ -15,6 +15,20 @@ export CARGO_BUILD_JOBS=1
 export CARGO_TARGET_DIR=target-boson-uf-app
 ```
 
+## Teaching host (Pass 3 gate)
+
+Axum oneshot under [`examples/protected-boson-host`](../examples/protected-boson-host/).
+Copy table + product mount sketches live in that host README.
+
+```bash
+cargo check -p protected-boson-host
+cargo run -p protected-boson-host
+```
+
+Success line: `protected_boson_host: OK — /boson deny/allow + dashboard KPIs`.
+Hydrate/browser is out of gate for the oneshot (`cargo-leptos` + `wasm32` +
+Orbital / `uf-product` belong to a composite product host).
+
 ## Layer 1 — Unit + integration (CI)
 
 Sibling-source UI contracts (no Orbital / `boson-app` compile):
@@ -26,10 +40,13 @@ cargo test -p boson-backend --test workspace_members --test product_surface
 Backend contracts (preferred path; no UI graph):
 
 ```bash
-cargo fmt --all --check
+cargo fmt -p boson-backend -p boson-app -p protected-boson-host -- --check
 cargo clippy -p boson-backend --all-targets -- -D warnings
 cargo test -p boson-backend
 ```
+
+`cargo fmt --all` can fail in this monorepo checkout when a path-patched
+member sits outside that workspace; package-scoped fmt is the honest local gate.
 
 Full workspace (includes `boson-app` UI). May fail when the path-patched
 `uf-product` / `uf-integrations` UI graph is broken upstream — that is a
