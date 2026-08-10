@@ -80,5 +80,5 @@ fn default_gluon_pool_rows_shape_happy_path() {
     let rows = default_gluon_pool_rows();
     assert_eq!(rows.len(), 1);
     assert_eq!(rows[0].id, "global");
-    assert!(!rows[0].label.is_empty());
+    assert_ne!(rows[0].label, "");
 }

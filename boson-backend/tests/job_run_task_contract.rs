@@ -66,8 +66,8 @@ fn get_tasks_list_sorted_and_named_happy_path() {
     assert_eq!(tasks[0].name, "alpha.task");
     assert_eq!(tasks[1].name, "zeta.task");
     for t in &tasks {
-        assert!(!t.name.trim().is_empty());
-        assert!(!t.signature_json.is_empty());
+        assert_ne!(t.name.trim(), "");
+        assert_ne!(t.signature_json, "");
     }
 }
 
@@ -145,7 +145,7 @@ fn tasks_page_filters_by_query_happy_path() {
 fn tasks_page_filters_unknown_query_empty_sad() {
     let mut tasks = vec![sample_task("alpha")];
     filter_tasks_by_query(&mut tasks, Some("__no_match__"));
-    assert!(tasks.is_empty());
+    assert_eq!(tasks.len(), 0);
 }
 
 #[test]

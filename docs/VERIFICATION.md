@@ -3,8 +3,10 @@
 Re-run after code or doc changes. This workspace is the Boson operations app
 (`boson-app` Leptos UI + `boson-backend` pure server contracts). Layer 1 unit +
 integration tests cover job/run/task/dashboard helpers backing the `#[server]`
-surface. No Leptos UI e2e, `*-e2e` crate, or AWS campaign is required for this workspace. Boson coordinator / IsolatedLab contracts own persistence and execution;
-this repo verifies the UF app mapping layer.
+surface, plus sibling-source UI surface contracts for `boson-app`. No Leptos UI
+e2e, `*-e2e` crate, or AWS campaign is required for this workspace. Boson
+coordinator / IsolatedLab contracts own persistence and execution; this repo
+verifies the UF app mapping layer.
 
 ## Environment
 
@@ -14,6 +16,12 @@ export CARGO_TARGET_DIR=target-boson-uf-app
 ```
 
 ## Layer 1 — Unit + integration (CI)
+
+Sibling-source UI contracts (no Orbital / `boson-app` compile):
+
+```bash
+cargo test -p boson-backend --test workspace_members --test product_surface
+```
 
 Backend contracts (preferred path; no UI graph):
 
@@ -25,7 +33,9 @@ cargo test -p boson-backend
 
 Full workspace (includes `boson-app` UI). May fail when the path-patched
 `uf-product` / `uf-integrations` UI graph is broken upstream — that is a
-pre-existing host-product UI compile issue, not a Boson backend contract gap:
+pre-existing host-product UI compile issue, not a Boson backend contract gap.
+Surface needles for routes, nav testids, `RequireAuthenticated`, and
+`BosonAdmin` live in `product_surface`.
 
 ```bash
 cargo clippy --workspace --all-targets -- -D warnings
@@ -33,28 +43,6 @@ cargo test --workspace
 # Host-aligned SSR surface (when UI graph compiles):
 cargo test -p boson-app --features ssr
 ```
-
-### TEST_MAP
-
-| Behavior | Level | Happy | Sad | Notes |
-|----------|-------|-------|-----|-------|
-| `validate_task_name` | unit+integ | non-empty / trimmed name | blank / whitespace → `"required"` | gate for get_task / config |
-| `validate_job_id` | unit+integ | non-empty id | blank → `"required"` | gate for cancel_job |
-| `validate_run_id` | unit+integ | non-empty id | blank → `"required"` | gate for get_run |
-| `find_task_by_name` (`get_task`) | unit+integ | exact name → summary | unknown → `None` | list/detail contract |
-| `find_job_by_id` (`cancel_job` / queue) | unit+integ | exact id → summary | unknown → `None` | queue contract |
-| `find_run_by_id` (`get_run`) | unit+integ | exact id → summary | unknown → `None` | run detail contract |
-| `sort_tasks_by_name` / `filter_tasks_by_query` | unit+integ | lex order / substring match | blank query keeps all; unknown → `[]` | tasks page |
-| `parse_job_status_filter` | unit+integ | known lowercase statuses | unknown / wrong-case → `None` | jobs list |
-| `job_to_summary` / `run_to_summary` / aggregates | unit+integ | identity + queued/success counts | no runs → `success_rate_pct = None` | get_tasks |
-| `apply_task_config_update` / `task_config_to_dto` | unit+integ | partial merge | — | update_task_config |
-| `apply_*_datatable_query` / filters | unit+integ | search + status equals/OR | non-status → no status filter; blank search → `None` | DataTable adapters |
-| `dashboard_stats` / `run_stats_series_from_runs` | unit+integ | KPI shape / success+failed series | outside window → zero buckets | dashboard |
-| Higgs `#[server]` fns + session / `BosonAdmin` / email-verified gates | — | — | — | deferred — needs host SSR |
-| Leptos UI / Playwright / `cargo leptos` e2e | e2e | — | — | **waived** — covering integ named below |
-| IsolatedLab job/run/task e2e | e2e | — | — | **waived** — covered by boson coordinator + Layer 1 integ |
-| AWS / soak | AWS | — | — | **waived** — no cloud resources |
-| Micro-benchmarks | bench | — | — | **waived** — no hot-path campaign |
 
 ## Layer 2 — E2E
 
@@ -75,6 +63,8 @@ Covering integ tests for the e2e waiver:
 - `validate_*_accepts_*_happy_path` / `validate_*_rejects_blank_sad`
 - `jobs_datatable_*` / `runs_datatable_*` / `extract_status_filter_*` / `resolve_job_filter_*`
 - `dashboard_stats_aggregates_counts_happy_path` / `run_stats_series_24h_includes_success_and_failed_happy_path` / `run_stats_series_all_outside_window_zero_success_sad`
+- `boson_product_workspace_members_happy_path`
+- `boson_routes_mount_happy_path` / `layout_auth_gate_and_nav_happy_path` / `admin_mutators_require_boson_admin_happy_path`
 
 ## Layer 3 — AWS campaigns + performance
 
@@ -102,7 +92,8 @@ rustdoc with deny flags is pin-dependent on Orbital / host graphs.
   compile — report that separately from Boson contract results.
 - Tests may `unwrap`/`expect`; production server fns map failures to `ServerFnError`
   (no ordinary-path unwrap).
-- Sad-path assertions check message content or `None` / empty — (stronger than `is_err()` alone).
+- Sad-path assertions check message content or `None` / empty — stronger than
+  `is_err()` alone.
 - Happy-path tests are named `*_happy_path` so audits detect them.
 - `BosonRoutes` data loaders call the `#[server]` fns; those fns are thin Higgs
-  wrappers over the helpers listed in the TEST_MAP.
+  wrappers over the helpers covered by Layer 1 contract tests.
