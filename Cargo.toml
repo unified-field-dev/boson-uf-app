@@ -64,12 +64,12 @@ serde_json = "1"
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 turf = "0.10"
 
-boson = { package = "uf-boson", version = "0.1.1", default-features = false }
-boson-core = { version = "0.1.1", default-features = false }
-boson-runtime = { version = "0.1.1", default-features = false }
+boson = { package = "uf-boson", version = "0.1.3", default-features = false }
+boson-core = { version = "0.1.3", default-features = false }
+boson-runtime = { version = "0.1.3", default-features = false }
 boson-coordinator = { git = "https://github.com/unified-field-dev/boson-coordinator", branch = "main" }
 higgs = { path = "../../L1-host-stack-kits/higgs/higgs", default-features = false }
-valence = { package = "uf-valence", version = "0.1.1", default-features = false, features = ["mem", "sqlite"] }
+valence = { package = "uf-valence", version = "0.1.4", default-features = false, features = ["mem", "sqlite"] }
 higgs-host = { path = "../../L1-host-stack-kits/higgs/higgs-host", default-features = false }
 higgs-identity = { path = "../../L1-host-stack-kits/higgs/higgs-identity" }
 
@@ -113,9 +113,15 @@ uf-search-core = { path = "../../L2-product-platform/unified-field-product/uf-se
 uf-notifications-core = { path = "../../L2-product-platform/uf-notifications/uf-notifications-core" }
 uf-notifications-api = { path = "../../L2-product-platform/uf-notifications/uf-notifications-api" }
 
-[patch.crates-io]
-uf-valence = { path = "../../L0-upstream-cores/valence/valence" }
-uf-valence-core = { path = "../../L0-upstream-cores/valence/valence-core" }
-uf-valence-codegen = { path = "../../L0-upstream-cores/valence/valence-codegen" }
-uf-valence-macros = { path = "../../L0-upstream-cores/valence/valence-macros" }
-uf-valence-telemetry = { path = "../../L0-upstream-cores/valence/valence-telemetry" }
+
+# Kits may still git-pin older Valence; force one crates.io graph.
+[patch."https://github.com/unified-field-dev/valence"]
+uf-valence = { version = "0.1.4" }
+uf-valence-core = { version = "0.1.4" }
+uf-valence-codegen = { version = "0.1.4" }
+uf-valence-macros = { version = "0.1.4" }
+uf-valence-telemetry = { version = "0.1.4" }
+uf-valence-backend-mem = { version = "0.1.4" }
+uf-valence-backend-sqlite = { version = "0.1.4" }
+uf-valence-backend-sql = { version = "0.1.4" }
+uf-valence-schema-dsl = { version = "0.1.4" }
