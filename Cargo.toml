@@ -83,11 +83,9 @@ orbital-paging = { version = "0.1.3", default-features = false }
 uf-integrations = { path = "../../L2-product-platform/unified-field-product/uf-integrations", default-features = false }
 uf-product = { path = "../../L2-product-platform/unified-field-product/uf-product", default-features = false }
 uf-product-macros = { path = "../../L2-product-platform/unified-field-product/uf-product-macros" }
-uf-ssr = { path = "../../L3-zone-products/counter-app/uf-ssr", default-features = false }
-uf-app-registry = { path = "../../L3-zone-products/counter-app/uf-app-registry" }
 inventory = "0.3"
 wasm-bindgen = "=0.2.126"
-gauge = { path = "../../L3-zone-products/gauge/gauge", default-features = false }
+gauge = { path = "../../L2-product-platform/gauge/gauge", default-features = false }
 lepton-shell = { path = "../../L2-product-platform/lepton-uf-app/lepton-shell", default-features = false }
 lepton-auth = { path = "../../L1-host-stack-kits/lepton/lepton-auth", default-features = false }
 
