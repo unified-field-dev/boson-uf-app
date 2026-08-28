@@ -3,7 +3,7 @@
 [![CI](https://github.com/unified-field-dev/boson-uf-app/actions/workflows/ci.yml/badge.svg)](https://github.com/unified-field-dev/boson-uf-app/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-[GitHub](https://github.com/unified-field-dev/boson-uf-app) · `cargo doc -p boson-backend --open` · distributed via git (not crates.io)
+[GitHub](https://github.com/unified-field-dev/boson-uf-app) · `cargo doc -p boson-backend --open`
 
 ## About
 
@@ -14,7 +14,7 @@ mount this crate so operators can inspect and operate background work.
 - **UI (`boson-app`)** — pages, Higgs `#[server]` wrappers, `BosonRoutes`,
   `uf_app!` registration
 - **Backend (`boson-backend`)** — pure job/run/task/dashboard helpers (no Leptos);
-  preferred Layer 1 CI path
+  primary CI surface
 
 Hosts supply a Boson coordinator and auth guard context. Enable `ssr` / hydrate
 to match your host. Crate-root rustdoc owns Concern → route → server fn tables;
@@ -86,7 +86,7 @@ reports.
 
 ## Verify
 
-GitHub Actions (`.github/workflows/ci.yml`) runs the Layer 1 subset from
+GitHub Actions (`.github/workflows/ci.yml`) runs the CI subset from
 [`docs/VERIFICATION.md`](docs/VERIFICATION.md): fmt, clippy `-D warnings` on
 `boson-backend` (+ teaching host), contract tests, `protected-boson-host`
 check/run, and boson-backend rustdoc with broken-intra-doc-link deny.
@@ -106,8 +106,6 @@ RUSTDOCFLAGS="-D rustdoc::broken-intra-doc-links" cargo doc -p boson-backend --n
 
 Teaching host success line:
 `protected_boson_host: OK — /boson deny/allow + dashboard KPIs`.
-`boson-app` compile/doc can fail when the sibling Orbital / host graph does
-not compile — treat that as host-product debt, not a Boson mapping gap.
 Full command block: [`docs/VERIFICATION.md`](docs/VERIFICATION.md). Contribute:
 [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
