@@ -177,13 +177,11 @@
 //! | `/boson/runs` | [`BosonRunsIndexPage`] | [`list_runs_page`], [`list_runs_datatable_page`] |
 //! | `/boson/runs/:id` | [`BosonRunDetailPage`] | [`get_run`] |
 //!
-//! ## Examples ladder
+//! ## Examples
 //!
-//! | Level | Where |
-//! |-------|--------|
-//! | Highlight | [Mount Boson routes](#mount-boson-routes) |
-//! | Mid | `boson-backend` unit + integ suites (`docs/VERIFICATION.md`) |
-//! | Detailed | `examples/protected-boson-host` (auth + dashboard KPIs; inventory `boson` / `/boson`) |
+//! Start with [Mount Boson routes](#mount-boson-routes). The `boson-backend` unit and integ
+//! suites in `docs/VERIFICATION.md` cover server-fn contracts. Runnable host:
+//! `examples/protected-boson-host` (auth + dashboard KPIs; inventory `boson` / `/boson`).
 //!
 //! ## Where to look next
 //!

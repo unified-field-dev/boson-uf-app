@@ -136,13 +136,10 @@
 //! On success `stats` carries the four KPI fields consumed by `boson-app` dashboard server
 //! functions.
 //!
-//! ## Examples ladder
+//! ## Examples
 //!
-//! | Level | Where |
-//! |-------|--------|
-//! | Highlight | [Validate ids](#validate-ids) |
-//! | Mid | This crate's unit + integ suites (`docs/VERIFICATION.md`) |
-//! | Detailed | `examples/protected-boson-host` (auth + dashboard KPIs) |
+//! Start with [Validate ids](#validate-ids). This crate's unit and integ suites are listed in
+//! `docs/VERIFICATION.md`. Runnable host: `examples/protected-boson-host` (auth + dashboard KPIs).
 
 #![cfg_attr(test, allow(clippy::unwrap_used, clippy::expect_used))]
 

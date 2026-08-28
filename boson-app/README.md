@@ -20,7 +20,7 @@ view! {
 ```
 
 Crate-root rustdoc owns Organized-by-task, Owns / does not own, the route table,
-and the Examples ladder. Mapping helpers live in `boson-backend`.
+and the Examples. Mapping helpers live in `boson-backend`.
 
 Compose into a host that supplies a Boson coordinator and the auth/context
 extractors the app expects. Enable `ssr` / hydrate to match your host.

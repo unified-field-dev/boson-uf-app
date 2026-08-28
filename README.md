@@ -69,13 +69,7 @@ cargo test -p boson-backend
 
 Copy table + product mount `Cargo.toml`:
 [`examples/protected-boson-host/README.md`](examples/protected-boson-host/README.md).
-Full ladder: [`examples/README.md`](examples/README.md).
-
-| Level | Where |
-|-------|--------|
-| Highlight | Mount snippet above; crate-root Getting started |
-| Mid | `boson-backend` unit + integ suites (see `docs/VERIFICATION.md`) |
-| Detailed | `protected-boson-host` (session gate + dashboard KPIs; inventory `boson` / `/boson`) |
+More examples: [`examples/README.md`](examples/README.md).
 
 ## Security
 
