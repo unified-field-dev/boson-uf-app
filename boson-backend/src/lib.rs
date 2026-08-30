@@ -6,24 +6,25 @@
 //!
 //! ## Features
 //!
-//! - **Id validation** — Reject blank, oversized, or path-unsafe task names, job ids, and
-//!   run ids before coordinator lookups. [Get started](#validate-ids)
-//! - **Task/job/run mapping** — Pure helpers that build UI DTOs from coordinator jobs,
-//!   runs, and registry task descriptors. [Get started](#map-task-job-run)
-//! - **Dashboard aggregates** — KPI counters for tasks, queued/running jobs, and recent
-//!   runs via [`dashboard_stats`]. [Get started](#dashboard-kpis)
-//! - **Ops path encoding** — Percent-encode path segments for `/boson` hrefs via
+//! - **Id validation** — Validates task names, job ids, and run ids so blank, oversized, or
+//!   path-unsafe values fail closed before coordinator lookups. [Get started](#validate-ids)
+//! - **Task/job/run mapping** — Builds UI DTOs from coordinator jobs, runs, and registry
+//!   task descriptors without performing IO. [Get started](#map-task-job-run)
+//! - **Dashboard aggregates** — Provides KPI counters for tasks, queued/running jobs, and
+//!   recent runs via [`dashboard_stats`]. [Get started](#dashboard-kpis)
+//! - **Ops path encoding** — Builds percent-encoded path segments for `/boson` hrefs via
 //!   [`encode_ops_path_segment`], [`boson_task_path`], [`boson_run_path`], and related
 //!   helpers.
-//! - **DataTable query adapters** — Apply status and quick-search filters for queue and run
-//!   tables via [`apply_jobs_datatable_query`] and [`apply_runs_datatable_query`].
+//! - **DataTable query adapters** — Supports status and quick-search filters for queue and
+//!   run tables via [`apply_jobs_datatable_query`] and [`apply_runs_datatable_query`].
 //!
 //! ## Validate ids
 //!
-//! Ops UI detail lookups reject ids that would break routing or leak path segments into
-//! Boson IO. [`validate_task_name`], [`validate_job_id`], and [`validate_run_id`] run before
-//! `boson-app` server functions call coordinator APIs — call them in custom wrappers when
-//! you add new read paths that accept path or query parameters.
+//! Id validation checks path and query parameters before they reach Boson IO, so blank or
+//! path-unsafe values fail closed instead of breaking routing. [`validate_task_name`],
+//! [`validate_job_id`], and [`validate_run_id`] run in `boson-app` server functions ahead of
+//! coordinator lookups — call them in custom wrappers when you add new read paths that
+//! accept path or query parameters.
 //!
 //! **Prerequisites:** None beyond importing this crate; validators are synchronous and
 //! return [`Result<(), BosonIdError>`].
@@ -48,10 +49,12 @@
 //!
 //! ## Map task job run
 //!
-//! Mapping helpers turn coordinator jobs, runs, and registry descriptors into serde-friendly
-//! DTOs the UI can render without touching Boson internals. [`task_summary_from_parts`] and
-//! [`find_task_by_name`] back task list/detail pages; [`job_to_summary`] shapes queue rows;
-//! [`run_to_summary`] builds run history previews.
+//! Task/job/run mapping turns coordinator jobs, runs, and registry descriptors into
+//! serde-friendly DTOs the UI can render without touching Boson internals.
+//! [`task_summary_from_parts`] and [`find_task_by_name`] back task list/detail pages;
+//! [`job_to_summary`] shapes queue rows; [`run_to_summary`] builds run history previews.
+//! Call these after you already hold coordinator rows in memory — typically inside
+//! `boson-app` `#[server]` handlers that assemble list or detail responses.
 //!
 //! **Prerequisites:** Caller already loaded jobs, runs, and task config from the coordinator
 //! — these functions do not perform IO.
@@ -115,10 +118,12 @@
 //!
 //! ## Dashboard KPIs
 //!
-//! Dashboard KPI aggregates provide registry size and active job counters without
-//! UI-specific formatting. [`dashboard_stats`] packages task count, queued jobs, running
-//! jobs, and runs started in the last 24 hours into [`DashboardStats`]; chart bucketing lives
-//! in [`run_stats_series_from_runs`] after the caller loads run rows.
+//! Dashboard aggregates package registry size and active job counters into a single
+//! [`DashboardStats`] value for the ops landing page, without UI-specific formatting.
+//! [`dashboard_stats`] takes task count, queued jobs, running jobs, and runs started in the
+//! last 24 hours; chart bucketing lives in [`run_stats_series_from_runs`] after the caller
+//! loads run rows. Call this when a dashboard server function has already counted those
+//! slices from the coordinator.
 //!
 //! **Prerequisites:** Caller supplies counts from coordinator queries — these helpers do not
 //! call Boson.
