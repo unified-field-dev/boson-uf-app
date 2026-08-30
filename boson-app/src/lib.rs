@@ -12,20 +12,20 @@
 //!
 //! ## Features
 //!
-//! - **Boson admin routes** — Nested `/boson` route tree behind auth for dashboard,
-//!   tasks, queue, and runs. Mount once when the host router starts.
+//! - **Boson admin routes** — Provides the nested `/boson` route tree behind auth for
+//!   dashboard, tasks, queue, and runs. Mount once when the host router starts.
 //!   [Get started](#mount-boson-routes)
-//! - **Dashboard KPIs** — [`BosonRootPage`] with task, queue, and run counters via
+//! - **Dashboard KPIs** — Shows task, queue, and run counters on [`BosonRootPage`] via
 //!   [`get_dashboard_stats`] plus run-trend charts from [`get_run_stats_series`].
 //!   [Get started](#dashboard-kpis)
-//! - **Tasks browser** — Index, detail, and config pages for registered tasks via
+//! - **Tasks browser** — Lists registered tasks and supports detail and config edits via
 //!   [`get_tasks`], [`get_task`], and [`update_task_config`].
 //!   [Get started](#browse-tasks)
-//! - **Queue inspector** — Paginated job list and cancel actions via [`list_jobs_page`]
-//!   and [`cancel_job`]. [Get started](#inspect-queue)
-//! - **Runs browser** — Index and detail pages for run attempts via [`list_runs_page`]
+//! - **Queue inspector** — Lists queued and running jobs and lets operators cancel them via
+//!   [`list_jobs_page`] and [`cancel_job`]. [Get started](#inspect-queue)
+//! - **Runs browser** — Lists run attempts and opens detail pages via [`list_runs_page`]
 //!   and [`get_run`]. [Get started](#browse-runs)
-//! - **Server function wrappers** — [`mod@server`] Higgs `#[server]` fns and DTO
+//! - **Server function wrappers** — Exposes [`mod@server`] Higgs `#[server]` fns and DTO
 //!   re-exports backed by [`boson_backend`] pure mapping helpers.
 //!
 //! ## Mount Boson routes
@@ -66,8 +66,11 @@
 //! Boson backend request context wired.
 //!
 //! ```rust,ignore
-//! use boson_app::{get_dashboard_stats, get_run_stats_series, DashboardStats};
+//! use boson_app::{
+//!     BosonRootPage, get_dashboard_stats, get_run_stats_series, DashboardStats,
+//! };
 //!
+//! // BosonRootPage calls these on each SSR render:
 //! let stats: DashboardStats = get_dashboard_stats().await?;
 //! assert_eq!(stats.task_count, 3);
 //! assert_eq!(stats.jobs_queued, 5);
@@ -91,9 +94,12 @@
 //! config edits require a verified email.
 //!
 //! ```rust,ignore
-//! use boson_app::{get_tasks, get_task, update_task_config, TaskSummary};
+//! use boson_app::{
+//!     BosonTasksIndexPage, get_tasks, get_task, update_task_config, TaskSummary,
+//! };
 //! use boson_backend::UpdateTaskConfigRequest;
 //!
+//! // BosonTasksIndexPage loads get_tasks for the index:
 //! let tasks: Vec<TaskSummary> = get_tasks().await?;
 //! assert_eq!(tasks.first().map(|t| t.name.as_str()), Some("orders.task"));
 //!
@@ -121,10 +127,12 @@
 //! **Prerequisites:** Routes mounted; job ids must pass `boson_backend::validate_job_id`.
 //!
 //! ```rust,ignore
-//! use boson_app::{list_jobs_page, cancel_job};
+//! use boson_app::{BosonQueuePage, list_jobs_page, cancel_job, JobSummary};
 //!
+//! // BosonQueuePage loads list_jobs_page with optional status filters:
 //! let page = list_jobs_page(0, 20, None).await?;
-//! assert_eq!(page.items.first().map(|j| j.job_id.as_str()), Some("job-1"));
+//! let first: &JobSummary = page.items.first().expect("queued job");
+//! assert_eq!(first.job_id, "job-1");
 //!
 //! cancel_job("job-1".into()).await?;
 //! ```
@@ -143,10 +151,12 @@
 //! **Prerequisites:** Routes mounted; run ids must pass `boson_backend::validate_run_id`.
 //!
 //! ```rust,ignore
-//! use boson_app::{list_runs_page, get_run};
+//! use boson_app::{BosonRunsIndexPage, list_runs_page, get_run, RunSummary};
 //!
+//! // BosonRunsIndexPage loads list_runs_page with optional filters:
 //! let page = list_runs_page(0, 20, None).await?;
-//! assert!(page.items.len() <= 20);
+//! let first: &RunSummary = page.items.first().expect("run row");
+//! assert_eq!(first.run_id, "run-1");
 //!
 //! let detail = get_run("run-1".into()).await?;
 //! assert_eq!(detail.run_id, "run-1");
