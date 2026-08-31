@@ -36,9 +36,19 @@ pub(super) fn require_session(ctx: &higgs::Higgs) -> Result<(), ServerFnError> {
 /// Mirror the task-config UI `requires_email_verification` gate server-side.
 ///
 /// Uses axum-login's auth user (via lepton-auth) because `SessionSnapshot`
-/// only stores `user_id` + `auth_hash`.
+/// only stores `user_id` + `auth_hash`. Lab hosts may force the outcome via
+/// [`crate::e2e_lab::set_email_verified_override`] without a lepton-auth Backend.
 #[cfg(feature = "ssr")]
 pub(super) async fn require_email_verified() -> Result<(), ServerFnError> {
+    if let Some(verified) = crate::e2e_lab::email_verified_override() {
+        return if verified {
+            Ok(())
+        } else {
+            Err(ServerFnError::new(
+                "Email verification is required for this action",
+            ))
+        };
+    }
     let user = lepton_auth::extract_auth_user().await?;
     if user.email_verified {
         Ok(())

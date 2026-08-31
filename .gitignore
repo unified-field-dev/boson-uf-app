@@ -1,2 +1,6 @@
 /target
 /target-*
+/boson-uf-app-e2e/end2end/node_modules
+/boson-uf-app-e2e/end2end/test-results
+/boson-uf-app-e2e/site/pkg
+/boson-uf-app-e2e/site/*.css

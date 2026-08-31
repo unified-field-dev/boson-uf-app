@@ -1,4 +1,4 @@
-//! Gate: boson-app / boson-backend / protected host are members of this workspace.
+//! Gate: boson-app / boson-backend / protected host / e2e lab are members of this workspace.
 //!
 //! Featureless sibling-source contract (photon / gauge / lepton-shell pattern).
 
@@ -16,6 +16,7 @@ fn boson_product_workspace_members_happy_path() {
     for member in [
         "boson-app",
         "boson-backend",
+        "boson-uf-app-e2e",
         "examples/protected-boson-host",
     ] {
         assert!(

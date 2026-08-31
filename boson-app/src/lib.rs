@@ -214,6 +214,8 @@ use leptos_router::{
 use uf_product_macros::uf_app;
 
 mod components;
+/// Lab-only overrides for `boson-uf-app-e2e` (no-ops unless seed setters run).
+pub mod e2e_lab;
 mod layout;
 mod lazy_routes;
 /// Client-side live-update hooks (poll tick, placeholder broadcast sources).

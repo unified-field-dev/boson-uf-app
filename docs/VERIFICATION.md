@@ -1,12 +1,13 @@
 # boson-uf-app verification
 
 Re-run after code or doc changes. This workspace is the Boson operations app
-(`boson-app` Leptos UI + `boson-backend` pure server contracts). Layer 1 unit +
-integration tests cover job/run/task/dashboard helpers backing the `#[server]`
-surface, plus sibling-source UI surface contracts for `boson-app`. No Leptos UI
-e2e, `*-e2e` crate, or cloud fleet is required for this workspace. Boson
-coordinator / IsolatedLab contracts own persistence and execution; this repo
-verifies the UF app mapping layer.
+(`boson-app` Leptos UI + `boson-backend` pure server contracts + `boson-uf-app-e2e`
+lab host). Layer 1 unit + integration tests cover job/run/task/dashboard helpers
+backing the `#[server]` surface, plus sibling-source UI surface contracts for
+`boson-app`. Layer 2 is Playwright against a dedicated lab Leptos host that mounts
+`BosonRoutes` with mem Valence and an in-process MemQueue coordinator. Boson
+coordinator / core IsolatedLab contracts still own persistence and execution
+matrix correctness.
 
 ## Environment
 
@@ -27,7 +28,7 @@ cargo run -p protected-boson-host
 
 Success line: `protected_boson_host: OK — /boson deny/allow + dashboard KPIs`.
 Hydrate/browser is out of gate for the oneshot (`cargo-leptos` + `wasm32` +
-Orbital / `uf-product` belong to a composite product host).
+Orbital / `uf-product` belong to a composite product host or `boson-uf-app-e2e`).
 
 ## Layer 1 — Unit + integration (CI)
 
@@ -44,7 +45,7 @@ cargo test -p boson-backend --test workspace_members --test product_surface
 Backend contracts (preferred path; no UI graph):
 
 ```bash
-cargo fmt -p boson-backend -p boson-app -p protected-boson-host -- --check
+cargo fmt -p boson-backend -p boson-app -p protected-boson-host -p boson-uf-app-e2e -- --check
 cargo clippy -p boson-backend --all-targets -- -D warnings
 cargo clippy -p protected-boson-host --all-targets -- -D warnings
 cargo test -p boson-backend
@@ -57,7 +58,8 @@ Full workspace (includes `boson-app` UI). May fail when the sibling
 `uf-product` / `uf-integrations` UI graph does not compile — that is a
 host-product UI issue, not a Boson backend contract gap.
 Surface needles for routes, nav testids, `RequireAuthenticated`, and
-`BosonAdmin` live in `product_surface`.
+`BosonAdmin` live in `product_surface` (structural secondary; Layer 2 is
+primary for operator UI).
 
 ```bash
 cargo clippy --workspace --all-targets -- -D warnings
@@ -89,32 +91,50 @@ Hard CI job deferred: `boson-app` hydrate still depends on the Orbital / host
 graph (same pin risk as UI compile in Layer 1). Run locally when that graph is
 green.
 
-## Layer 2 — E2E
+## Layer 2 — E2E (lab host + Playwright)
 
-**Waived.** Task/job/run list+detail, status filters, DataTable query adapters,
-dashboard KPI/trend shapes, and id/name validation are exercised by Layer 1
-integration tests named below. A Leptos/UI browser suite or IsolatedLab `*-e2e`
-crate is out of scope for this backend-first remediation; live Boson
-execution/persistence IsolatedLab belongs in boson coordinator / core.
+Primary operator-UI gate. Dedicated lab host mounts eager `BosonRoutes` pages
+(same components as production Lazy routes), mem Valence, Higgs session injection,
+and MemQueue `CoordinatorAdapter`. Port `127.0.0.1:3170`.
 
-Covering integ tests for the e2e waiver:
+```bash
+export CARGO_BUILD_JOBS=1
+export CARGO_TARGET_DIR=target-boson-uf-app
+# From the boson-uf-app workspace root. Builds SSR + hydrate, then Playwright.
+cargo leptos end-to-end --project boson-uf-app-e2e
+```
 
-- `get_tasks_list_sorted_and_named_happy_path` / `get_task_detail_matches_list_entry_happy_path` / `get_task_unknown_name_is_none_sad`
+Do not interrupt the end-to-end run. It stops when Playwright finishes.
+
+Scenario IDs (validating happy + sad):
+
+- `pw-boson-auth-gate-happy-admin` / `pw-boson-auth-gate-sad-anonymous`
+- `pw-boson-dashboard-happy-kpis` / `pw-boson-dashboard-sad-empty-recent-not-crash`
+- `pw-boson-tasks-happy-list-detail` / `pw-boson-tasks-sad-unknown-task`
+- `pw-boson-queue-cancel-happy-admin` / `pw-boson-queue-cancel-sad-non-admin`
+- `pw-boson-task-config-happy-admin-save` / `pw-boson-task-config-sad-unverified-email`
+- `pw-boson-runs-happy-list-detail` / `pw-boson-runs-sad-unknown-run`
+
+Local gate (2026-08-31): `cargo leptos end-to-end --project boson-uf-app-e2e`
+reported **12 passed**. Workspace `Cargo.toml` patches crates.io orbital onto
+uf-dev git so `ThemeInjection` is a single type (same pattern as lepton-uf-app).
+Hard CI job for this hydrate graph may stay local/manual until the pin is
+stable; Layer 2 is no longer waived as “helpers substitute for UI.”
+
+Layer 1 helper contracts remain the mapping gate:
+
+- `get_tasks_list_sorted_and_named_happy_path` / `get_task_unknown_name_is_none_sad`
 - `get_run_detail_matches_list_entry_happy_path` / `get_run_unknown_id_is_none_sad`
 - `cancel_job_list_entry_resolves_happy_path` / `cancel_job_unknown_id_is_none_sad`
 - `tasks_page_filters_by_query_happy_path` / `tasks_page_filters_unknown_query_empty_sad`
-- `list_jobs_status_filter_parses_known_happy_path` / `list_jobs_status_filter_unknown_is_none_sad`
-- `get_tasks_aggregates_stats_happy_path` / `update_task_config_merges_partial_happy_path`
-- `validate_*_accepts_*_happy_path` / `validate_*_rejects_blank_sad`
-- `jobs_datatable_*` / `runs_datatable_*` / `extract_status_filter_*` / `resolve_job_filter_*`
-- `dashboard_stats_aggregates_counts_happy_path` / `run_stats_series_24h_includes_success_and_failed_happy_path` / `run_stats_series_all_outside_window_zero_success_sad`
-- `boson_product_workspace_members_happy_path`
+- `dashboard_stats_aggregates_counts_happy_path` / `run_stats_series_all_outside_window_zero_success_sad`
 - `boson_routes_mount_happy_path` / `layout_auth_gate_and_nav_happy_path` / `admin_mutators_require_boson_admin_happy_path`
 
 ## Layer 3 — Cloud + performance
 
 **Waived.** This application workspace; no cloud resources or Criterion benches.
-Correctness is in-process against Boson UF app DTO/mapping contracts only.
+Correctness is in-process against Boson UF app DTO/mapping contracts and the
+lab Playwright host. L0/L1 Boson execution campaigns stay in boson / coordinator.
 
 ## Rustdoc policy
 
@@ -142,3 +162,5 @@ rustdoc with deny flags is pin-dependent on Orbital / host graphs.
 - Happy-path tests are named `*_happy_path` so audits detect them.
 - `BosonRoutes` data loaders call the `#[server]` fns; those fns are thin Higgs
   wrappers over the helpers covered by Layer 1 contract tests.
+- `product_surface` sibling-source needles are secondary regression checks, not
+  a substitute for Layer 2 Playwright.

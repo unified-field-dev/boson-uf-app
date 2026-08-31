@@ -62,7 +62,7 @@ jobs:
         working-directory: ${{ env.APP_WD }}
         run: >
           cargo fmt -p boson-backend -p boson-app -p protected-boson-host
-          -- --check
+          -p boson-uf-app-e2e -- --check
 
   clippy:
     runs-on: ubuntu-latest

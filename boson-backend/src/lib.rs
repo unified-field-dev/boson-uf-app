@@ -15,7 +15,7 @@
 //! - **Ops path encoding** — Builds percent-encoded path segments for `/boson` hrefs via
 //!   [`encode_ops_path_segment`], [`boson_task_path`], [`boson_run_path`], and related
 //!   helpers.
-//! - **DataTable query adapters** — Supports status and quick-search filters for queue and
+//! - **`DataTable` query adapters** — Supports status and quick-search filters for queue and
 //!   run tables via [`apply_jobs_datatable_query`] and [`apply_runs_datatable_query`].
 //!
 //! ## Validate ids
