@@ -14,12 +14,20 @@
 //! ## Errors
 //!
 //! Fallible ops return [`ServerFnError`](leptos::prelude::ServerFnError) (Leptos
-//! boundary). Blank / oversized / path-unsafe ids are rejected by
-//! `boson_backend::validate_*` as [`boson_backend::BosonIdError`] and mapped with
-//! operation context. Detail hrefs use `boson_backend::boson_*_path` helpers so
-//! Orbital `paths::*` format strings cannot smuggle extra path segments. Missing
-//! session, missing Boson coordinator context, and coordinator IO failures are
-//! also `ServerFnError` strings at this boundary.
+//! boundary). Stable message prefixes integrators can match:
+//!
+//! - Auth: `Authentication is required…`, `Email verification is required…`
+//! - Context: `Boson backend not in request context`
+//! - Id validation: [`boson_backend::BosonIdError`] Display text
+//! - Range: `Invalid range_secs:…` ([`boson_backend::BosonInputError`])
+//! - Config update: `Invalid task config update:…`
+//! - Config load: `Failed to load task config:…` / `Task config not found:…`
+//! - Mutators: `Failed to cancel job:…` / `Failed to update config:…`
+//!
+//! Blank / oversized / path-unsafe ids are rejected by `boson_backend::validate_*`
+//! before coordinator IO. Detail hrefs use `boson_backend::boson_*_path` helpers so
+//! Orbital `paths::*` format strings cannot smuggle extra path segments. Failures
+//! are traced once at the server-fn boundary (`operation`, `error_class`, safe ids).
 
 mod dashboard;
 mod gluon_pools;

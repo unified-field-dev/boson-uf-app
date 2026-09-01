@@ -57,7 +57,6 @@ pub fn BosonJobsLiveSource(
     latest_event: RwSignal<Option<Value>>,
 ) -> impl IntoView {
     let _ = (trigger, latest_event);
-    view! {}
 }
 
 /// Placeholder per-job live source — polling refresh is used instead.
@@ -71,7 +70,6 @@ pub fn BosonJobRunLiveSource(
     latest_event: RwSignal<Option<Value>>,
 ) -> impl IntoView {
     let _ = (job_id, trigger, latest_event);
-    view! {}
 }
 
 /// Interval for dashboard KPI polling (no broadcast WS). Only read when the

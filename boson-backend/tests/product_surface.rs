@@ -244,7 +244,7 @@ fn task_config_drop_email_gate_sad_path() {
     let start = tasks
         .find("pub async fn update_task_config")
         .expect("update_task_config");
-    let body = &tasks[start..start + 550.min(tasks.len() - start)];
+    let body = &tasks[start..start + 750.min(tasks.len() - start)];
     assert!(
         body.contains("require_email_verified().await?"),
         "update_task_config must keep require_email_verified"

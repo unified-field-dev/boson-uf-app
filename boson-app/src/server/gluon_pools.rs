@@ -5,14 +5,28 @@
 
 use leptos::prelude::*;
 
+#[cfg(feature = "ssr")]
+use super::helpers::{require_email_verified, require_session, trace_server_result};
 use super::types::GluonPoolPickRow;
 
 /// Lists Gluon virtual pools suitable for Boson task routing.
 #[uf_product_macros::server(permission = "BosonAdmin")]
 pub async fn list_gluon_pools_for_boson_task_config() -> Result<Vec<GluonPoolPickRow>, ServerFnError>
 {
-    let ctx = higgs::Higgs::from_request().await?;
-    super::helpers::require_session(&ctx)?;
-    super::helpers::require_email_verified().await?;
-    Ok(boson_backend::default_gluon_pool_rows())
+    let result = async {
+        let ctx = higgs::Higgs::from_request().await?;
+        require_session(&ctx)?;
+        require_email_verified().await?;
+        Ok(boson_backend::default_gluon_pool_rows())
+    }
+    .await;
+    #[cfg(feature = "ssr")]
+    trace_server_result(
+        "list_gluon_pools_for_boson_task_config",
+        &result,
+        None,
+        None,
+        None,
+    );
+    result
 }

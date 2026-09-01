@@ -19,8 +19,12 @@ view! {
 }
 ```
 
-Crate-root rustdoc owns Organized-by-task, Owns / does not own, the route table,
-and the Examples. Mapping helpers live in `boson-backend`.
+Crate-root rustdoc owns Organized-by-task, Features, the route table, and the
+Examples. Pure mapping and id validation live in `boson-backend`. CI Layer 1
+(SSR clippy/check) and Layer 2 (Playwright) gates are listed in
+`docs/VERIFICATION.md` at the workspace root.
 
 Compose into a host that supplies a Boson coordinator and the auth/context
-extractors the app expects. Enable `ssr` / hydrate to match your host.
+extractors the app expects. Enable `ssr` / `hydrate` to match your host. The
+`e2e-lab` feature is for the Playwright lab host only — do not enable it on
+product hosts.

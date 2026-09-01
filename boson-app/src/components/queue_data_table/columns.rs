@@ -64,7 +64,6 @@ pub fn queue_table_columns(
         let can_cancel = status == JobStatusDto::Queued || status == JobStatusDto::Running;
 
         if !can_cancel {
-            let _: () = view! {};
             return ().into_any();
         }
 

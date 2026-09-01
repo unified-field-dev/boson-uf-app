@@ -81,10 +81,7 @@ pub fn BosonTaskConfigPage() -> impl IntoView {
                                 backoff_multiplier_str=form.backoff_multiplier_str
                             />
                             {move || form.save_error.get().map_or_else(
-                                || {
-                                    let _: () = view! {};
-                                    ().into_any()
-                                },
+                                || ().into_any(),
                                 |e| view! {
                                     <MessageBar intent=MessageBarIntent::Error>{e}</MessageBar>
                                 }.into_any(),

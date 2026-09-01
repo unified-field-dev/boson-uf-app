@@ -1,7 +1,6 @@
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
 use leptos_router::NavigateOptions;
-use orbital::components::{Body1Strong, Text, TextTag};
 use orbital::primitives::{Button, ButtonAppearance, ButtonSize};
 
 /// Action buttons shared by TaskCard and the tasks DataTable actions column.

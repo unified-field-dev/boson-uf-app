@@ -182,3 +182,125 @@ pub fn boson_run_path(run_id: &str) -> String {
 pub fn boson_runs_job_filter_path(job_id: &str) -> String {
     format!("/boson/runs?job={}", encode_ops_path_segment(job_id))
 }
+
+/// Dashboard chart window: last 24 hours (seconds).
+pub const RANGE_SECS_24H: i64 = 86_400;
+/// Dashboard chart window: last 7 days (seconds).
+pub const RANGE_SECS_7D: i64 = 604_800;
+
+/// Inclusive priority bounds accepted by the ops UI config update.
+pub const MIN_TASK_PRIORITY: i32 = -1_000;
+/// Inclusive priority bounds accepted by the ops UI config update.
+pub const MAX_TASK_PRIORITY: i32 = 10_000;
+/// Maximum retry attempts (including the first try) accepted from the UI.
+pub const MAX_RETRY_ATTEMPTS: u32 = 100;
+/// Maximum backoff delay (ms) accepted from the UI.
+pub const MAX_RETRY_DELAY_MS: u64 = 86_400_000;
+/// Maximum Unicode scalar count for a pool name in a config update.
+pub const MAX_POOL_NAME_CHARS: usize = 128;
+
+/// Invalid dashboard range or task-config update field rejected at the server boundary.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum BosonInputError {
+    /// `range_secs` was not an allowed dashboard window.
+    InvalidRangeSecs,
+    /// Priority was outside [`MIN_TASK_PRIORITY`]..=[`MAX_TASK_PRIORITY`].
+    PriorityOutOfRange,
+    /// Pool string was blank, oversized, or path-unsafe.
+    InvalidPool,
+    /// Retry `max_attempts` was zero or above [`MAX_RETRY_ATTEMPTS`].
+    InvalidMaxAttempts,
+    /// Retry delay fields exceeded [`MAX_RETRY_DELAY_MS`].
+    InvalidRetryDelay,
+    /// Retry backoff multiplier was non-finite or not positive.
+    InvalidBackoffMultiplier,
+}
+
+impl std::fmt::Display for BosonInputError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::InvalidRangeSecs => write!(
+                f,
+                "Invalid range_secs: expected {RANGE_SECS_24H} (24h) or {RANGE_SECS_7D} (7d)"
+            ),
+            Self::PriorityOutOfRange => write!(
+                f,
+                "Invalid task config update: priority must be between {MIN_TASK_PRIORITY} and {MAX_TASK_PRIORITY}"
+            ),
+            Self::InvalidPool => write!(
+                f,
+                "Invalid task config update: pool must be a non-empty path-safe name"
+            ),
+            Self::InvalidMaxAttempts => write!(
+                f,
+                "Invalid task config update: max_attempts must be between 1 and {MAX_RETRY_ATTEMPTS}"
+            ),
+            Self::InvalidRetryDelay => write!(
+                f,
+                "Invalid task config update: retry delays must be at most {MAX_RETRY_DELAY_MS} ms"
+            ),
+            Self::InvalidBackoffMultiplier => write!(
+                f,
+                "Invalid task config update: backoff_multiplier must be a finite positive number"
+            ),
+        }
+    }
+}
+
+impl std::error::Error for BosonInputError {}
+
+/// Accepts only the dashboard chart windows the UI exposes (24h / 7d).
+///
+/// # Errors
+///
+/// Returns [`BosonInputError::InvalidRangeSecs`] when `range_secs` is not
+/// [`RANGE_SECS_24H`] or [`RANGE_SECS_7D`].
+pub const fn validate_range_secs(range_secs: i64) -> Result<(), BosonInputError> {
+    if range_secs == RANGE_SECS_24H || range_secs == RANGE_SECS_7D {
+        Ok(())
+    } else {
+        Err(BosonInputError::InvalidRangeSecs)
+    }
+}
+
+/// Validates optional fields on a partial task-config update before apply/upsert.
+///
+/// Unset (`None`) fields are skipped. Set fields must stay within ops UI bounds.
+///
+/// # Errors
+///
+/// Returns a [`BosonInputError`] variant when priority, pool, or retry policy
+/// fields are out of range or path-unsafe.
+pub fn validate_task_config_update(
+    req: &crate::types::UpdateTaskConfigRequest,
+) -> Result<(), BosonInputError> {
+    if let Some(priority) = req.priority {
+        if !(MIN_TASK_PRIORITY..=MAX_TASK_PRIORITY).contains(&priority) {
+            return Err(BosonInputError::PriorityOutOfRange);
+        }
+    }
+    if let Some(ref pool) = req.pool {
+        let trimmed = pool.trim();
+        if trimmed.is_empty()
+            || trimmed.chars().count() > MAX_POOL_NAME_CHARS
+            || trimmed == "."
+            || trimmed == ".."
+            || trimmed.chars().any(is_unsafe_ops_id_char)
+        {
+            return Err(BosonInputError::InvalidPool);
+        }
+    }
+    if let Some(ref retry) = req.retry_policy {
+        if retry.max_attempts == 0 || retry.max_attempts > MAX_RETRY_ATTEMPTS {
+            return Err(BosonInputError::InvalidMaxAttempts);
+        }
+        if retry.base_delay_ms > MAX_RETRY_DELAY_MS || retry.max_delay_ms > MAX_RETRY_DELAY_MS {
+            return Err(BosonInputError::InvalidRetryDelay);
+        }
+        if !retry.backoff_multiplier.is_finite() || retry.backoff_multiplier <= 0.0 {
+            return Err(BosonInputError::InvalidBackoffMultiplier);
+        }
+    }
+    Ok(())
+}

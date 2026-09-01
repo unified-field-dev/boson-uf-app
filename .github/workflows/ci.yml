@@ -1,7 +1,7 @@
 # PR / merge gate aligned with docs/VERIFICATION.md (boson-backend + teaching
-# host). Path deps assume a Unified Field sibling checkout layout; CI places
-# this repo under that path and shallow-clones siblings.
-# boson-app / Orbital UI compile stays local (see VERIFICATION.md).
+# host + boson-app SSR + Playwright Layer 2). Path deps assume a Unified Field
+# sibling checkout layout; CI places this repo under that path and shallow-clones
+# siblings.
 name: CI
 
 on:
@@ -16,6 +16,8 @@ env:
   CARGO_TERM_COLOR: always
   CARGO_BUILD_JOBS: 1
   CARGO_TARGET_DIR: target-boson-uf-app
+  CARGO_INCREMENTAL: 0
+  CARGO_PROFILE_DEV_DEBUG: "0"
   RUST_BACKTRACE: 1
   # Leptos workspace deps enable the `nightly` feature.
   RUSTFLAGS: "-D warnings"
@@ -50,10 +52,9 @@ jobs:
           clone photon-leptos "${UF_ROOT}/L1-host-stack-kits/photon-leptos"
           clone unified-field-product "${UF_ROOT}/L2-product-platform/unified-field-product"
           clone uf-notifications "${UF_ROOT}/L2-product-platform/uf-notifications"
-          # Workspace member boson-app path-depends on lepton-shell.
           clone lepton-uf-app "${UF_ROOT}/L2-product-platform/lepton-uf-app"
-          # Workspace deps: gauge (ssr optional) + Higgs (path deps).
           clone gauge "${UF_ROOT}/L2-product-platform/gauge"
+          clone record-history "${UF_ROOT}/L2-product-platform/record-history"
       - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c # master (pin)
         with:
           toolchain: nightly
@@ -93,16 +94,21 @@ jobs:
           clone uf-notifications "${UF_ROOT}/L2-product-platform/uf-notifications"
           clone lepton-uf-app "${UF_ROOT}/L2-product-platform/lepton-uf-app"
           clone gauge "${UF_ROOT}/L2-product-platform/gauge"
+          clone record-history "${UF_ROOT}/L2-product-platform/record-history"
       - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c # master (pin)
         with:
           toolchain: nightly
           components: clippy
-      # Preferred path from VERIFICATION.md (clippy -D warnings).
-      - name: cargo clippy (boson-backend + teaching host)
+      - name: cargo clippy (backend + teaching host)
         working-directory: ${{ env.APP_WD }}
         run: |
           cargo clippy -p boson-backend --all-targets -- -D warnings
           cargo clippy -p protected-boson-host --all-targets -- -D warnings
+      - name: cargo clippy (boson-app SSR)
+        working-directory: ${{ env.APP_WD }}
+        run: |
+          # boson-uf-app-e2e is a lab harness (expect-heavy); skip clippy there (chronon pattern).
+          cargo clippy -p boson-app --features ssr --all-targets -- -D warnings
 
   test:
     runs-on: ubuntu-latest
@@ -133,20 +139,103 @@ jobs:
           clone uf-notifications "${UF_ROOT}/L2-product-platform/uf-notifications"
           clone lepton-uf-app "${UF_ROOT}/L2-product-platform/lepton-uf-app"
           clone gauge "${UF_ROOT}/L2-product-platform/gauge"
+          clone record-history "${UF_ROOT}/L2-product-platform/record-history"
       - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c # master (pin)
         with:
           toolchain: nightly
+          targets: wasm32-unknown-unknown
       - name: cargo test (sibling-source UI contracts)
         working-directory: ${{ env.APP_WD }}
         run: cargo test -p boson-backend --test workspace_members --test product_surface
       - name: cargo test (boson-backend contracts)
         working-directory: ${{ env.APP_WD }}
         run: cargo test -p boson-backend
+      - name: cargo check (boson-app + e2e host SSR)
+        working-directory: ${{ env.APP_WD }}
+        run: |
+          cargo check -p boson-app --features ssr
+          cargo check -p boson-uf-app-e2e --features ssr
       - name: cargo check + run (protected-boson-host)
         working-directory: ${{ env.APP_WD }}
         run: |
           cargo check -p protected-boson-host
           cargo run -p protected-boson-host
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout boson-uf-app into unified-field layout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          path: ${{ env.APP_WD }}
+      - name: Checkout path-dep / patch siblings
+        run: |
+          set -euo pipefail
+          clone() {
+            local repo="$1" dest="$2"
+            git clone --depth 1 "https://github.com/deathbreakfast/${repo}.git" "${dest}"
+          }
+          clone valence "${UF_ROOT}/L0-upstream-cores/valence"
+          clone orbital "${UF_ROOT}/L0-upstream-cores/orbital"
+          clone chronon "${UF_ROOT}/L0-upstream-cores/chronon"
+          clone photon "${UF_ROOT}/L0-upstream-cores/photon"
+          clone boson "${UF_ROOT}/L0-upstream-cores/boson"
+          clone higgs "${UF_ROOT}/L1-host-stack-kits/higgs"
+          clone lepton "${UF_ROOT}/L1-host-stack-kits/lepton"
+          clone chronon-coordinator-macros "${UF_ROOT}/L1-host-stack-kits/chronon-coordinator-macros"
+          clone chronon-valence-identity "${UF_ROOT}/L1-host-stack-kits/chronon-valence-identity"
+          clone boson-valence-identity "${UF_ROOT}/L1-host-stack-kits/boson-valence-identity"
+          clone photon-leptos "${UF_ROOT}/L1-host-stack-kits/photon-leptos"
+          clone unified-field-product "${UF_ROOT}/L2-product-platform/unified-field-product"
+          clone uf-notifications "${UF_ROOT}/L2-product-platform/uf-notifications"
+          clone lepton-uf-app "${UF_ROOT}/L2-product-platform/lepton-uf-app"
+          clone gauge "${UF_ROOT}/L2-product-platform/gauge"
+          clone record-history "${UF_ROOT}/L2-product-platform/record-history"
+      - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c # master (pin)
+        with:
+          toolchain: nightly
+          targets: wasm32-unknown-unknown
+      - name: Install cargo-leptos
+        run: cargo install cargo-leptos --locked --version 0.3.6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: ${{ env.APP_WD }}/boson-uf-app-e2e/end2end/package-lock.json
+      - name: Install npm dependencies
+        working-directory: ${{ env.APP_WD }}/boson-uf-app-e2e/end2end
+        run: npm ci
+      - name: Get Playwright version
+        id: pw-version
+        working-directory: ${{ env.APP_WD }}/boson-uf-app-e2e/end2end
+        run: echo "version=$(node -p "require('./package-lock.json').packages['node_modules/@playwright/test'].version")" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw-version.outputs.version }}-boson-uf-app
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        working-directory: ${{ env.APP_WD }}/boson-uf-app-e2e/end2end
+        run: npx playwright install --with-deps chromium
+      - name: Install Playwright OS deps when cache hit
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        working-directory: ${{ env.APP_WD }}/boson-uf-app-e2e/end2end
+        run: npx playwright install-deps chromium
+      - name: cargo leptos end-to-end
+        working-directory: ${{ env.APP_WD }}
+        env:
+          CI: true
+        run: cargo leptos end-to-end --project boson-uf-app-e2e
+      - name: Upload Playwright artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts-boson-uf-app-${{ github.run_id }}
+          path: |
+            ${{ env.APP_WD }}/boson-uf-app-e2e/end2end/playwright-report/
+            ${{ env.APP_WD }}/boson-uf-app-e2e/end2end/test-results/
+          if-no-files-found: ignore
 
   docs:
     runs-on: ubuntu-latest
@@ -177,6 +266,7 @@ jobs:
           clone uf-notifications "${UF_ROOT}/L2-product-platform/uf-notifications"
           clone lepton-uf-app "${UF_ROOT}/L2-product-platform/lepton-uf-app"
           clone gauge "${UF_ROOT}/L2-product-platform/gauge"
+          clone record-history "${UF_ROOT}/L2-product-platform/record-history"
       - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c # master (pin)
         with:
           toolchain: nightly

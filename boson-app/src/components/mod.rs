@@ -1,4 +1,7 @@
-// Boson UI components
+//! Shared Boson UI building blocks (tables, badges, help, motion).
+//!
+//! Pages under [`crate::pages`] compose these with Orbital layouts. Prefer crate-root
+//! rustdoc for operator workflows; this module is the inventory of reusable pieces.
 
 mod back_link;
 mod card_surface;
@@ -15,9 +18,11 @@ mod task_summary_panel;
 mod tasks_data_table;
 
 pub use back_link::BosonBackLink;
-pub use card_surface::{
-    boson_table_page_layout, BosonCardContent, BosonDataTableShell, BosonTablePageClasses,
-};
+pub use card_surface::{boson_table_page_layout, BosonCardContent, BosonDataTableShell};
+// Re-export layout class bundle for hosts / pages that type the return of
+// `boson_table_page_layout` explicitly (not always named in-crate).
+#[allow(unused_imports)]
+pub use card_surface::BosonTablePageClasses;
 pub use data_table_loading::BosonDataTableRefetchSkeleton;
 pub use help::{
     attempt_help, backoff_multiplier_help, basic_config_help, defaults_help, duration_help,

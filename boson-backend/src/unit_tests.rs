@@ -542,3 +542,125 @@ fn job_status_dto_serde_roundtrip_happy_path() {
     let back: JobStatusDto = serde_json::from_str(&json).expect("deserialize");
     assert_eq!(back, JobStatusDto::Queued);
 }
+
+#[test]
+fn validate_range_secs_accepts_ui_windows_happy_path() {
+    validate_range_secs(RANGE_SECS_24H).expect("24h");
+    validate_range_secs(RANGE_SECS_7D).expect("7d");
+}
+
+#[test]
+fn validate_range_secs_rejects_other_values_sad() {
+    assert_eq!(
+        validate_range_secs(0).expect_err("zero"),
+        BosonInputError::InvalidRangeSecs
+    );
+    assert_eq!(
+        validate_range_secs(-1).expect_err("negative"),
+        BosonInputError::InvalidRangeSecs
+    );
+    assert_eq!(
+        validate_range_secs(86_401).expect_err("near 24h"),
+        BosonInputError::InvalidRangeSecs
+    );
+    assert!(BosonInputError::InvalidRangeSecs
+        .to_string()
+        .starts_with("Invalid range_secs:"));
+}
+
+#[test]
+fn validate_task_config_update_accepts_in_range_happy_path() {
+    let req = UpdateTaskConfigRequest {
+        priority: Some(10),
+        pool: Some("global".into()),
+        retry_policy: Some(RetryPolicyDto {
+            max_attempts: 5,
+            base_delay_ms: 100,
+            backoff_multiplier: 2.0,
+            max_delay_ms: 1_000,
+        }),
+    };
+    validate_task_config_update(&req).expect("in range");
+    validate_task_config_update(&UpdateTaskConfigRequest {
+        priority: None,
+        pool: None,
+        retry_policy: None,
+    })
+    .expect("empty update");
+}
+
+#[test]
+fn validate_task_config_update_rejects_out_of_range_sad() {
+    assert_eq!(
+        validate_task_config_update(&UpdateTaskConfigRequest {
+            priority: Some(MAX_TASK_PRIORITY + 1),
+            pool: None,
+            retry_policy: None,
+        })
+        .expect_err("priority"),
+        BosonInputError::PriorityOutOfRange
+    );
+    assert_eq!(
+        validate_task_config_update(&UpdateTaskConfigRequest {
+            priority: None,
+            pool: Some("a/b".into()),
+            retry_policy: None,
+        })
+        .expect_err("pool"),
+        BosonInputError::InvalidPool
+    );
+    assert_eq!(
+        validate_task_config_update(&UpdateTaskConfigRequest {
+            priority: None,
+            pool: Some(String::new()),
+            retry_policy: None,
+        })
+        .expect_err("blank pool"),
+        BosonInputError::InvalidPool
+    );
+    assert_eq!(
+        validate_task_config_update(&UpdateTaskConfigRequest {
+            priority: None,
+            pool: None,
+            retry_policy: Some(RetryPolicyDto {
+                max_attempts: 0,
+                base_delay_ms: 1,
+                backoff_multiplier: 2.0,
+                max_delay_ms: 10,
+            }),
+        })
+        .expect_err("attempts"),
+        BosonInputError::InvalidMaxAttempts
+    );
+    assert_eq!(
+        validate_task_config_update(&UpdateTaskConfigRequest {
+            priority: None,
+            pool: None,
+            retry_policy: Some(RetryPolicyDto {
+                max_attempts: 3,
+                base_delay_ms: MAX_RETRY_DELAY_MS + 1,
+                backoff_multiplier: 2.0,
+                max_delay_ms: 10,
+            }),
+        })
+        .expect_err("delay"),
+        BosonInputError::InvalidRetryDelay
+    );
+    assert_eq!(
+        validate_task_config_update(&UpdateTaskConfigRequest {
+            priority: None,
+            pool: None,
+            retry_policy: Some(RetryPolicyDto {
+                max_attempts: 3,
+                base_delay_ms: 1,
+                backoff_multiplier: 0.0,
+                max_delay_ms: 10,
+            }),
+        })
+        .expect_err("multiplier"),
+        BosonInputError::InvalidBackoffMultiplier
+    );
+    assert!(BosonInputError::PriorityOutOfRange
+        .to_string()
+        .starts_with("Invalid task config update:"));
+}

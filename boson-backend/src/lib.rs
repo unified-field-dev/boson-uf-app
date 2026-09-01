@@ -180,8 +180,10 @@ pub use types::{
 };
 pub use validate::{
     boson_run_path, boson_runs_job_filter_path, boson_task_config_path, boson_task_path,
-    encode_ops_path_segment, validate_job_id, validate_run_id, validate_task_name, BosonIdError,
-    MAX_BOSON_ID_CHARS,
+    encode_ops_path_segment, validate_job_id, validate_range_secs, validate_run_id,
+    validate_task_config_update, validate_task_name, BosonIdError, BosonInputError,
+    MAX_BOSON_ID_CHARS, MAX_POOL_NAME_CHARS, MAX_RETRY_ATTEMPTS, MAX_RETRY_DELAY_MS,
+    MAX_TASK_PRIORITY, MIN_TASK_PRIORITY, RANGE_SECS_24H, RANGE_SECS_7D,
 };
 
 #[cfg(test)]

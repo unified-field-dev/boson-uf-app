@@ -1,3 +1,8 @@
+//! Boson ops route pages mounted under `/boson`.
+//!
+//! Each page is a Leptos view composed with Orbital primitives. Server data comes from
+//! [`crate::server`]. Prefer crate-root rustdoc for mount and server-fn teaching examples.
+
 pub mod dashboard;
 pub mod queue;
 pub mod run_detail;

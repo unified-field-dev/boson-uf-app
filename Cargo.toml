@@ -101,6 +101,7 @@ turf = "0.10"
 anyhow = "1"
 async-trait = "0.1"
 log = "0.4"
+tracing = { version = "0.1", default-features = false }
 tower-sessions = "0.14.0"
 
 boson = { package = "uf-boson", git = "https://github.com/unified-field-dev/boson", branch = "main", default-features = false }
@@ -136,18 +137,20 @@ lepton-auth = { git = "https://github.com/unified-field-dev/lepton", branch = "m
 [patch."https://github.com/deathbreakfast/gauge"]
 gauge = { path = "../../L2-product-platform/gauge/gauge" }
 
-# Unify crates.io uf-valence / chronon / orbital / boson onto the git tree
+# Unify crates.io uf-valence / chronon / orbital / boson onto monorepo checkouts
 # (avoids duplicate ThemeInjection / Valence types — lepton-auth-ui pulls crates.io orbital).
+# Path-patch valence so gauge PermissionHistory codegen matches the L0 checkout CI clones
+# (git tip uf-valence-codegen has been failing that schema with "expected square brackets").
 [patch.crates-io]
-uf-valence = { git = "https://github.com/unified-field-dev/valence", branch = "main" }
-uf-valence-core = { git = "https://github.com/unified-field-dev/valence", branch = "main" }
-uf-valence-codegen = { git = "https://github.com/unified-field-dev/valence", branch = "main" }
-uf-valence-macros = { git = "https://github.com/unified-field-dev/valence", branch = "main" }
-uf-valence-telemetry = { git = "https://github.com/unified-field-dev/valence", branch = "main" }
-uf-valence-backend-mem = { git = "https://github.com/unified-field-dev/valence", branch = "main" }
-uf-valence-backend-sqlite = { git = "https://github.com/unified-field-dev/valence", branch = "main" }
-uf-valence-backend-sql = { git = "https://github.com/unified-field-dev/valence", branch = "main" }
-uf-valence-schema-dsl = { git = "https://github.com/unified-field-dev/valence", branch = "main" }
+uf-valence = { path = "../../L0-upstream-cores/valence/valence" }
+uf-valence-core = { path = "../../L0-upstream-cores/valence/valence-core" }
+uf-valence-codegen = { path = "../../L0-upstream-cores/valence/valence-codegen" }
+uf-valence-macros = { path = "../../L0-upstream-cores/valence/valence-macros" }
+uf-valence-telemetry = { path = "../../L0-upstream-cores/valence/valence-telemetry" }
+uf-valence-backend-mem = { path = "../../L0-upstream-cores/valence/valence-backend-mem" }
+uf-valence-backend-sqlite = { path = "../../L0-upstream-cores/valence/valence-backend-sqlite" }
+uf-valence-backend-sql = { path = "../../L0-upstream-cores/valence/valence-backend-sql" }
+uf-valence-schema-dsl = { path = "../../L0-upstream-cores/valence/valence-schema-dsl" }
 chronon-core = { git = "https://github.com/unified-field-dev/chronon", branch = "main" }
 chronon-executor = { git = "https://github.com/unified-field-dev/chronon", branch = "main" }
 chronon-scheduler = { git = "https://github.com/unified-field-dev/chronon", branch = "main" }
@@ -176,3 +179,14 @@ orbital-discussion = { git = "https://github.com/unified-field-dev/orbital", bra
 orbital-history = { git = "https://github.com/unified-field-dev/orbital", branch = "main" }
 orbital-markdown = { git = "https://github.com/unified-field-dev/orbital", branch = "main" }
 orbital-style = { git = "https://github.com/unified-field-dev/orbital", branch = "main" }
+
+[patch."https://github.com/unified-field-dev/valence"]
+uf-valence = { path = "../../L0-upstream-cores/valence/valence" }
+uf-valence-core = { path = "../../L0-upstream-cores/valence/valence-core" }
+uf-valence-codegen = { path = "../../L0-upstream-cores/valence/valence-codegen" }
+uf-valence-macros = { path = "../../L0-upstream-cores/valence/valence-macros" }
+uf-valence-telemetry = { path = "../../L0-upstream-cores/valence/valence-telemetry" }
+uf-valence-backend-mem = { path = "../../L0-upstream-cores/valence/valence-backend-mem" }
+uf-valence-backend-sqlite = { path = "../../L0-upstream-cores/valence/valence-backend-sqlite" }
+uf-valence-backend-sql = { path = "../../L0-upstream-cores/valence/valence-backend-sql" }
+uf-valence-schema-dsl = { path = "../../L0-upstream-cores/valence/valence-schema-dsl" }

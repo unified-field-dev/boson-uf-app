@@ -32,9 +32,9 @@ Orbital / `uf-product` belong to a composite product host or `boson-uf-app-e2e`)
 
 ## Layer 1 — Unit + integration (CI)
 
-GitHub Actions (`.github/workflows/ci.yml`) covers this Layer 1 subset plus the
-teaching host and boson-backend rustdoc gate below. It does not build
-`boson-app` (Leptos UI / SSR).
+GitHub Actions (`.github/workflows/ci.yml`) covers Layer 1 (backend contracts,
+teaching host, **and** `boson-app` / `boson-uf-app-e2e` SSR check + clippy) plus
+the boson-backend rustdoc gate and the Layer 2 Playwright job below.
 
 Sibling-source UI contracts (no Orbital / `boson-app` compile):
 
@@ -42,19 +42,27 @@ Sibling-source UI contracts (no Orbital / `boson-app` compile):
 cargo test -p boson-backend --test workspace_members --test product_surface
 ```
 
-Backend contracts (preferred path; no UI graph):
+Backend + SSR surface (preferred CI path):
 
 ```bash
 cargo fmt -p boson-backend -p boson-app -p protected-boson-host -p boson-uf-app-e2e -- --check
 cargo clippy -p boson-backend --all-targets -- -D warnings
 cargo clippy -p protected-boson-host --all-targets -- -D warnings
+cargo clippy -p boson-app --features ssr --all-targets -- -D warnings
+# boson-uf-app-e2e lab harness is expect-heavy; skip clippy (same as chronon-uf-app-e2e).
 cargo test -p boson-backend
+cargo check -p boson-app --features ssr
+cargo check -p boson-uf-app-e2e --features ssr
 ```
-
 `cargo fmt --all` can fail when a sibling checkout sits outside this workspace;
 package-scoped fmt is the honest local gate.
 
-Full workspace (includes `boson-app` UI). May fail when the sibling
+SSR compile needs a green sibling `gauge` checkout (path-patched from
+`L2-product-platform/gauge`). If `PermissionHistory` (or other gauge codegen) is
+missing, fix gauge / `record-history` first — that is not a Boson backend
+contract gap.
+
+Full workspace (includes hydrate UI). May fail when the sibling
 `uf-product` / `uf-integrations` UI graph does not compile — that is a
 host-product UI issue, not a Boson backend contract gap.
 Surface needles for routes, nav testids, `RequireAuthenticated`, and
@@ -64,7 +72,6 @@ primary for operator UI).
 ```bash
 cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
-# Host-aligned SSR surface (when UI graph compiles):
 cargo test -p boson-app --features ssr
 ```
 
@@ -87,15 +94,15 @@ export RUSTFLAGS="-D warnings -Zcrate-attr=feature(stdarch_x86_avx512)"
 cargo dylint --all -p boson-app --no-deps -- --features hydrate
 ```
 
-Hard CI job deferred: `boson-app` hydrate still depends on the Orbital / host
-graph (same pin risk as UI compile in Layer 1). Run locally when that graph is
-green.
+Hard CI job for hydrate-only dylint remains deferred (Orbital / host pin risk).
+Run locally when that graph is green.
 
 ## Layer 2 — E2E (lab host + Playwright)
 
 Primary operator-UI gate. Dedicated lab host mounts eager `BosonRoutes` pages
 (same components as production Lazy routes), mem Valence, Higgs session injection,
-and MemQueue `CoordinatorAdapter`. Port `127.0.0.1:3170`.
+and MemQueue `CoordinatorAdapter`. Port `127.0.0.1:3170`. The lab enables
+`boson-app/e2e-lab` for email-verification seed overrides.
 
 ```bash
 export CARGO_BUILD_JOBS=1
@@ -115,11 +122,9 @@ Scenario IDs (validating happy + sad):
 - `pw-boson-task-config-happy-admin-save` / `pw-boson-task-config-sad-unverified-email`
 - `pw-boson-runs-happy-list-detail` / `pw-boson-runs-sad-unknown-run`
 
-Local gate (2026-08-31): `cargo leptos end-to-end --project boson-uf-app-e2e`
-reported **12 passed**. Workspace `Cargo.toml` patches crates.io orbital onto
-uf-dev git so `ThemeInjection` is a single type (same pattern as lepton-uf-app).
-Hard CI job for this hydrate graph may stay local/manual until the pin is
-stable; Layer 2 is no longer waived as “helpers substitute for UI.”
+CI runs the same `cargo leptos end-to-end --project boson-uf-app-e2e` job on
+every PR and push to main (lepton/neutrino parity). Workspace `Cargo.toml`
+patches crates.io orbital onto uf-dev git so `ThemeInjection` is a single type.
 
 Layer 1 helper contracts remain the mapping gate:
 
@@ -128,6 +133,7 @@ Layer 1 helper contracts remain the mapping gate:
 - `cancel_job_list_entry_resolves_happy_path` / `cancel_job_unknown_id_is_none_sad`
 - `tasks_page_filters_by_query_happy_path` / `tasks_page_filters_unknown_query_empty_sad`
 - `dashboard_stats_aggregates_counts_happy_path` / `run_stats_series_all_outside_window_zero_success_sad`
+- `validate_range_secs_*` / `validate_task_config_update_*`
 - `boson_routes_mount_happy_path` / `layout_auth_gate_and_nav_happy_path` / `admin_mutators_require_boson_admin_happy_path`
 
 ## Layer 3 — Cloud + performance
@@ -153,10 +159,12 @@ rustdoc with deny flags is pin-dependent on Orbital / host graphs.
 ## Notes
 
 - Prefer `cargo test -p boson-backend` for backend contract CI when the UI
-  dependency graph (`uf-product` via `uf-integrations` / `lepton-shell`) fails to
-  compile — report that separately from Boson contract results.
+  dependency graph (`uf-product` via `uf-integrations` / `lepton-shell` / `gauge`)
+  fails to compile — report that separately from Boson contract results.
 - Tests may `unwrap`/`expect`; production server fns map failures to `ServerFnError`
-  (no ordinary-path unwrap).
+  (no ordinary-path unwrap). Task config load fails closed (`Failed to load task
+  config:…`); dashboard `range_secs` and config updates are validated at the
+  boundary.
 - Sad-path assertions check message content or `None` / empty — stronger than
   `is_err()` alone.
 - Happy-path tests are named `*_happy_path` so audits detect them.
@@ -164,3 +172,4 @@ rustdoc with deny flags is pin-dependent on Orbital / host graphs.
   wrappers over the helpers covered by Layer 1 contract tests.
 - `product_surface` sibling-source needles are secondary regression checks, not
   a substitute for Layer 2 Playwright.
+- Product hosts must **not** enable `boson-app/e2e-lab` (lab email override).

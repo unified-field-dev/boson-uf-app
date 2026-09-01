@@ -80,8 +80,10 @@
 //! ```
 //!
 //! On success `stats` carries `task_count`, `jobs_queued`, `jobs_running`, and `runs_today`;
-//! `series` holds chart buckets for successful and failed runs. Blank or unsafe path ids are
-//! rejected by `boson_backend::validate_*` before coordinator IO.
+//! `series` holds chart buckets for successful and failed runs. `range_secs` must be
+//! `86_400` (24h) or `604_800` (7d); other values return `Invalid range_secs:…`.
+//! Blank or unsafe path ids are rejected by `boson_backend::validate_*` before
+//! coordinator IO.
 //!
 //! ## Browse tasks
 //!
@@ -115,7 +117,8 @@
 //!
 //! On success the index returns sorted [`TaskSummary`] rows and detail resolves one task
 //! or maps a missing name to a server error. Config updates persist through the coordinator
-//! after validation.
+//! after validation. Task list/detail fail closed when task config cannot be loaded
+//! (`Failed to load task config:…`) instead of substituting silent defaults.
 //!
 //! ## Inspect queue
 //!
@@ -197,15 +200,17 @@
 //!
 //! - [`BosonLayout`] — shared app bar / nav shell wrapping every route.
 //! - [`mod@server`] — server functions and DTOs backing the UI.
+//! - [`mod@pages`] — route page components (dashboard, tasks, queue, runs).
+//! - [`mod@components`] — shared Orbital-composed UI pieces (tables, badges, help).
 //! - [`permissions::BosonPermission`] — permission manifest for `BosonAdmin`.
 //! - [`live`] / [`photon_ws`] — client poll-tick and SSR route merge for live updates.
 //! - `boson_backend` — id validation and pure mapping helpers used by these server fns.
+//! - Workspace `docs/VERIFICATION.md` — Layer 1 unit/integ and Layer 2 Playwright CI gates.
 
 #![allow(missing_docs)]
-#![cfg_attr(
-    feature = "ssr",
-    allow(dead_code, unused_imports, unused_variables, unknown_lints)
-)]
+// Orbital / Leptos macros leave cfg-gated items that look unused under `ssr` alone;
+// keep the allow narrow to unknown_lints (workspace also allows unknown_lints).
+#![cfg_attr(feature = "ssr", allow(unknown_lints))]
 use leptos::prelude::*;
 use leptos_router::{
     components::{ParentRoute, Route},
@@ -214,7 +219,7 @@ use leptos_router::{
 use uf_product_macros::uf_app;
 
 mod components;
-/// Lab-only overrides for `boson-uf-app-e2e` (no-ops unless seed setters run).
+/// Lab-only overrides for `boson-uf-app-e2e` (setters require feature `e2e-lab`).
 pub mod e2e_lab;
 mod layout;
 mod lazy_routes;
