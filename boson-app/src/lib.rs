@@ -69,8 +69,10 @@
 //! use boson_app::{
 //!     BosonRootPage, get_dashboard_stats, get_run_stats_series, DashboardStats,
 //! };
+//! use leptos::prelude::*;
 //!
 //! // BosonRootPage calls these on each SSR render:
+//! view! { <BosonRootPage /> };
 //! let stats: DashboardStats = get_dashboard_stats().await?;
 //! assert_eq!(stats.task_count, 3);
 //! assert_eq!(stats.jobs_queued, 5);
@@ -100,8 +102,10 @@
 //!     BosonTasksIndexPage, get_tasks, get_task, update_task_config, TaskSummary,
 //! };
 //! use boson_backend::UpdateTaskConfigRequest;
+//! use leptos::prelude::*;
 //!
 //! // BosonTasksIndexPage loads get_tasks for the index:
+//! view! { <BosonTasksIndexPage /> };
 //! let tasks: Vec<TaskSummary> = get_tasks().await?;
 //! assert_eq!(tasks.first().map(|t| t.name.as_str()), Some("orders.task"));
 //!
@@ -131,8 +135,10 @@
 //!
 //! ```rust,ignore
 //! use boson_app::{BosonQueuePage, list_jobs_page, cancel_job, JobSummary};
+//! use leptos::prelude::*;
 //!
 //! // BosonQueuePage loads list_jobs_page with optional status filters:
+//! view! { <BosonQueuePage /> };
 //! let page = list_jobs_page(0, 20, None).await?;
 //! let first: &JobSummary = page.items.first().expect("queued job");
 //! assert_eq!(first.job_id, "job-1");
@@ -155,8 +161,10 @@
 //!
 //! ```rust,ignore
 //! use boson_app::{BosonRunsIndexPage, list_runs_page, get_run, RunSummary};
+//! use leptos::prelude::*;
 //!
 //! // BosonRunsIndexPage loads list_runs_page with optional filters:
+//! view! { <BosonRunsIndexPage /> };
 //! let page = list_runs_page(0, 20, None).await?;
 //! let first: &RunSummary = page.items.first().expect("run row");
 //! assert_eq!(first.run_id, "run-1");
@@ -201,7 +209,7 @@
 //! - [`BosonLayout`] — shared app bar / nav shell wrapping every route.
 //! - [`mod@server`] — server functions and DTOs backing the UI.
 //! - [`mod@pages`] — route page components (dashboard, tasks, queue, runs).
-//! - [`mod@components`] — shared Orbital-composed UI pieces (tables, badges, help).
+//! - `components` — shared Orbital-composed UI pieces (tables, badges, help).
 //! - [`permissions::BosonPermission`] — permission manifest for `BosonAdmin`.
 //! - [`live`] / [`photon_ws`] — client poll-tick and SSR route merge for live updates.
 //! - `boson_backend` — id validation and pure mapping helpers used by these server fns.

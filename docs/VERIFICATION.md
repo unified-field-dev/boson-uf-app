@@ -133,7 +133,7 @@ Layer 1 helper contracts remain the mapping gate:
 - `cancel_job_list_entry_resolves_happy_path` / `cancel_job_unknown_id_is_none_sad`
 - `tasks_page_filters_by_query_happy_path` / `tasks_page_filters_unknown_query_empty_sad`
 - `dashboard_stats_aggregates_counts_happy_path` / `run_stats_series_all_outside_window_zero_success_sad`
-- `validate_range_secs_*` / `validate_task_config_update_*`
+- `validate_range_secs_*` / `validate_task_config_update_*` / `format_task_config_load_error_*`
 - `boson_routes_mount_happy_path` / `layout_auth_gate_and_nav_happy_path` / `admin_mutators_require_boson_admin_happy_path`
 
 ## Layer 3 — Cloud + performance

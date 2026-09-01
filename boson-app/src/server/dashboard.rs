@@ -2,7 +2,9 @@
 
 use leptos::prelude::*;
 
-use super::types::{DashboardChartSeries, DashboardStats, BOSON_LIST_FETCH_CAP};
+#[cfg(feature = "ssr")]
+use super::types::BOSON_LIST_FETCH_CAP;
+use super::types::{DashboardChartSeries, DashboardStats};
 
 #[cfg(feature = "ssr")]
 use super::helpers::{require_session, trace_server_result};

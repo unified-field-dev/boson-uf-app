@@ -5,8 +5,11 @@ use orbital_paging::{Page, PageRequest};
 
 #[cfg(feature = "ssr")]
 use super::helpers::{require_session, run_to_summary, trace_server_result};
+#[cfg(feature = "ssr")]
 use super::page_query;
-use super::types::{clamp_page_list_limit, RunSummary, BOSON_LIST_FETCH_CAP};
+use super::types::RunSummary;
+#[cfg(feature = "ssr")]
+use super::types::{clamp_page_list_limit, BOSON_LIST_FETCH_CAP};
 
 /// Paginated runs endpoint.
 #[uf_product_macros::server]

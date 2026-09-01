@@ -250,6 +250,15 @@ impl std::fmt::Display for BosonInputError {
 
 impl std::error::Error for BosonInputError {}
 
+/// Operator-facing error when task config cannot be loaded (fail closed).
+///
+/// `boson-app` maps coordinator IO failures through this helper so list/detail
+/// never substitutes [`boson_core::TaskConfig::default_for`].
+#[must_use]
+pub fn format_task_config_load_error(cause: impl std::fmt::Display) -> String {
+    format!("Failed to load task config: {cause}")
+}
+
 /// Accepts only the dashboard chart windows the UI exposes (24h / 7d).
 ///
 /// # Errors

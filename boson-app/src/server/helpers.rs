@@ -87,7 +87,7 @@ pub(super) async fn build_task_summary(
     let config = backend
         .get_task_config(&name)
         .await
-        .map_err(|e| ServerFnError::new(format!("Failed to load task config: {e}")))?;
+        .map_err(|e| ServerFnError::new(boson_backend::format_task_config_load_error(e)))?;
 
     let jobs_queued = u32::try_from(
         backend

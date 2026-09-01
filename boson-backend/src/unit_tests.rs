@@ -664,3 +664,17 @@ fn validate_task_config_update_rejects_out_of_range_sad() {
         .to_string()
         .starts_with("Invalid task config update:"));
 }
+
+#[test]
+fn format_task_config_load_error_prefixes_cause_happy_path() {
+    let msg = format_task_config_load_error("coordinator unavailable");
+    assert!(msg.starts_with("Failed to load task config:"));
+    assert!(msg.contains("coordinator unavailable"));
+}
+
+#[test]
+fn format_task_config_load_error_never_empty_prefix_sad() {
+    let msg = format_task_config_load_error("");
+    assert_eq!(msg, "Failed to load task config: ");
+    assert!(!msg.contains("default_for"));
+}

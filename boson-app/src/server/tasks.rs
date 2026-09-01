@@ -8,7 +8,9 @@ use super::helpers::{
     apply_task_config_update, build_task_summary, load_all_task_summaries, require_email_verified,
     require_session, task_config_to_dto, trace_server_result,
 };
-use super::types::{clamp_page_list_limit, TaskConfigDto, TaskSummary, UpdateTaskConfigRequest};
+#[cfg(feature = "ssr")]
+use super::types::clamp_page_list_limit;
+use super::types::{TaskConfigDto, TaskSummary, UpdateTaskConfigRequest};
 
 /// Get all tasks with effective config and stats.
 #[uf_product_macros::server]

@@ -12,6 +12,10 @@
 //!   task descriptors without performing IO. [Get started](#map-task-job-run)
 //! - **Dashboard aggregates** — Provides KPI counters for tasks, queued/running jobs, and
 //!   recent runs via [`dashboard_stats`]. [Get started](#dashboard-kpis)
+//! - **Input validation** — Rejects chart windows and task-config updates outside the ops UI
+//!   bounds via [`validate_range_secs`] and [`validate_task_config_update`], and formats
+//!   fail-closed config-load errors via [`format_task_config_load_error`].
+//!   [Get started](#validate-input)
 //! - **Ops path encoding** — Builds percent-encoded path segments for `/boson` hrefs via
 //!   [`encode_ops_path_segment`], [`boson_task_path`], [`boson_run_path`], and related
 //!   helpers.
@@ -141,6 +145,54 @@
 //! On success `stats` carries the four KPI fields consumed by `boson-app` dashboard server
 //! functions.
 //!
+//! ## Validate input
+//!
+//! Input validation covers dashboard chart windows and partial task-config updates before
+//! coordinator writes, so out-of-range priority, unsafe pool names, or unsupported
+//! `range_secs` fail with typed [`BosonInputError`] instead of reaching Boson IO.
+//! [`validate_range_secs`] accepts only the 24h and 7d windows the UI exposes;
+//! [`validate_task_config_update`] checks set fields on [`UpdateTaskConfigRequest`].
+//! When config load itself fails, [`format_task_config_load_error`] builds the operator
+//! message used by `boson-app` so summaries never fall back to silent defaults.
+//!
+//! **Prerequisites:** None beyond this crate; validators are synchronous. Call them from
+//! `#[server]` handlers (or custom wrappers) before coordinator upserts or chart queries.
+//!
+//! ```rust,ignore
+//! use boson_backend::{
+//!     format_task_config_load_error, validate_range_secs, validate_task_config_update,
+//!     BosonInputError, UpdateTaskConfigRequest, RANGE_SECS_24H,
+//! };
+//!
+//! validate_range_secs(RANGE_SECS_24H).expect("24h window");
+//! assert_eq!(
+//!     validate_range_secs(0).unwrap_err(),
+//!     BosonInputError::InvalidRangeSecs
+//! );
+//!
+//! let req = UpdateTaskConfigRequest {
+//!     priority: Some(10),
+//!     pool: Some("global".into()),
+//!     ..Default::default()
+//! };
+//! validate_task_config_update(&req).expect("in range");
+//! assert_eq!(
+//!     validate_task_config_update(&UpdateTaskConfigRequest {
+//!         priority: Some(i32::MAX),
+//!         ..Default::default()
+//!     })
+//!     .unwrap_err(),
+//!     BosonInputError::PriorityOutOfRange
+//! );
+//!
+//! let msg = format_task_config_load_error("coordinator unavailable");
+//! assert!(msg.starts_with("Failed to load task config:"));
+//! ```
+//!
+//! On success validators return `Ok(())`. Failures map to [`BosonInputError`] variants with
+//! stable Display text (`Invalid range_secs:…`, `Invalid task config update:…`). Config-load
+//! formatting always prefixes `Failed to load task config:`.
+//!
 //! ## Examples
 //!
 //! Start with [Validate ids](#validate-ids). This crate's unit and integ suites are listed in
@@ -180,10 +232,10 @@ pub use types::{
 };
 pub use validate::{
     boson_run_path, boson_runs_job_filter_path, boson_task_config_path, boson_task_path,
-    encode_ops_path_segment, validate_job_id, validate_range_secs, validate_run_id,
-    validate_task_config_update, validate_task_name, BosonIdError, BosonInputError,
-    MAX_BOSON_ID_CHARS, MAX_POOL_NAME_CHARS, MAX_RETRY_ATTEMPTS, MAX_RETRY_DELAY_MS,
-    MAX_TASK_PRIORITY, MIN_TASK_PRIORITY, RANGE_SECS_24H, RANGE_SECS_7D,
+    encode_ops_path_segment, format_task_config_load_error, validate_job_id, validate_range_secs,
+    validate_run_id, validate_task_config_update, validate_task_name, BosonIdError,
+    BosonInputError, MAX_BOSON_ID_CHARS, MAX_POOL_NAME_CHARS, MAX_RETRY_ATTEMPTS,
+    MAX_RETRY_DELAY_MS, MAX_TASK_PRIORITY, MIN_TASK_PRIORITY, RANGE_SECS_24H, RANGE_SECS_7D,
 };
 
 #[cfg(test)]
