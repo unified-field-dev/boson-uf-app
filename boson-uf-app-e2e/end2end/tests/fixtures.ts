@@ -27,35 +27,41 @@ export async function seedAuth(
   }>;
 }
 
+async function bootState(page: Page): Promise<"ready" | "error" | "loading"> {
+  return page.evaluate(() => {
+    const html = document.documentElement;
+    if (html.getAttribute("data-orbital-hydrated") === "true") {
+      return "ready";
+    }
+    if (html.getAttribute("data-orbital-boot-state") === "error") {
+      return "error";
+    }
+    return "loading";
+  });
+}
+
 /**
- * Wait for Orbital boot overlay to finish and hydrate to mark the document ready.
+ * Wait for Orbital hydrate to mark the document ready, then clear the boot overlay.
+ *
+ * Reload immediately when boot enters `error` (do not burn the full poll budget).
+ * Never reload while still `loading` — that aborts in-flight `.wasm`.
  */
-export async function waitForHydrated(page: Page, timeoutMs = 240_000) {
-  await expect
-    .poll(
-      async () =>
-        page.evaluate(() => {
-          const html = document.documentElement;
-          if (html.getAttribute("data-orbital-boot-state") === "error") {
-            return "error";
-          }
-          if (html.getAttribute("data-orbital-hydrated") === "true") {
-            return "ready";
-          }
-          return "loading";
-        }),
-      { timeout: timeoutMs },
-    )
-    .not.toBe("error");
-  await expect
-    .poll(
-      async () =>
-        page.evaluate(
-          () => document.documentElement.getAttribute("data-orbital-hydrated") === "true",
-        ),
-      { timeout: timeoutMs },
-    )
-    .toBe(true);
+export async function waitForHydrated(page: Page, timeoutMs = 90_000) {
+  const deadline = Date.now() + timeoutMs;
+  let reloads = 0;
+  while (Date.now() < deadline) {
+    const state = await bootState(page);
+    if (state === "ready") {
+      break;
+    }
+    if (state === "error" && reloads < 2) {
+      reloads += 1;
+      await page.reload({ waitUntil: "load" });
+      continue;
+    }
+    await page.waitForTimeout(250);
+  }
+  await expect.poll(async () => bootState(page), { timeout: 5_000 }).toBe("ready");
   await expect(page.getByTestId("orbital-boot-overlay")).toHaveCount(0, {
     timeout: 60_000,
   });
