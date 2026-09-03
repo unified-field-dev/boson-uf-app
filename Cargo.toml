@@ -67,6 +67,8 @@ must_use_candidate = "allow"
 missing_errors_doc = "allow"
 missing_panics_doc = "allow"
 return_self_not_must_use = "allow"
+# TypedBuilder (Leptos props) emits empty enums under clippy --all-targets.
+empty_enums = "allow"
 
 [profile.wasm-release]
 inherits = "release"
@@ -125,8 +127,6 @@ orbital-paging = { git = "https://github.com/unified-field-dev/orbital", branch 
 uf-integrations = { git = "https://github.com/unified-field-dev/unified-field-product", branch = "main", default-features = false }
 uf-product = { git = "https://github.com/unified-field-dev/unified-field-product", branch = "main", default-features = false }
 uf-product-macros = { git = "https://github.com/unified-field-dev/unified-field-product", branch = "main" }
-uf-help = { git = "https://github.com/unified-field-dev/unified-field-product", branch = "main", default-features = false }
-uf-help-macros = { git = "https://github.com/unified-field-dev/unified-field-product", branch = "main" }
 inventory = "0.3"
 wasm-bindgen = "=0.2.126"
 gauge = { git = "https://github.com/unified-field-dev/gauge", branch = "main", default-features = false }

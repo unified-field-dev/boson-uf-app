@@ -58,44 +58,38 @@ pub fn TaskSummaryPanel(
         <style>{style_sheet}</style>
         <Flex vertical=true gap=SpacingSize::Size80.flex_gap()>
             {show_title.then(|| view! { <Subtitle2 block=true>{name.clone()}</Subtitle2> })}
-            <div id="boson-task-detail-summary">
-                <Flex vertical=true gap=SpacingSize::Size80.flex_gap()>
-                    <Flex align=FlexAlign::Center gap=SpacingSize::Size40.flex_gap() wrap=FlexWrap::Wrap>
-                        <InfoLabel>
-                            <Body1>"Signature"</Body1>
-                            <InfoLabelInfo slot>
-                                {signature_help()}
-                            </InfoLabelInfo>
-                        </InfoLabel>
-                        <Text tag=TextTag::Code>{signature}</Text>
-                    </Flex>
-                    <Caption2 block=true class=class_names.meta_secondary>
-                        <InfoLabel>
-                            "Defaults: "
-                            <InfoLabelInfo slot>
-                                {defaults_help()}
-                            </InfoLabelInfo>
-                        </InfoLabel>
-                        "pool=\"" {default_pool} "\", priority=" {default_priority}
-                    </Caption2>
-                    <Caption2 block=true class=class_names.meta_secondary>
-                        <InfoLabel>
-                            "Effective: "
-                            <InfoLabelInfo slot>
-                                {effective_help()}
-                            </InfoLabelInfo>
-                        </InfoLabel>
-                        {effective_str}
-                    </Caption2>
-                </Flex>
-            </div>
-            <div id="boson-task-detail-metrics">
-                <Caption2 block=true class=class_names.meta_secondary>
-                    "Jobs queued: " {jobs_queued}
-                    "  |  Runs: " {runs_total}
-                    "  |  Success rate: " {success_str}
-                </Caption2>
-            </div>
+            <Flex align=FlexAlign::Center gap=SpacingSize::Size40.flex_gap() wrap=FlexWrap::Wrap>
+                <InfoLabel>
+                    <Body1>"Signature"</Body1>
+                    <InfoLabelInfo slot>
+                        {signature_help()}
+                    </InfoLabelInfo>
+                </InfoLabel>
+                <Text tag=TextTag::Code>{signature}</Text>
+            </Flex>
+            <Caption2 block=true class=class_names.meta_secondary>
+                <InfoLabel>
+                    "Defaults: "
+                    <InfoLabelInfo slot>
+                        {defaults_help()}
+                    </InfoLabelInfo>
+                </InfoLabel>
+                "pool=\"" {default_pool} "\", priority=" {default_priority}
+            </Caption2>
+            <Caption2 block=true class=class_names.meta_secondary>
+                <InfoLabel>
+                    "Effective: "
+                    <InfoLabelInfo slot>
+                        {effective_help()}
+                    </InfoLabelInfo>
+                </InfoLabel>
+                {effective_str}
+            </Caption2>
+            <Caption2 block=true class=class_names.meta_secondary>
+                "Jobs queued: " {jobs_queued}
+                "  |  Runs: " {runs_total}
+                "  |  Success rate: " {success_str}
+            </Caption2>
             {children.map(|c| view! {
                 <Flex gap=SpacingSize::Size80.flex_gap() class=class_names.actions>
                     {c()}

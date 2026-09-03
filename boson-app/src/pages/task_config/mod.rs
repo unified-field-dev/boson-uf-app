@@ -59,64 +59,60 @@ pub fn BosonTaskConfigPage() -> impl IntoView {
     let on_save = form.save_callback(task_name_memo, config_res);
 
     view! {
-        <div id="boson-task-config">
-            <ContentContainer data_testid="boson-task-config">
-                <Flex vertical=true gap=SpacingSize::Size240.flex_gap()>
-                    <BosonBackLink href=crate::paths::TASKS label="Back to Tasks" />
-                    <Title3>"Configure Task: " {task_name}</Title3>
+        <ContentContainer data_testid="boson-task-config">
+            <Flex vertical=true gap=SpacingSize::Size240.flex_gap()>
+                <BosonBackLink href=crate::paths::TASKS label="Back to Tasks" />
+                <Title3>"Configure Task: " {task_name}</Title3>
 
-                    <Suspense fallback=move || view! { <TaskConfigSkeleton /> }>
-                        {move || match (config_res.get(), pools_res.get()) {
-                            (Some(Ok(_)), pools) => {
-                                let pool_options = pools.and_then(Result::ok).unwrap_or_default();
-                                view! {
-                                <TaskConfigForm
-                                    pool=form.pool
-                                    priority_str=form.priority_str
-                                    pool_options=pool_options
-                                />
-                                <RetryPolicyForm
-                                    max_attempts_str=form.max_attempts_str
-                                    base_delay_ms_str=form.base_delay_ms_str
-                                    max_delay_ms_str=form.max_delay_ms_str
-                                    backoff_multiplier_str=form.backoff_multiplier_str
-                                />
-                                {move || form.save_error.get().map_or_else(
-                                    || ().into_any(),
-                                    |e| view! {
-                                        <MessageBar intent=MessageBarIntent::Error>{e}</MessageBar>
-                                    }.into_any(),
-                                )}
-                                <Flex gap=SpacingSize::Size120.flex_gap()>
-                                    <div id="task-config-cancel">
-                                        <Button
-                                            appearance=ButtonAppearance::Subtle
-                                            on_click=Callback::new(move |_| { nav_store.with_value(|n| n(crate::paths::TASKS, NavigateOptions::default())); })
-                                        >
-                                            "Cancel"
-                                        </Button>
-                                    </div>
-                                    <div id="task-config-save" data-testid="task-config-save">
-                                        <Button
-                                            appearance=ButtonAppearance::Primary
-                                            disabled=form.save_pending
-                                            on_click=on_save
-                                        >
-                                            {move || if form.save_pending.get() { "Saving..." } else { "Save Changes" }}
-                                        </Button>
-                                    </div>
-                                </Flex>
-                            }
-                                .into_any()
-                            }
-                            (Some(Err(e)), _) => view! {
-                                <MessageBar intent=MessageBarIntent::Error>{e.to_string()}</MessageBar>
-                            }.into_any(),
-                            (None, _) => view! { <TaskConfigSkeleton /> }.into_any(),
-                        }}
-                    </Suspense>
-                </Flex>
-            </ContentContainer>
-        </div>
+                <Suspense fallback=move || view! { <TaskConfigSkeleton /> }>
+                    {move || match (config_res.get(), pools_res.get()) {
+                        (Some(Ok(_)), pools) => {
+                            let pool_options = pools.and_then(Result::ok).unwrap_or_default();
+                            view! {
+                            <TaskConfigForm
+                                pool=form.pool
+                                priority_str=form.priority_str
+                                pool_options=pool_options
+                            />
+                            <RetryPolicyForm
+                                max_attempts_str=form.max_attempts_str
+                                base_delay_ms_str=form.base_delay_ms_str
+                                max_delay_ms_str=form.max_delay_ms_str
+                                backoff_multiplier_str=form.backoff_multiplier_str
+                            />
+                            {move || form.save_error.get().map_or_else(
+                                || ().into_any(),
+                                |e| view! {
+                                    <MessageBar intent=MessageBarIntent::Error>{e}</MessageBar>
+                                }.into_any(),
+                            )}
+                            <Flex gap=SpacingSize::Size120.flex_gap()>
+                                <Button
+                                    appearance=ButtonAppearance::Subtle
+                                    on_click=Callback::new(move |_| { nav_store.with_value(|n| n(crate::paths::TASKS, NavigateOptions::default())); })
+                                >
+                                    "Cancel"
+                                </Button>
+                                <div data-testid="task-config-save">
+                                    <Button
+                                        appearance=ButtonAppearance::Primary
+                                        disabled=form.save_pending
+                                        on_click=on_save
+                                    >
+                                        {move || if form.save_pending.get() { "Saving..." } else { "Save Changes" }}
+                                    </Button>
+                                </div>
+                            </Flex>
+                        }
+                            .into_any()
+                        }
+                        (Some(Err(e)), _) => view! {
+                            <MessageBar intent=MessageBarIntent::Error>{e.to_string()}</MessageBar>
+                        }.into_any(),
+                        (None, _) => view! { <TaskConfigSkeleton /> }.into_any(),
+                    }}
+                </Suspense>
+            </Flex>
+        </ContentContainer>
     }
 }

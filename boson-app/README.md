@@ -25,7 +25,6 @@ Examples. Pure mapping and id validation live in `boson-backend`. CI Layer 1
 `docs/VERIFICATION.md` at the workspace root.
 
 Compose into a host that supplies a Boson coordinator and the auth/context
-extractors the app expects. Enable `ssr` / `hydrate` to match your host. For
-Help spotlight tours, enable `uf-integrations` `offering-help` (or `full`) and
-call `boson_app::ensure_help_steps_linked()`. The `e2e-lab` feature is for the
-Playwright lab host only — do not enable it on product hosts.
+extractors the app expects. Enable `ssr` / `hydrate` to match your host. The
+`e2e-lab` feature is for the Playwright lab host only — do not enable it on
+product hosts.

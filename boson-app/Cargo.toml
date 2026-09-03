@@ -40,8 +40,6 @@ lepton-shell = { workspace = true, default-features = false }
 orbital-macros = { workspace = true }
 uf-product-macros = { workspace = true }
 uf-product = { workspace = true, default-features = false, optional = true }
-uf-help = { workspace = true, default-features = false }
-uf-help-macros = { workspace = true }
 inventory = { workspace = true, optional = true }
 orbital-paging = { workspace = true }
 orbital-data = { workspace = true }
@@ -71,7 +69,6 @@ hydrate = [
     "orbital-charts/hydrate",
     "dep:uf-product",
     "uf-product/hydrate",
-    "uf-help/hydrate",
     "dep:leptos-use",
 ]
 ssr = [
@@ -98,7 +95,6 @@ ssr = [
     "lepton-auth/ssr",
     "dep:uf-product",
     "uf-product/ssr",
-    "uf-help/ssr",
     "orbital-paging/ssr",
     "dep:inventory",
     "dep:tracing",

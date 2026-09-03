@@ -29,5 +29,3 @@ Site: `http://127.0.0.1:3170` · seed: `POST /api/test/seed-data`
 | `pw-boson-queue-cancel-*` | Admin cancel; non-admin denied |
 | `pw-boson-task-config-*` | Unverified blocked; admin save |
 | `pw-boson-runs-*` | List→detail; unknown run |
-| `pw-boson-help-spotlight-skip-*` | Seeded localStorage quiet; auth gate skips tour |
-| `pw-boson-help-spotlight-*-green` | First-visit tour completes on each Boson route |

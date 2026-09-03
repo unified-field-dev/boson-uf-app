@@ -76,22 +76,20 @@ fn DashboardHelpStatCardSkeleton() -> impl IntoView {
 #[component]
 fn DashboardStatsSkeleton() -> impl IntoView {
     view! {
-        <div id="boson-dashboard-stats">
-            <Flex gap=SpacingSize::Size160.flex_gap() wrap=FlexWrap::Wrap>
-                <div data-testid="dashboard-stat-tasks">
-                    <DashboardStatCardSkeleton label="Tasks" icon=icondata::AiAppstoreOutlined />
-                </div>
-                <div data-testid="dashboard-stat-queued">
-                    <DashboardStatCardSkeleton label="Jobs Queued" icon=icondata::AiUnorderedListOutlined />
-                </div>
-                <div data-testid="dashboard-stat-running">
-                    <DashboardStatCardSkeleton label="Jobs Running" icon=icondata::AiThunderboltOutlined />
-                </div>
-                <div data-testid="dashboard-stat-runs-today">
-                    <DashboardHelpStatCardSkeleton />
-                </div>
-            </Flex>
-        </div>
+        <Flex gap=SpacingSize::Size160.flex_gap() wrap=FlexWrap::Wrap>
+            <div data-testid="dashboard-stat-tasks">
+                <DashboardStatCardSkeleton label="Tasks" icon=icondata::AiAppstoreOutlined />
+            </div>
+            <div data-testid="dashboard-stat-queued">
+                <DashboardStatCardSkeleton label="Jobs Queued" icon=icondata::AiUnorderedListOutlined />
+            </div>
+            <div data-testid="dashboard-stat-running">
+                <DashboardStatCardSkeleton label="Jobs Running" icon=icondata::AiThunderboltOutlined />
+            </div>
+            <div data-testid="dashboard-stat-runs-today">
+                <DashboardHelpStatCardSkeleton />
+            </div>
+        </Flex>
     }
 }
 
@@ -114,59 +112,57 @@ fn DashboardStatsCards(
             motion=boson_kpi_enter_motion()
             stagger=Signal::from(MotionDuration::Normal)
         >
-            <div id="boson-dashboard-stats">
-                <Flex gap=SpacingSize::Size160.flex_gap() wrap=FlexWrap::Wrap>
-                    <OrbitalPresenceGroupItem
-                        show=kpi_enter
-                        index=Signal::from(0usize)
-                    >
-                        <div data-testid="dashboard-stat-tasks">
-                            <StatCard
-                                label="Tasks"
-                                value=Signal::derive(move || task_count.get())
-                                icon=icondata::AiAppstoreOutlined
-                            />
-                        </div>
-                    </OrbitalPresenceGroupItem>
-                    <OrbitalPresenceGroupItem
-                        show=kpi_enter
-                        index=Signal::from(1usize)
-                    >
-                        <div data-testid="dashboard-stat-queued">
-                            <StatCard
-                                label="Jobs Queued"
-                                value=Signal::derive(move || jobs_queued.get())
-                                icon=icondata::AiUnorderedListOutlined
-                            />
-                        </div>
-                    </OrbitalPresenceGroupItem>
-                    <OrbitalPresenceGroupItem
-                        show=kpi_enter
-                        index=Signal::from(2usize)
-                    >
-                        <div data-testid="dashboard-stat-running">
-                            <StatCard
-                                label="Jobs Running"
-                                value=Signal::derive(move || jobs_running.get())
-                                icon=icondata::AiThunderboltOutlined
-                            />
-                        </div>
-                    </OrbitalPresenceGroupItem>
-                    <OrbitalPresenceGroupItem
-                        show=kpi_enter
-                        index=Signal::from(3usize)
-                    >
-                        <div data-testid="dashboard-stat-runs-today">
-                            <BosonHelpStatCard
-                                label="Runs (24h)"
-                                value=Signal::derive(move || runs_today.get())
-                                icon=icondata::AiHistoryOutlined
-                                label_info=runs_24h_help()
-                            />
-                        </div>
-                    </OrbitalPresenceGroupItem>
-                </Flex>
-            </div>
+            <Flex gap=SpacingSize::Size160.flex_gap() wrap=FlexWrap::Wrap>
+                <OrbitalPresenceGroupItem
+                    show=kpi_enter
+                    index=Signal::from(0usize)
+                >
+                    <div data-testid="dashboard-stat-tasks">
+                        <StatCard
+                            label="Tasks"
+                            value=Signal::derive(move || task_count.get())
+                            icon=icondata::AiAppstoreOutlined
+                        />
+                    </div>
+                </OrbitalPresenceGroupItem>
+                <OrbitalPresenceGroupItem
+                    show=kpi_enter
+                    index=Signal::from(1usize)
+                >
+                    <div data-testid="dashboard-stat-queued">
+                        <StatCard
+                            label="Jobs Queued"
+                            value=Signal::derive(move || jobs_queued.get())
+                            icon=icondata::AiUnorderedListOutlined
+                        />
+                    </div>
+                </OrbitalPresenceGroupItem>
+                <OrbitalPresenceGroupItem
+                    show=kpi_enter
+                    index=Signal::from(2usize)
+                >
+                    <div data-testid="dashboard-stat-running">
+                        <StatCard
+                            label="Jobs Running"
+                            value=Signal::derive(move || jobs_running.get())
+                            icon=icondata::AiThunderboltOutlined
+                        />
+                    </div>
+                </OrbitalPresenceGroupItem>
+                <OrbitalPresenceGroupItem
+                    show=kpi_enter
+                    index=Signal::from(3usize)
+                >
+                    <div data-testid="dashboard-stat-runs-today">
+                        <BosonHelpStatCard
+                            label="Runs (24h)"
+                            value=Signal::derive(move || runs_today.get())
+                            icon=icondata::AiHistoryOutlined
+                            label_info=runs_24h_help()
+                        />
+                    </div>
+                </OrbitalPresenceGroupItem>
+            </Flex>
         </OrbitalPresenceGroup>
     }
 }

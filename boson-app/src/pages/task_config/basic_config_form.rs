@@ -42,7 +42,7 @@ pub fn TaskConfigForm(
                             let opts = opts_for_select.clone();
                             let opts_hint = opts.clone();
                             view! {
-                                <div id="task-config-pool" data-testid="task-config-pool">
+                                <div data-testid="task-config-pool">
                                     <Select bind=pool>
                                         <For
                                             each=move || opts.clone()
@@ -67,9 +67,7 @@ pub fn TaskConfigForm(
                             .into_any()
                         } else {
                             view! {
-                                <div id="task-config-pool">
-                                    <Input bind=pool />
-                                </div>
+                                <Input bind=pool />
                                 <FormHint>"Default: \"global\". Configure Gluon virtual pools to pick from a list."</FormHint>
                             }
                             .into_any()
@@ -78,15 +76,13 @@ pub fn TaskConfigForm(
                 </Flex>
                 <Flex vertical=true gap=SpacingSize::Size40.flex_gap()>
                     <Label>"Default Priority"</Label>
-                    <div id="task-config-priority">
-                        <Input
-                            bind=priority_str
-                            appearance=InputAppearance {
-                                input_type: Signal::from(InputType::Number),
-                                ..Default::default()
-                            }
-                        />
-                    </div>
+                    <Input
+                        bind=priority_str
+                        appearance=InputAppearance {
+                            input_type: Signal::from(InputType::Number),
+                            ..Default::default()
+                        }
+                    />
                     <FormHint>"Default: 1. Lower value = higher priority (runs sooner)"</FormHint>
                 </Flex>
             </Flex>

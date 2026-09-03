@@ -80,9 +80,9 @@ impl LazyRoute for BosonVerifiedTaskConfigRoute {
 
     fn view(_this: Self) -> AnyView {
         view! {
-            <uf_product::routes::RequireAuthenticated requires_email_verification=true>
+            <orbital::routes::RequireAuthenticated requires_email_verification=true>
                 <BosonTaskConfigPage />
-            </uf_product::routes::RequireAuthenticated>
+            </orbital::routes::RequireAuthenticated>
         }
         .into_any()
     }

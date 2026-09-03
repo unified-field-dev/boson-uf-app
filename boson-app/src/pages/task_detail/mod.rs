@@ -47,15 +47,11 @@ pub fn BosonTaskDetailPage() -> impl IntoView {
                                 <Card>
                                     <BosonCardContent>
                                         <TaskSummaryPanel task=t show_title=false>
-                                            <div id="task-detail-configure" data-testid="task-detail-configure">
+                                            <div data-testid="task-detail-configure">
                                                 <Button appearance=ButtonAppearance::Primary on_click=Callback::new(move |_| nav(&config_path, NavigateOptions::default()))>"Configure"</Button>
                                             </div>
-                                            <div id="task-detail-view-queue">
-                                                <Button appearance=ButtonAppearance::Subtle on_click=Callback::new(move |_| nav2(crate::paths::QUEUE, NavigateOptions::default()))>"View Queue"</Button>
-                                            </div>
-                                            <div id="task-detail-view-runs">
-                                                <Button appearance=ButtonAppearance::Subtle on_click=Callback::new(move |_| nav3(crate::paths::RUNS, NavigateOptions::default()))>"View Runs"</Button>
-                                            </div>
+                                            <Button appearance=ButtonAppearance::Subtle on_click=Callback::new(move |_| nav2(crate::paths::QUEUE, NavigateOptions::default()))>"View Queue"</Button>
+                                            <Button appearance=ButtonAppearance::Subtle on_click=Callback::new(move |_| nav3(crate::paths::RUNS, NavigateOptions::default()))>"View Runs"</Button>
                                         </TaskSummaryPanel>
                                     </BosonCardContent>
                                 </Card>

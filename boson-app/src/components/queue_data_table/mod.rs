@@ -46,8 +46,8 @@ pub fn QueueDataTable(
     let table_refresh = refresh_signal.unwrap_or_else(|| Signal::derive(|| 0u32));
 
     view! {
-        <BosonDataTableShell id="boson-queue-data-table" data_testid="boson-queue-data-table">
-            <div id="queue-status-filter" data-testid="queue-status-filter">
+        <BosonDataTableShell data_testid="boson-queue-data-table">
+            <div data-testid="queue-status-filter">
                 {move || {
                     let _refresh = table_refresh.get();
                     view! {

@@ -52,27 +52,25 @@ pub fn BosonQueuePage() -> impl IntoView {
     view! {
         <style>{page_style}</style>
         <BosonJobsLiveSource trigger=live.trigger latest_event=live.latest_event />
-        <div id="boson-queue">
-            <ContentContainer class=page_classes.page data_testid="boson-queue">
-                <Flex vertical=true gap=SpacingSize::Size240.flex_gap() class=page_classes.body>
-                    <Title3>"Queue"</Title3>
-                    {move || cancel_error.get().map(|e| {
-                        view! {
-                            <MessageBar intent=MessageBarIntent::Error>{e}</MessageBar>
-                        }
-                    })}
+        <ContentContainer class=page_classes.page data_testid="boson-queue">
+            <Flex vertical=true gap=SpacingSize::Size240.flex_gap() class=page_classes.body>
+                <Title3>"Queue"</Title3>
+                {move || cancel_error.get().map(|e| {
+                    view! {
+                        <MessageBar intent=MessageBarIntent::Error>{e}</MessageBar>
+                    }
+                })}
 
-                    <Card class=page_classes.card>
-                        <BosonCardContent class=page_classes.card_content>
-                            <QueueDataTable
-                                cancel_pending=cancel_pending.read_only()
-                                on_cancel=on_cancel
-                                refresh_signal=refresh_signal
-                            />
-                        </BosonCardContent>
-                    </Card>
-                </Flex>
-            </ContentContainer>
-        </div>
+                <Card class=page_classes.card>
+                    <BosonCardContent class=page_classes.card_content>
+                        <QueueDataTable
+                            cancel_pending=cancel_pending.read_only()
+                            on_cancel=on_cancel
+                            refresh_signal=refresh_signal
+                        />
+                    </BosonCardContent>
+                </Card>
+            </Flex>
+        </ContentContainer>
     }
 }

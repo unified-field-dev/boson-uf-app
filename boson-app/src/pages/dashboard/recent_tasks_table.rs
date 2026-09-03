@@ -171,46 +171,44 @@ pub fn RecentTasksTable(
     });
 
     view! {
-        <div id="boson-dashboard-tasks-overview">
-            <Flex vertical=true gap=SpacingSize::Size160.flex_gap()>
-                <Flex justify=FlexJustify::SpaceBetween align=FlexAlign::Center>
-                    <InfoLabel>
-                        <Subtitle2 block=true>"Tasks Overview"</Subtitle2>
-                        <InfoLabelInfo slot>
-                            {tasks_overview_help()}
-                        </InfoLabelInfo>
-                    </InfoLabel>
-                    <div data-testid="dashboard-recent-tasks-view-all">
-                        <Link href=crate::paths::TASKS>"View All"</Link>
-                    </div>
-                </Flex>
-                <Suspense fallback=move || view! { <RecentTasksTableSkeleton /> }>
-                    {move || match tasks_res.get() {
-                        Some(Ok(_)) => {
-                            if top_tasks.get().is_empty() {
-                                view! {
-                                    <Card>
-                                        <BosonCardContent>
-                                            <EmptyState
-                                                message="No tasks registered"
-                                                description="Register tasks with #[boson::task] to see them here."
-                                            />
-                                        </BosonCardContent>
-                                    </Card>
-                                }.into_any()
-                            } else {
-                                view! {
-                                    <RecentTasksFilledTable top_tasks=top_tasks />
-                                }.into_any()
-                            }
-                        }
-                        Some(Err(e)) => view! {
-                            <MessageBar intent=MessageBarIntent::Error>{e.to_string()}</MessageBar>
-                        }.into_any(),
-                        None => view! { <RecentTasksTableSkeleton /> }.into_any(),
-                    }}
-                </Suspense>
+        <Flex vertical=true gap=SpacingSize::Size160.flex_gap()>
+            <Flex justify=FlexJustify::SpaceBetween align=FlexAlign::Center>
+                <InfoLabel>
+                    <Subtitle2 block=true>"Tasks Overview"</Subtitle2>
+                    <InfoLabelInfo slot>
+                        {tasks_overview_help()}
+                    </InfoLabelInfo>
+                </InfoLabel>
+                <div data-testid="dashboard-recent-tasks-view-all">
+                    <Link href=crate::paths::TASKS>"View All"</Link>
+                </div>
             </Flex>
-        </div>
+            <Suspense fallback=move || view! { <RecentTasksTableSkeleton /> }>
+                {move || match tasks_res.get() {
+                    Some(Ok(_)) => {
+                        if top_tasks.get().is_empty() {
+                            view! {
+                                <Card>
+                                    <BosonCardContent>
+                                        <EmptyState
+                                            message="No tasks registered"
+                                            description="Register tasks with #[boson::task] to see them here."
+                                        />
+                                    </BosonCardContent>
+                                </Card>
+                            }.into_any()
+                        } else {
+                            view! {
+                                <RecentTasksFilledTable top_tasks=top_tasks />
+                            }.into_any()
+                        }
+                    }
+                    Some(Err(e)) => view! {
+                        <MessageBar intent=MessageBarIntent::Error>{e.to_string()}</MessageBar>
+                    }.into_any(),
+                    None => view! { <RecentTasksTableSkeleton /> }.into_any(),
+                }}
+            </Suspense>
+        </Flex>
     }
 }

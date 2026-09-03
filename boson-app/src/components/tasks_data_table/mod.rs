@@ -38,7 +38,7 @@ pub fn TasksDataTable() -> impl IntoView {
     };
 
     view! {
-        <BosonDataTableShell id="boson-tasks-data-table" data_testid="boson-tasks-data-table">
+        <BosonDataTableShell data_testid="boson-tasks-data-table">
             <DataTable
                 data_source=data_source
                 paging=PagingMode::Paged

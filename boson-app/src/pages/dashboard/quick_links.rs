@@ -14,17 +14,17 @@ pub fn QuickLinks() -> impl IntoView {
             </CardHeader>
             <BosonCardContent>
                 <Flex gap=SpacingSize::Size120.flex_gap() wrap=FlexWrap::Wrap>
-                    <div id="boson-ql-tasks" data-testid="dashboard-quick-link-tasks">
+                    <div data-testid="dashboard-quick-link-tasks">
                         <Link href=crate::paths::TASKS>
                             <Body1>"Tasks"</Body1>
                         </Link>
                     </div>
-                    <div id="boson-ql-queue" data-testid="dashboard-quick-link-queue">
+                    <div data-testid="dashboard-quick-link-queue">
                         <Link href=crate::paths::QUEUE>
                             <Body1>"Queue"</Body1>
                         </Link>
                     </div>
-                    <div id="boson-ql-runs" data-testid="dashboard-quick-link-runs">
+                    <div data-testid="dashboard-quick-link-runs">
                         <Link href=crate::paths::RUNS>
                             <Body1>"Runs"</Body1>
                         </Link>

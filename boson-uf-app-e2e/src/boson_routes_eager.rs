@@ -14,7 +14,7 @@ use leptos_router::{
     components::{ParentRoute, Route},
     path,
 };
-use uf_product::routes::RequireAuthenticated;
+use orbital::routes::RequireAuthenticated;
 
 /// Same paths as [`boson_app::BosonRoutes`], without Lazy route views.
 #[component(transparent)]

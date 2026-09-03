@@ -93,19 +93,17 @@ pub fn BosonRunDetailPage() -> impl IntoView {
                             view! {
                                 <Flex vertical=true gap=SpacingSize::Size160.flex_gap()>
                                     <RunInfoGrid run=r />
-                                    <div id="boson-run-detail-error">
-                                        <OrbitalPresence
-                                            show=error_show
-                                            motion=boson_error_reveal_motion()
-                                            appear=true
-                                        >
-                                            {move || {
-                                                error_msg.clone().map(|msg| {
-                                                    view! { <RunErrorDisplay message=msg /> }
-                                                })
-                                            }}
-                                        </OrbitalPresence>
-                                    </div>
+                                    <OrbitalPresence
+                                        show=error_show
+                                        motion=boson_error_reveal_motion()
+                                        appear=true
+                                    >
+                                        {move || {
+                                            error_msg.clone().map(|msg| {
+                                                view! { <RunErrorDisplay message=msg /> }
+                                            })
+                                        }}
+                                    </OrbitalPresence>
                                 </Flex>
                             }.into_any()
                         }

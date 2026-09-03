@@ -25,9 +25,6 @@
 //!   [`list_jobs_page`] and [`cancel_job`]. [Get started](#inspect-queue)
 //! - **Runs browser** — Lists run attempts and opens detail pages via [`list_runs_page`]
 //!   and [`get_run`]. [Get started](#browse-runs)
-//! - **Help spotlight tours** — Route-scoped Help steps for dashboard, tasks, queue, and
-//!   runs. Call [`ensure_help_steps_linked`] so inventory links into the host; enable
-//!   `offering-help` on the product shell. [Get started](#help-spotlight-tours)
 //! - **Server function wrappers** — Exposes [`mod@server`] Higgs `#[server]` fns and DTO
 //!   re-exports backed by [`boson_backend`] pure mapping helpers.
 //!
@@ -180,26 +177,6 @@
 //! or errors when the id is unknown. Oversized or path-unsafe ids fail validation before
 //! coordinator lookup.
 //!
-//! ## Help spotlight tours
-//!
-//! Boson ships Help spotlight steps for each ops route (dashboard, tasks, task detail,
-//! config, queue, runs, run detail). Hosts that enable `offering-help` (or `full`) mount
-//! `HelpTourPlayer`; call [`ensure_help_steps_linked`] at route mount so `inventory`
-//! submissions from [`mod@help_steps`] are retained.
-//!
-//! **Prerequisites:** `uf-help` hydrate/ssr features on this crate; product host with
-//! Help player mounted; authenticated session for Valence visit tracking.
-//!
-//! ```rust,ignore
-//! use boson_app::{ensure_help_steps_linked, BosonRoutes};
-//!
-//! ensure_help_steps_linked();
-//! // Mount BosonRoutes inside the host <Routes> tree as usual.
-//! ```
-//!
-//! On success, visiting `/boson` (and other Boson paths) can show pending spotlight
-//! steps. Replay restarts the tour for the current route via the Help menu.
-//!
 //! ## Feature flags
 //!
 //! | Flag | Effect |
@@ -229,7 +206,6 @@
 //!
 //! ## Where to look next
 //!
-//! - [`mod@help_steps`] — Help spotlight tour inventory; call [`ensure_help_steps_linked`].
 //! - [`BosonLayout`] — shared app bar / nav shell wrapping every route.
 //! - [`mod@server`] — server functions and DTOs backing the UI.
 //! - [`mod@pages`] — route page components (dashboard, tasks, queue, runs).
@@ -253,8 +229,6 @@ use uf_product_macros::uf_app;
 mod components;
 /// Lab-only overrides for `boson-uf-app-e2e` (setters require feature `e2e-lab`).
 pub mod e2e_lab;
-/// Help spotlight tour step inventory for Boson routes.
-pub mod help_steps;
 mod layout;
 mod lazy_routes;
 /// Client-side live-update hooks (poll tick, placeholder broadcast sources).
@@ -267,7 +241,6 @@ pub mod photon_ws;
 /// SSR server functions and DTOs backing the Boson UI.
 pub mod server;
 
-pub use help_steps::ensure_help_steps_linked;
 pub use layout::BosonLayout;
 pub use lazy_routes::{
     prefetch_family, BosonLayoutRouteView, BosonQueueRoute, BosonRootRoute, BosonRunDetailRoute,
@@ -307,7 +280,6 @@ uf_app! {
 #[orbital_macros::orbital_routes_extract]
 #[component(transparent)]
 pub fn BosonRoutes() -> impl leptos_router::MatchNestedRoutes + Clone {
-    crate::help_steps::ensure_help_steps_linked();
     view! {
         <ParentRoute path=path!("boson") view=BosonLayoutRouteView>
             <Route path=path!("") view={Lazy::<BosonRootRoute>::new()} />

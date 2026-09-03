@@ -122,8 +122,6 @@ Scenario IDs (validating happy + sad):
 - `pw-boson-queue-cancel-happy-admin` / `pw-boson-queue-cancel-sad-non-admin`
 - `pw-boson-task-config-happy-admin-save` / `pw-boson-task-config-sad-unverified-email`
 - `pw-boson-runs-happy-list-detail` / `pw-boson-runs-sad-unknown-run`
-- `pw-boson-help-spotlight-skip-seeded` / `pw-boson-help-spotlight-skip-auth-gate`
-- `pw-boson-help-spotlight-dashboard|tasks|task-detail|task-config|queue|runs|run-detail-green`
 
 CI runs the same `cargo leptos end-to-end --project boson-uf-app-e2e` job on
 every PR and push to main (lepton/neutrino parity). Workspace `Cargo.toml`

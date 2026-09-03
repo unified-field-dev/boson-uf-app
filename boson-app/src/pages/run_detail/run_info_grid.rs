@@ -1,6 +1,6 @@
 use leptos::prelude::*;
-use orbital::components::{Body1, Caption2, Card, SpacingSize};
-use orbital::primitives::{Flex, Grid, GridConfig, GridItem, InfoLabel, InfoLabelInfo};
+use orbital::components::{Body1, Caption2, Card};
+use orbital::primitives::{Grid, GridConfig, GridItem, InfoLabel, InfoLabelInfo};
 
 use crate::components::{
     attempt_help, duration_help, BosonCardContent, BosonTableLink, RunStatusBadge,
@@ -24,61 +24,49 @@ pub fn RunInfoGrid(
         <style>{style_sheet}</style>
         <Card>
             <BosonCardContent>
-                <Flex vertical=true gap=SpacingSize::Size160.flex_gap()>
-                    <div id="boson-run-detail-info">
-                        <Grid config=GridConfig::with_gaps(2, 24, 8)>
-                            <GridItem><Caption2 class=class_names.label>"Run ID"</Caption2></GridItem>
-                            <GridItem><Body1>{run.run_id.clone()}</Body1></GridItem>
+                <Grid config=GridConfig::with_gaps(2, 24, 8)>
+                    <GridItem><Caption2 class=class_names.label>"Run ID"</Caption2></GridItem>
+                    <GridItem><Body1>{run.run_id.clone()}</Body1></GridItem>
 
-                            <GridItem><Caption2 class=class_names.label>"Task"</Caption2></GridItem>
-                            <GridItem><Body1>{run.task_name.clone()}</Body1></GridItem>
+                    <GridItem><Caption2 class=class_names.label>"Job ID"</Caption2></GridItem>
+                    <GridItem>
+                        <BosonTableLink href=job_href>
+                            {job_id}
+                        </BosonTableLink>
+                    </GridItem>
 
-                            <GridItem><Caption2 class=class_names.label>"Status"</Caption2></GridItem>
-                            <GridItem><RunStatusBadge status=run.status /></GridItem>
+                    <GridItem><Caption2 class=class_names.label>"Task"</Caption2></GridItem>
+                    <GridItem><Body1>{run.task_name.clone()}</Body1></GridItem>
 
-                            <GridItem>
-                                <InfoLabel>
-                                    <Caption2 class=class_names.label>"Attempt"</Caption2>
-                                    <InfoLabelInfo slot>
-                                        {attempt_help()}
-                                    </InfoLabelInfo>
-                                </InfoLabel>
-                            </GridItem>
-                            <GridItem><Body1>{run.attempt}</Body1></GridItem>
-                        </Grid>
-                    </div>
+                    <GridItem><Caption2 class=class_names.label>"Status"</Caption2></GridItem>
+                    <GridItem><RunStatusBadge status=run.status /></GridItem>
 
-                    <div id="boson-run-detail-job">
-                        <Grid config=GridConfig::with_gaps(2, 24, 8)>
-                            <GridItem><Caption2 class=class_names.label>"Job ID"</Caption2></GridItem>
-                            <GridItem>
-                                <BosonTableLink href=job_href>
-                                    {job_id}
-                                </BosonTableLink>
-                            </GridItem>
-                        </Grid>
-                    </div>
+                    <GridItem>
+                        <InfoLabel>
+                            <Caption2 class=class_names.label>"Attempt"</Caption2>
+                            <InfoLabelInfo slot>
+                                {attempt_help()}
+                            </InfoLabelInfo>
+                        </InfoLabel>
+                    </GridItem>
+                    <GridItem><Body1>{run.attempt}</Body1></GridItem>
 
-                    <div id="boson-run-detail-timing">
-                        <Grid config=GridConfig::with_gaps(2, 24, 8)>
-                            <GridItem><Caption2 class=class_names.label>"Started"</Caption2></GridItem>
-                            <GridItem><Body1>{run.started_at.clone()}</Body1></GridItem>
+                    <GridItem><Caption2 class=class_names.label>"Started"</Caption2></GridItem>
+                    <GridItem><Body1>{run.started_at.clone()}</Body1></GridItem>
 
-                            <GridItem><Caption2 class=class_names.label>"Finished"</Caption2></GridItem>
-                            <GridItem><Body1>{run.finished_at.clone().unwrap_or_else(|| "-".to_string())}</Body1></GridItem>
+                    <GridItem><Caption2 class=class_names.label>"Finished"</Caption2></GridItem>
+                    <GridItem><Body1>{run.finished_at.clone().unwrap_or_else(|| "-".to_string())}</Body1></GridItem>
 
-                            <GridItem>
-                                <InfoLabel>
-                                    <Caption2 class=class_names.label>"Duration"</Caption2>
-                                    <InfoLabelInfo slot>
-                                        {duration_help()}
-                                    </InfoLabelInfo>
-                                </InfoLabel>
-                            </GridItem>
-                            <GridItem><Body1>{run.duration_ms.map_or_else(|| "-".to_string(), |ms| format!("{ms} ms"))}</Body1></GridItem>
-                        </Grid>
-                    </div>
-                </Flex>
+                    <GridItem>
+                        <InfoLabel>
+                            <Caption2 class=class_names.label>"Duration"</Caption2>
+                            <InfoLabelInfo slot>
+                                {duration_help()}
+                            </InfoLabelInfo>
+                        </InfoLabel>
+                    </GridItem>
+                    <GridItem><Body1>{run.duration_ms.map_or_else(|| "-".to_string(), |ms| format!("{ms} ms"))}</Body1></GridItem>
+                </Grid>
             </BosonCardContent>
         </Card>
     }

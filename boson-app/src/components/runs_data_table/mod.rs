@@ -55,7 +55,7 @@ pub fn RunsDataTable(
     let empty_desc = empty_description.unwrap_or("Run history will appear here when jobs execute.");
 
     view! {
-        <BosonDataTableShell id="boson-runs-data-table" data_testid="boson-runs-data-table">
+        <BosonDataTableShell data_testid="boson-runs-data-table">
             <DataTable
                 data_source=data_source
                 paging=PagingMode::Paged

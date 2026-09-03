@@ -5,8 +5,7 @@
   "scripts": {
     "wait-server": "wait-on -t 300000 -i 500 -l http-get://localhost:3170/health",
     "test": "npm run wait-server && npx playwright test --workers=1",
-    "test:headed": "npm run wait-server && PW_HEADED=1 npx playwright test --workers=1 --headed",
-    "test:ui": "npm run wait-server && env -u CI npx playwright test --ui --workers=1"
+    "test:headed": "npm run wait-server && PW_HEADED=1 npx playwright test --workers=1 --headed"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.1",

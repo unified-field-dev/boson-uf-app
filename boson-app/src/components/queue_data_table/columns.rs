@@ -1,5 +1,5 @@
 use std::collections::HashSet;
-use std::sync::{Arc, OnceLock};
+use std::sync::Arc;
 
 use leptos::prelude::*;
 use orbital::components::Body1Strong;
@@ -10,8 +10,6 @@ use crate::components::{pool_help, priority_help, BosonHelpColumnHeader, JobStat
 use crate::server::JobStatusDto;
 
 use super::mapper::job_status_from_key;
-
-static QUEUE_CANCEL_SPOTLIGHT: OnceLock<()> = OnceLock::new();
 
 pub fn queue_table_columns(
     cancel_pending: ReadSignal<HashSet<String>>,
@@ -73,17 +71,9 @@ pub fn queue_table_columns(
         let job_id_check = job_id.clone();
         let job_id_btn = job_id.clone();
         let job_id_label = job_id;
-        let cancel_hint_id = QUEUE_CANCEL_SPOTLIGHT
-            .set(())
-            .is_ok()
-            .then_some("boson-queue-cancel-hint");
 
         view! {
-            <div
-                id=cancel_hint_id
-                data-testid=format!("job-cancel-{job_id_btn}")
-                attr:data-skip-row-click=""
-            >
+            <div data-testid=format!("job-cancel-{job_id_btn}") attr:data-skip-row-click="">
                 <Button
                     size=ButtonSize::Small
                     appearance=ButtonAppearance::Subtle

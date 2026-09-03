@@ -14,20 +14,18 @@ pub fn BosonTasksIndexPage() -> impl IntoView {
 
     view! {
         <style>{page_style}</style>
-        <div id="boson-tasks">
-            <ContentContainer class=page_classes.page data_testid="boson-tasks">
-                <Flex vertical=true gap=SpacingSize::Size240.flex_gap() class=page_classes.body>
-                    <Title3>"Tasks"</Title3>
+        <ContentContainer class=page_classes.page data_testid="boson-tasks">
+            <Flex vertical=true gap=SpacingSize::Size240.flex_gap() class=page_classes.body>
+                <Title3>"Tasks"</Title3>
 
-                    <Card class=page_classes.card>
-                        <BosonCardContent class=page_classes.card_content>
-                            <div id="boson-tasks-search" data-testid="tasks-search">
-                                <TasksDataTable />
-                            </div>
-                        </BosonCardContent>
-                    </Card>
-                </Flex>
-            </ContentContainer>
-        </div>
+                <Card class=page_classes.card>
+                    <BosonCardContent class=page_classes.card_content>
+                        <div data-testid="tasks-search">
+                            <TasksDataTable />
+                        </div>
+                    </BosonCardContent>
+                </Card>
+            </Flex>
+        </ContentContainer>
     }
 }

@@ -34,51 +34,49 @@ pub fn BosonRunsIndexPage() -> impl IntoView {
 
     view! {
         <style>{page_style}</style>
-        <div id="boson-runs">
-            <ContentContainer class=page_classes.page data_testid="boson-runs">
-                <Flex vertical=true gap=SpacingSize::Size240.flex_gap() class=page_classes.body>
-                    <Title3>"Runs"</Title3>
+        <ContentContainer class=page_classes.page data_testid="boson-runs">
+            <Flex vertical=true gap=SpacingSize::Size240.flex_gap() class=page_classes.body>
+                <Title3>"Runs"</Title3>
 
-                    {move || job_filter.get().map(|job_id| {
-                        view! {
-                            <div data-testid="runs-job-filter-chip">
-                                <Flex align=FlexAlign::Center gap=SpacingSize::Size80.flex_gap()>
-                                    <Caption1>"Filtered by job:"</Caption1>
-                                    <Tag>{job_id}</Tag>
-                                    <Button
-                                        size=ButtonSize::Small
-                                        appearance=ButtonAppearance::Subtle
-                                        on_click=Callback::new({
-                                            let nav = navigate_store.with_value(Clone::clone);
-                                            move |_| {
-                                                nav(crate::paths::RUNS, NavigateOptions::default());
-                                            }
-                                        })
-                                    >
-                                        "Clear"
-                                    </Button>
-                                </Flex>
-                            </div>
-                        }
-                    })}
+                {move || job_filter.get().map(|job_id| {
+                    view! {
+                        <div data-testid="runs-job-filter-chip">
+                            <Flex align=FlexAlign::Center gap=SpacingSize::Size80.flex_gap()>
+                                <Caption1>"Filtered by job:"</Caption1>
+                                <Tag>{job_id}</Tag>
+                                <Button
+                                    size=ButtonSize::Small
+                                    appearance=ButtonAppearance::Subtle
+                                    on_click=Callback::new({
+                                        let nav = navigate_store.with_value(Clone::clone);
+                                        move |_| {
+                                            nav(crate::paths::RUNS, NavigateOptions::default());
+                                        }
+                                    })
+                                >
+                                    "Clear"
+                                </Button>
+                            </Flex>
+                        </div>
+                    }
+                })}
 
-                    {move || {
-                        let current_scope = scope.get();
-                        let desc = empty_description.get();
-                        view! {
-                            <Card class=fill_card_store.with_value(Clone::clone)>
-                                <BosonCardContent class=fill_card_content_store.with_value(Clone::clone)>
-                                    <RunsDataTable
-                                        scope=current_scope
-                                        fill_height=true
-                                        empty_description=desc
-                                    />
-                                </BosonCardContent>
-                            </Card>
-                        }
-                    }}
-                </Flex>
-            </ContentContainer>
-        </div>
+                {move || {
+                    let current_scope = scope.get();
+                    let desc = empty_description.get();
+                    view! {
+                        <Card class=fill_card_store.with_value(Clone::clone)>
+                            <BosonCardContent class=fill_card_content_store.with_value(Clone::clone)>
+                                <RunsDataTable
+                                    scope=current_scope
+                                    fill_height=true
+                                    empty_description=desc
+                                />
+                            </BosonCardContent>
+                        </Card>
+                    }
+                }}
+            </Flex>
+        </ContentContainer>
     }
 }

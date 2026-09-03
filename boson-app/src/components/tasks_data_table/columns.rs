@@ -1,4 +1,4 @@
-use std::sync::{Arc, OnceLock};
+use std::sync::Arc;
 
 use leptos::prelude::*;
 use orbital::components::{Body1Strong, SpacingSize, Text, TextTag};
@@ -11,8 +11,6 @@ use crate::components::{
 
 use super::actions::TaskCardActions;
 use super::mapper::record_to_task_name;
-
-static TASKS_ACTIONS_SPOTLIGHT_ROW: OnceLock<String> = OnceLock::new();
 
 pub fn tasks_table_columns() -> Vec<DataTableColumnDef> {
     let name_view = Arc::new(|record: DataRecord| {
@@ -67,10 +65,9 @@ pub fn tasks_table_columns() -> Vec<DataTableColumnDef> {
 
     let actions_view = Arc::new(|record: DataRecord| {
         let name = record_to_task_name(&record);
-        let spotlight_ids = TASKS_ACTIONS_SPOTLIGHT_ROW.set(name.clone()).is_ok();
         view! {
             <Flex gap=SpacingSize::Size40.flex_gap() wrap=FlexWrap::Wrap attr:data-skip-row-click="">
-                <TaskCardActions task_name=name spotlight_ids=spotlight_ids />
+                <TaskCardActions task_name=name />
             </Flex>
         }
         .into_any()

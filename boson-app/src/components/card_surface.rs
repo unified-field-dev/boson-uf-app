@@ -85,9 +85,6 @@ pub fn boson_table_page_layout() -> (&'static str, BosonTablePageClasses) {
 /// list cards and table columns reachable without clipping the card padding.
 #[component]
 pub fn BosonDataTableShell(
-    /// Optional HTML id for help spotlight tours.
-    #[prop(optional, into)]
-    id: MaybeProp<String>,
     /// Data testid.
     #[prop(optional, into)]
     data_testid: MaybeProp<String>,
@@ -121,7 +118,7 @@ pub fn BosonDataTableShell(
 
     view! {
         <style>{style_sheet}</style>
-        <div class=class_names.shell id=move || id.get() data-testid=move || data_testid.get()>
+        <div class=class_names.shell data-testid=move || data_testid.get()>
             {children()}
         </div>
     }

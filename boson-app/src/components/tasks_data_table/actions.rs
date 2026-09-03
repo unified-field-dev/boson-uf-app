@@ -9,9 +9,6 @@ use orbital::primitives::{Button, ButtonAppearance, ButtonSize};
 pub fn TaskCardActions(
     /// Task name.
     task_name: String,
-    /// When true, attach spotlight tour ids (first table row only).
-    #[prop(default = false)]
-    spotlight_ids: bool,
 ) -> impl IntoView {
     let navigate = use_navigate();
     let nav_store = StoredValue::new(navigate);
@@ -21,14 +18,9 @@ pub fn TaskCardActions(
     let name_config_btn = task_name.clone();
     let name_card_testid = task_name;
 
-    let view_id = spotlight_ids.then_some("boson-tasks-action-view");
-    let configure_id = spotlight_ids.then_some("boson-tasks-action-configure");
-    let queue_id = spotlight_ids.then_some("boson-tasks-action-queue");
-    let runs_id = spotlight_ids.then_some("boson-tasks-action-runs");
-
     view! {
         <>
-            <div id=view_id data-testid=format!("task-card-view-{name_card_testid}") attr:data-skip-row-click="">
+            <div data-testid=format!("task-card-view-{name_card_testid}") attr:data-skip-row-click="">
                 <Button
                     size=ButtonSize::Small
                     appearance=ButtonAppearance::Subtle
@@ -39,7 +31,7 @@ pub fn TaskCardActions(
                     "View"
                 </Button>
             </div>
-            <div id=configure_id data-testid=format!("task-card-config-{name_config}") attr:data-skip-row-click="">
+            <div data-testid=format!("task-card-config-{name_config}") attr:data-skip-row-click="">
                 <Button
                     size=ButtonSize::Small
                     appearance=ButtonAppearance::Subtle
@@ -52,7 +44,7 @@ pub fn TaskCardActions(
                     "Configure"
                 </Button>
             </div>
-            <div id=queue_id attr:data-skip-row-click="">
+            <div attr:data-skip-row-click="">
                 <Button
                     size=ButtonSize::Small
                     appearance=ButtonAppearance::Subtle
@@ -63,7 +55,7 @@ pub fn TaskCardActions(
                     "View Queue"
                 </Button>
             </div>
-            <div id=runs_id attr:data-skip-row-click="">
+            <div attr:data-skip-row-click="">
                 <Button
                     size=ButtonSize::Small
                     appearance=ButtonAppearance::Subtle

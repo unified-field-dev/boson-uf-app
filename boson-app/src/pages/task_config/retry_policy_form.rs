@@ -22,68 +22,66 @@ pub fn RetryPolicyForm(
     backoff_multiplier_str: RwSignal<String>,
 ) -> impl IntoView {
     view! {
-        <div id="boson-task-config-retry">
-            <Card>
-                <BosonHelpCardHeader
-                    title="Retry Policy"
-                    description="Tune how failed runs are retried before the job is marked failed."
-                    info=retry_policy_help()
-                />
-                <Flex vertical=true gap=SpacingSize::Size160.flex_gap() padding=SpacingSize::Size160.inset()>
-                    <Flex vertical=true gap=SpacingSize::Size40.flex_gap()>
-                        <Label>"Max Attempts"</Label>
-                        <Input
-                            bind=max_attempts_str
-                            appearance=InputAppearance {
-                                input_type: Signal::from(InputType::Number),
-                                ..Default::default()
-                            }
-                        />
-                        <FormHint>{max_attempts_hint()}</FormHint>
-                    </Flex>
-                    <Flex vertical=true gap=SpacingSize::Size40.flex_gap()>
-                        <Label>"Initial Delay (ms)"</Label>
-                        <Input
-                            bind=base_delay_ms_str
-                            appearance=InputAppearance {
-                                input_type: Signal::from(InputType::Number),
-                                ..Default::default()
-                            }
-                        />
-                        <FormHint>{initial_delay_hint()}</FormHint>
-                    </Flex>
-                    <Flex vertical=true gap=SpacingSize::Size40.flex_gap()>
-                        <InfoLabel>
-                            <Label>"Max Delay (ms)"</Label>
-                            <InfoLabelInfo slot>
-                                {max_delay_help()}
-                            </InfoLabelInfo>
-                        </InfoLabel>
-                        <Input
-                            bind=max_delay_ms_str
-                            appearance=InputAppearance {
-                                input_type: Signal::from(InputType::Number),
-                                ..Default::default()
-                            }
-                        />
-                    </Flex>
-                    <Flex vertical=true gap=SpacingSize::Size40.flex_gap()>
-                        <InfoLabel>
-                            <Label>"Backoff Multiplier"</Label>
-                            <InfoLabelInfo slot>
-                                {backoff_multiplier_help()}
-                            </InfoLabelInfo>
-                        </InfoLabel>
-                        <Input
-                            bind=backoff_multiplier_str
-                            appearance=InputAppearance {
-                                input_type: Signal::from(InputType::Number),
-                                ..Default::default()
-                            }
-                        />
-                    </Flex>
+        <Card>
+            <BosonHelpCardHeader
+                title="Retry Policy"
+                description="Tune how failed runs are retried before the job is marked failed."
+                info=retry_policy_help()
+            />
+            <Flex vertical=true gap=SpacingSize::Size160.flex_gap() padding=SpacingSize::Size160.inset()>
+                <Flex vertical=true gap=SpacingSize::Size40.flex_gap()>
+                    <Label>"Max Attempts"</Label>
+                    <Input
+                        bind=max_attempts_str
+                        appearance=InputAppearance {
+                            input_type: Signal::from(InputType::Number),
+                            ..Default::default()
+                        }
+                    />
+                    <FormHint>{max_attempts_hint()}</FormHint>
                 </Flex>
-            </Card>
-        </div>
+                <Flex vertical=true gap=SpacingSize::Size40.flex_gap()>
+                    <Label>"Initial Delay (ms)"</Label>
+                    <Input
+                        bind=base_delay_ms_str
+                        appearance=InputAppearance {
+                            input_type: Signal::from(InputType::Number),
+                            ..Default::default()
+                        }
+                    />
+                    <FormHint>{initial_delay_hint()}</FormHint>
+                </Flex>
+                <Flex vertical=true gap=SpacingSize::Size40.flex_gap()>
+                    <InfoLabel>
+                        <Label>"Max Delay (ms)"</Label>
+                        <InfoLabelInfo slot>
+                            {max_delay_help()}
+                        </InfoLabelInfo>
+                    </InfoLabel>
+                    <Input
+                        bind=max_delay_ms_str
+                        appearance=InputAppearance {
+                            input_type: Signal::from(InputType::Number),
+                            ..Default::default()
+                        }
+                    />
+                </Flex>
+                <Flex vertical=true gap=SpacingSize::Size40.flex_gap()>
+                    <InfoLabel>
+                        <Label>"Backoff Multiplier"</Label>
+                        <InfoLabelInfo slot>
+                            {backoff_multiplier_help()}
+                        </InfoLabelInfo>
+                    </InfoLabel>
+                    <Input
+                        bind=backoff_multiplier_str
+                        appearance=InputAppearance {
+                            input_type: Signal::from(InputType::Number),
+                            ..Default::default()
+                        }
+                    />
+                </Flex>
+            </Flex>
+        </Card>
     }
 }
