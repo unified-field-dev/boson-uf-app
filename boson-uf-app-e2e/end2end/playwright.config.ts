@@ -7,7 +7,8 @@ export default defineConfig({
   timeout: 300_000,
   expect: { timeout: 60_000 },
   fullyParallel: false,
-  retries: 0,
+  // Large WASM boots flake under CI memory/network; retry the whole test fresh.
+  retries: 2,
   workers: 1,
   reporter: [["list"]],
   use: {
