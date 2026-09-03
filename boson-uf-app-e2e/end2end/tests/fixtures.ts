@@ -40,24 +40,15 @@ async function bootState(page: Page): Promise<"ready" | "error" | "loading"> {
   });
 }
 
-/** Cache-busting full navigation — plain reload can reuse a bad wasm fetch. */
-async function hardRefresh(page: Page) {
-  const url = new URL(page.url());
-  url.searchParams.set("_orbboot", String(Date.now()));
-  await page.goto(url.toString(), { waitUntil: "load" });
-}
-
 /**
- * Wait for Orbital hydrate to mark the document ready, then clear the boot overlay.
- *
- * Large WASM (~100MiB) can fail the first fetch on CI. On `error`, hard-refresh
- * immediately (do not burn the poll budget). Never refresh while still `loading`
- * — that aborts in-flight `.wasm` and sticks boot-state on error.
+ * Wait for Orbital hydrate. On terminal boot `error`, pause then reload — do not
+ * thrash navigations (that aborts in-flight `.wasm`). Never reload while `loading`.
  */
-export async function waitForHydrated(page: Page, timeoutMs = 120_000) {
+export async function waitForHydrated(page: Page, timeoutMs = 180_000) {
   const deadline = Date.now() + timeoutMs;
   let refreshes = 0;
-  const maxRefreshes = 6;
+  const maxRefreshes = 3;
+
   while (Date.now() < deadline) {
     const state = await bootState(page);
     if (state === "ready") {
@@ -68,13 +59,16 @@ export async function waitForHydrated(page: Page, timeoutMs = 120_000) {
         break;
       }
       refreshes += 1;
-      await hardRefresh(page);
+      // Let Chromium release a failed compile before retrying the ~50–100MiB wasm.
+      await page.waitForTimeout(1_500);
+      await page.reload({ waitUntil: "load" });
       continue;
     }
-    await page.waitForTimeout(250);
+    await page.waitForTimeout(500);
   }
+
   await expect
-    .poll(async () => bootState(page), { timeout: 5_000 })
+    .poll(async () => bootState(page), { timeout: 10_000 })
     .toBe("ready");
   await expect(page.getByTestId("orbital-boot-overlay")).toHaveCount(0, {
     timeout: 60_000,
