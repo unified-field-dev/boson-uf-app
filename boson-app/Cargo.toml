@@ -1,0 +1,101 @@
+[package]
+name = "boson-app"
+version = "0.1.0"
+edition = "2021"
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+description = "Leptos ops UI for Boson queues, task config, and run history under /boson"
+readme = "README.md"
+
+[lints]
+workspace = true
+
+[dependencies]
+leptos.workspace = true
+leptos_meta.workspace = true
+leptos_router.workspace = true
+leptos_config.workspace = true
+leptos_dom.workspace = true
+leptos_macro.workspace = true
+leptos_server.workspace = true
+leptos_axum = { workspace = true, optional = true }
+axum = { workspace = true, optional = true }
+
+icondata.workspace = true
+icondata_core.workspace = true
+
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+chrono = { workspace = true, features = ["serde"] }
+
+turf.workspace = true
+
+orbital = { workspace = true, default-features = false }
+orbital-motion = { workspace = true }
+uf-integrations = { workspace = true, default-features = false }
+lepton-shell = { workspace = true, default-features = false }
+orbital-macros = { workspace = true }
+uf-product-macros = { workspace = true }
+uf-product = { workspace = true, default-features = false, optional = true }
+inventory = { workspace = true, optional = true }
+orbital-paging = { workspace = true }
+orbital-data = { workspace = true }
+orbital-charts = { workspace = true, default-features = false }
+
+boson-backend = { path = "../boson-backend" }
+boson-coordinator = { workspace = true, optional = true }
+boson-core = { workspace = true, optional = true }
+boson-runtime = { workspace = true, optional = true, default-features = false }
+valence = { workspace = true, optional = true }
+higgs = { workspace = true, optional = true }
+gauge = { workspace = true, optional = true }
+lepton-auth = { workspace = true, optional = true }
+leptos-use = { workspace = true, default-features = false, features = ["use_interval_fn"], optional = true }
+tracing = { workspace = true, optional = true }
+
+[features]
+default = []
+# Lab-only email-verified override for boson-uf-app-e2e. Do not enable on product hosts.
+e2e-lab = []
+hydrate = [
+    "leptos/hydrate",
+    "orbital-motion/hydrate",
+    "uf-integrations/hydrate",
+    "lepton-shell/hydrate",
+    "orbital-paging/hydrate",
+    "orbital-charts/hydrate",
+    "dep:uf-product",
+    "uf-product/hydrate",
+    "dep:leptos-use",
+]
+ssr = [
+    "leptos/ssr",
+    "leptos_meta/ssr",
+    "leptos_router/ssr",
+    "dep:leptos_axum",
+    "dep:axum",
+    "orbital-motion/ssr",
+    "orbital/ssr",
+    "uf-integrations/ssr",
+    "lepton-shell/ssr",
+    "orbital-charts/ssr",
+    "dep:boson-coordinator",
+    "dep:boson-core",
+    "dep:boson-runtime",
+    "dep:valence",
+    "valence/sqlite",
+    "dep:higgs",
+    "higgs/ssr",
+    "dep:gauge",
+    "gauge/ssr",
+    "dep:lepton-auth",
+    "lepton-auth/ssr",
+    "dep:uf-product",
+    "uf-product/ssr",
+    "orbital-paging/ssr",
+    "dep:inventory",
+    "dep:tracing",
+]
