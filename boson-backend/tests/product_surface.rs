@@ -126,13 +126,16 @@ fn admin_mutators_require_boson_admin_happy_path() {
     let jobs = read_app("server/jobs.rs");
     let tasks = read_app("server/tasks.rs");
     let pools = read_app("server/gluon_pools.rs");
-    let combined = format!("{jobs}\n{tasks}\n{pools}");
+    let runs = read_app("server/runs.rs");
+    let combined = format!("{jobs}\n{tasks}\n{pools}\n{runs}");
 
     for fn_name in [
         "cancel_job",
         "get_task_config",
         "update_task_config",
         "list_gluon_pools_for_boson_task_config",
+        "list_runs_page",
+        "list_runs_datatable_page",
     ] {
         assert!(
             combined.contains(fn_name),
@@ -141,8 +144,8 @@ fn admin_mutators_require_boson_admin_happy_path() {
     }
     let admin_attr = r#"permission = "BosonAdmin""#;
     assert!(
-        combined.matches(admin_attr).count() >= 4,
-        "cancel / task-config / pool server fns must carry BosonAdmin permission attribute"
+        combined.matches(admin_attr).count() >= 6,
+        "cancel / task-config / pool / run-list server fns must carry BosonAdmin permission attribute"
     );
 }
 
@@ -151,11 +154,12 @@ fn admin_mutators_drop_boson_admin_sad_path() {
     let jobs = read_app("server/jobs.rs");
     let tasks = read_app("server/tasks.rs");
     let pools = read_app("server/gluon_pools.rs");
-    let combined = format!("{jobs}\n{tasks}\n{pools}");
+    let runs = read_app("server/runs.rs");
+    let combined = format!("{jobs}\n{tasks}\n{pools}\n{runs}");
     let admin_attr = r#"permission = "BosonAdmin""#;
     assert!(
-        combined.matches(admin_attr).count() >= 4,
-        "dropping BosonAdmin from cancel/config/pools opens mutating ops without admin gate"
+        combined.matches(admin_attr).count() >= 6,
+        "dropping BosonAdmin from cancel/config/pools/runs opens ops without admin gate"
     );
     assert!(
         !combined.contains(r#"permission = "GaugeAdmin""#)

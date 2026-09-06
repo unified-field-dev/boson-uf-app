@@ -12,7 +12,7 @@ use super::types::RunSummary;
 use super::types::{clamp_page_list_limit, BOSON_LIST_FETCH_CAP};
 
 /// Paginated runs endpoint.
-#[uf_product_macros::server]
+#[uf_product_macros::server(permission = "BosonAdmin")]
 pub async fn list_runs_page(
     /// Zero-based index of the first run to return.
     offset: u32,
@@ -57,7 +57,7 @@ pub async fn list_runs_page(
 }
 
 /// Paginated runs for DataTable with in-memory filter/search (bounded fetch).
-#[uf_product_macros::server]
+#[uf_product_macros::server(permission = "BosonAdmin")]
 pub async fn list_runs_datatable_page(
     /// `DataTable` paging/filter/search/sort request from the client.
     request: PageRequest,
@@ -105,7 +105,7 @@ pub async fn list_runs_datatable_page(
 }
 
 /// Get a single run by id.
-#[uf_product_macros::server]
+#[uf_product_macros::server(permission = "BosonAdmin")]
 pub async fn get_run(
     /// Unique identifier of the run to look up.
     run_id: String,

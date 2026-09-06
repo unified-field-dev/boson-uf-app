@@ -3,10 +3,13 @@
 //! DTOs and pure mapping helpers live in [`boson_backend`] so contracts stay
 //! unit/integration-testable without the host UI graph. Server functions run on
 //! SSR only and use [`higgs::Higgs::from_request()`] plus [`helpers::require_session`]
-//! on every endpoint. Mutators `cancel_job` / `update_task_config` and task-config
-//! reads (`get_task_config`, `list_gluon_pools_for_boson_task_config`) require
-//! Gauge permission `BosonAdmin`. Task-config endpoints additionally mirror the
-//! UI email-verification gate via [`helpers::require_email_verified`].
+//! on every endpoint. Mutators `cancel_job` / `update_task_config`, task-config
+//! reads (`get_task_config`, `list_gluon_pools_for_boson_task_config`), and run
+//! history lists (`list_runs_page`, `list_runs_datatable_page`) require Gauge
+//! permission `BosonAdmin`. Task-config endpoints additionally mirror the UI
+//! email-verification gate via [`helpers::require_email_verified`]. Run history
+//! (`list_runs_page`, `list_runs_datatable_page`, `get_run`) also requires
+//! `BosonAdmin`.
 //!
 //! The UI uses paginated list endpoints (`get_tasks_page`, `list_jobs_page`,
 //! `list_runs_page`) and single-record getters (`get_task`, `get_run`, etc.).
