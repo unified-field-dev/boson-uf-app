@@ -11,10 +11,31 @@ matrix correctness.
 
 ## Environment
 
+Match [`.github/workflows/ci.yml`](../.github/workflows/ci.yml):
+
 ```bash
 export CARGO_BUILD_JOBS=1
 export CARGO_TARGET_DIR=target-boson-uf-app
+export CARGO_INCREMENTAL=0
+export CARGO_PROFILE_DEV_DEBUG=0
+export RUSTFLAGS="-D warnings"
 ```
+
+Toolchain: nightly (same as CI). E2E needs `wasm32-unknown-unknown`.
+
+## PR CI parity
+
+Required PR jobs — do not skip any when claiming local CI parity:
+
+| CI job | Local command / notes |
+|--------|------------------------|
+| `fmt` | `cargo fmt -p boson-backend -p boson-app -p protected-boson-host -p boson-uf-app-e2e -- --check` |
+| `clippy` | Backend + teaching host + `boson-app` SSR clippy (`-D warnings`) as in Layer 1 |
+| `test-backend` | `cargo test -p boson-backend --test workspace_members --test product_surface`; `cargo test -p boson-backend` |
+| `test-host` | `cargo check -p protected-boson-host`; `cargo run -p protected-boson-host` |
+| `e2e` | Serialize leptos server-only then frontend-only build; `cargo leptos end-to-end --project boson-uf-app-e2e` |
+| `docs` | `RUSTDOCFLAGS="-D rustdoc::broken-intra-doc-links" cargo doc -p boson-backend --no-deps` |
+| `leptos-lints` | Required. dylint 6.0.1 + `nightly-2025-05-14`; `cargo dylint --all -p boson-app --no-deps -- --features hydrate` |
 
 ## Teaching host
 
@@ -75,12 +96,12 @@ cargo test --workspace
 cargo test -p boson-app --features ssr
 ```
 
-### leptos-lints (CI job `leptos-lints`)
+### leptos-lints (required PR job `leptos-lints`)
 
 Needs `cargo-dylint` / `dylint-link` 6.0.1 and toolchain `nightly-2025-05-14`
 (see `leptos-lints@v0.1.2`). Workspace `[workspace.metadata.dylint]` pins the
 library; rustc deny names are declared under `[workspace.lints.rust]`.
-GitHub Actions runs the same command.
+GitHub Actions runs the same command on every PR.
 
 ```bash
 # cargo install cargo-dylint --locked --version 6.0.1
@@ -94,9 +115,6 @@ export RUSTFLAGS="-D warnings -Zcrate-attr=feature(stdarch_x86_avx512)"
 
 cargo dylint --all -p boson-app --no-deps -- --features hydrate
 ```
-
-Hard CI job for hydrate-only dylint remains deferred (Orbital / host pin risk).
-Run locally when that graph is green.
 
 ## Layer 2 — E2E (lab host + Playwright)
 
