@@ -13,16 +13,14 @@ pub fn runs_table_columns() -> Vec<DataTableColumnDef> {
     let status_view = Arc::new(|record: DataRecord| {
         let label = record
             .get("status")
-            .map(orbital_data::DataValue::display_string)
-            .unwrap_or_default();
+            .map_or_else(String::new, orbital_data::DataValue::display_string);
         view! { <RunStatusBadge status=run_status_from_key(&label) /> }.into_any()
     });
 
     let run_id_view = Arc::new(|record: DataRecord| {
         let run_id = record
             .get("run_id")
-            .map(orbital_data::DataValue::display_string)
-            .unwrap_or_default();
+            .map_or_else(String::new, orbital_data::DataValue::display_string);
         let testid = format!("runs-row-{run_id}");
         let href = boson_backend::boson_run_path(&run_id);
         view! {

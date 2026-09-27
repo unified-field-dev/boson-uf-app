@@ -71,6 +71,7 @@ pub fn QueueDataTable(
                                 column_menu: false,
                                 column_filter_button: false,
                                 column_hide: false,
+                                show_table_grid: true,
                             }
                             events=DataTableEvents {
                                 on_row_click: Some(on_row_click),

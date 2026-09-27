@@ -41,6 +41,5 @@ pub fn task_to_record(task: TaskSummary) -> DataRecord {
 pub fn record_to_task_name(record: &DataRecord) -> String {
     record
         .get("name")
-        .map(orbital_data::DataValue::display_string)
-        .unwrap_or_default()
+        .map_or_else(String::new, orbital_data::DataValue::display_string)
 }

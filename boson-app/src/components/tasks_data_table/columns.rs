@@ -27,8 +27,7 @@ pub fn tasks_table_columns() -> Vec<DataTableColumnDef> {
     let signature_view = Arc::new(|record: DataRecord| {
         let sig = record
             .get("signature")
-            .map(orbital_data::DataValue::display_string)
-            .unwrap_or_default();
+            .map_or_else(String::new, orbital_data::DataValue::display_string);
         view! {
             <Text tag=TextTag::Code>{sig}</Text>
         }

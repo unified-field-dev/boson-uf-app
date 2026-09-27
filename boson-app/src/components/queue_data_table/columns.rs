@@ -18,16 +18,14 @@ pub fn queue_table_columns(
     let status_view = Arc::new(move |record: DataRecord| {
         let label = record
             .get("status")
-            .map(orbital_data::DataValue::display_string)
-            .unwrap_or_default();
+            .map_or_else(String::new, orbital_data::DataValue::display_string);
         view! { <JobStatusBadge status=job_status_from_key(&label) /> }.into_any()
     });
 
     let job_id_view = Arc::new(|record: DataRecord| {
         let job_id = record
             .get("job_id")
-            .map(orbital_data::DataValue::display_string)
-            .unwrap_or_default();
+            .map_or_else(String::new, orbital_data::DataValue::display_string);
         let testid = format!("job-card-{job_id}");
         view! {
             <div data-testid=testid>
@@ -54,12 +52,10 @@ pub fn queue_table_columns(
     let cancel_view = Arc::new(move |record: DataRecord| {
         let job_id = record
             .get("job_id")
-            .map(orbital_data::DataValue::display_string)
-            .unwrap_or_default();
+            .map_or_else(String::new, orbital_data::DataValue::display_string);
         let status_label = record
             .get("status")
-            .map(orbital_data::DataValue::display_string)
-            .unwrap_or_default();
+            .map_or_else(String::new, orbital_data::DataValue::display_string);
         let status = job_status_from_key(&status_label);
         let can_cancel = status == JobStatusDto::Queued || status == JobStatusDto::Running;
 

@@ -185,29 +185,25 @@ pub fn DashboardStatsGrid(
         stats_res
             .get()
             .and_then(Result::ok)
-            .map(|s| s.task_count.to_string())
-            .unwrap_or_default()
+            .map_or_else(String::new, |s| s.task_count.to_string())
     });
     let jobs_queued = Memo::new(move |_| {
         stats_res
             .get()
             .and_then(Result::ok)
-            .map(|s| s.jobs_queued.to_string())
-            .unwrap_or_default()
+            .map_or_else(String::new, |s| s.jobs_queued.to_string())
     });
     let jobs_running = Memo::new(move |_| {
         stats_res
             .get()
             .and_then(Result::ok)
-            .map(|s| s.jobs_running.to_string())
-            .unwrap_or_default()
+            .map_or_else(String::new, |s| s.jobs_running.to_string())
     });
     let runs_today = Memo::new(move |_| {
         stats_res
             .get()
             .and_then(Result::ok)
-            .map(|s| s.runs_today.to_string())
-            .unwrap_or_default()
+            .map_or_else(String::new, |s| s.runs_today.to_string())
     });
 
     view! {

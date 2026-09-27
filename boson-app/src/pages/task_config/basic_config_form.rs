@@ -60,8 +60,7 @@ pub fn TaskConfigForm(
                                     opts_hint
                                         .iter()
                                         .find(|o| o.id == p)
-                                        .map(|o| o.detail.clone())
-                                        .unwrap_or_default()
+                                        .map_or_else(String::new, |o| o.detail.clone())
                                 }}</FormHint>
                             }
                             .into_any()

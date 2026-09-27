@@ -166,8 +166,7 @@ pub fn RecentTasksTable(
         tasks_res
             .get()
             .and_then(Result::ok)
-            .map(|t| t.into_iter().take(5).collect::<Vec<_>>())
-            .unwrap_or_default()
+            .map_or_else(Vec::new, |t| t.into_iter().take(5).collect::<Vec<_>>())
     });
 
     view! {

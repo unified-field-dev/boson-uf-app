@@ -78,10 +78,9 @@ cargo check -p boson-uf-app-e2e --features ssr
 `cargo fmt --all` can fail when a sibling checkout sits outside this workspace;
 package-scoped fmt is the honest local gate.
 
-SSR compile needs a green sibling `gauge` checkout (path-patched from
-`L2-product-platform/gauge`). If `PermissionHistory` (or other gauge codegen) is
-missing, fix gauge / `record-history` first — that is not a Boson backend
-contract gap.
+SSR compile builds `gauge` from its unified-field-dev git `main`. If
+`PermissionHistory` (or other gauge codegen) is missing, fix gauge /
+`record-history` upstream first — that is not a Boson backend contract gap.
 
 Full workspace (includes hydrate UI). May fail when the sibling
 `uf-product` / `uf-integrations` UI graph does not compile — that is a
