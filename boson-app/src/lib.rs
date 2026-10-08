@@ -266,6 +266,7 @@ uf_app! {
     version: "0.1.0",
     routes: BosonRoutes,
     route_path: "/boson",
+    repository: "https://github.com/unified-field-dev/boson-uf-app",
     permission_manifest: permissions::BosonPermission,
 }
 
