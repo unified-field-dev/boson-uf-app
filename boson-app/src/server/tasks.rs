@@ -1,4 +1,7 @@
 //! Task list, detail, config, and paginated task endpoints.
+//!
+//! Tasks come from the in-process registry, so `get_tasks_page` and `get_tasks_datatable_page`
+//! load every task summary and page by offset; they return no cursor.
 
 use leptos::prelude::*;
 use orbital_paging::{Page, PageRequest};

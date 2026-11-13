@@ -1,4 +1,10 @@
 //! Job queue server functions.
+//!
+//! `list_jobs_datatable_page` pages by keyset cursor (`list_jobs_after`) when the request has
+//! no quick search and only `status` filter rules; quick search and other filters scan up to
+//! [`boson_backend::BOSON_LIST_FETCH_CAP`] jobs in memory and page by offset. See
+//! [`boson_backend::jobs_list_start`] for when a cursor request falls back to offset.
+//! `list_jobs_page` (infinite scroll) pages by offset.
 
 use leptos::prelude::*;
 use orbital_paging::{Page, PageRequest};
@@ -12,6 +18,8 @@ use super::page_query;
 use super::types::JobSummary;
 #[cfg(feature = "ssr")]
 use super::types::{clamp_page_list_limit, BOSON_LIST_FETCH_CAP};
+#[cfg(feature = "ssr")]
+use boson_backend::ListStart;
 
 /// Cancel a job.
 #[uf_product_macros::server(permission = "BosonAdmin")]
@@ -86,11 +94,7 @@ pub async fn list_jobs_datatable_page(
         require_session(&ctx)?;
         let limit = clamp_page_list_limit(request.limit);
         let status_filter = page_query::extract_status_filter(&request);
-        let needs_memory_filter = page_query::quick_search_text(&request).is_some()
-            || request
-                .filter
-                .as_ref()
-                .is_some_and(|f| f.items.iter().any(|r| r.field != "status"));
+        let needs_memory_filter = !boson_backend::jobs_cursor_eligible(&request);
 
         if needs_memory_filter {
             let backend = super::helpers::boson_backend()?;
@@ -120,16 +124,32 @@ pub async fn list_jobs_datatable_page(
             let backend = super::helpers::boson_backend()?;
             let backend = backend.as_ref();
             let status = status_filter.as_deref().and_then(parse_job_status_filter);
-            let jobs = backend
-                .list_jobs(status, request.offset as usize, (limit + 1) as usize)
-                .await;
-            let dtos: Vec<JobSummary> = jobs.into_iter().map(job_to_summary).collect();
+            let start = boson_backend::jobs_list_start(&request);
+            let jobs = match &start {
+                ListStart::After(key) => {
+                    backend
+                        .list_jobs_after(status, key.as_ref(), (limit + 1) as usize)
+                        .await
+                }
+                ListStart::Offset(offset) => {
+                    backend
+                        .list_jobs(status, *offset, (limit + 1) as usize)
+                        .await
+                }
+            };
+            // Count on the first page only, as before; cursor pages report `None`.
             let total_count: Option<u64> = if request.offset == 0 {
                 Some(backend.count_jobs(status).await)
             } else {
                 None
             };
-            Ok(Page::from_oversized(dtos, limit, total_count))
+            Ok(boson_backend::jobs_page_from_rows(
+                jobs,
+                &request,
+                limit,
+                &start,
+                total_count,
+            ))
         }
     }
     .await;

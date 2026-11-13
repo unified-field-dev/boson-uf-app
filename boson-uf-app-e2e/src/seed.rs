@@ -4,7 +4,7 @@ use axum::http::StatusCode;
 use axum::Json;
 use serde::Deserialize;
 
-use crate::e2e_valence::{e2e_fixtures, refresh_queue_job, store_fixtures};
+use crate::e2e_valence::{e2e_fixtures, refresh_queue_job, seed_paging_jobs, store_fixtures};
 use crate::gate_demos::{write_e2e_auth_kind, E2eAuthKind};
 
 #[derive(Debug, Deserialize)]
@@ -15,6 +15,9 @@ pub struct SeedRequest {
     /// When true, enqueue a fresh queued job for cancel specs.
     #[serde(default)]
     pub refresh_job: bool,
+    /// When true, upsert the jobs the jobs-table paging spec pages through.
+    #[serde(default)]
+    pub paging_jobs: bool,
 }
 
 fn default_auth() -> String {
@@ -48,6 +51,13 @@ pub async fn seed_data(
             StatusCode::INTERNAL_SERVER_ERROR
         })?;
         store_fixtures(fixtures.clone());
+    }
+
+    if body.paging_jobs {
+        seed_paging_jobs().await.map_err(|e| {
+            log::error!("seed paging_jobs failed: {e:#}");
+            StatusCode::INTERNAL_SERVER_ERROR
+        })?;
     }
 
     Ok(Json(serde_json::json!({

@@ -6,7 +6,8 @@ use std::sync::{Arc, Mutex, OnceLock};
 use boson_backend_mem::MemQueueBackend;
 use boson_coordinator::{BosonCoordinatorBackend, CoordinatorAdapter};
 use boson_core::{
-    ExecutionContext, JsonExecutionContextFactory, QueueBackend, QueueRouter, Run, RunStatus,
+    ExecutionContext, Job, JobStatus, JsonExecutionContextFactory, QueueBackend, QueueRouter, Run,
+    RunStatus,
 };
 use boson_runtime::{Boson, TaskDescriptor, TaskRegistry};
 use chrono::Utc;
@@ -404,6 +405,40 @@ pub async fn refresh_queue_job() -> anyhow::Result<FixtureIds> {
     store_fixtures(fixtures.clone());
     let _ = queue;
     Ok(fixtures)
+}
+
+/// Jobs the jobs-table paging spec pages through: `e2e-page-000` ... `e2e-page-089`.
+pub const E2E_PAGING_JOBS: usize = 90;
+
+/// Upsert [`E2E_PAGING_JOBS`] jobs, alternating queued and failed, so the queued filter spans
+/// three 20-row pages.
+///
+/// They are dated a year ahead so they sort after every job other specs enqueue (the queue
+/// table lists oldest first), which keeps those specs' jobs on page 1. Fixed ids make repeat
+/// calls overwrite rather than add.
+pub async fn seed_paging_jobs() -> anyhow::Result<()> {
+    let queue = e2e_queue();
+    let start = Utc::now() + chrono::Duration::days(365);
+    for i in 0..E2E_PAGING_JOBS {
+        let mut job = Job::new(
+            E2E_TASK_NAME,
+            serde_json::json!({"System": {"operation": "e2e_paging"}}),
+            serde_json::json!({}),
+            0,
+            "global",
+            0,
+            None,
+        );
+        job.job_id = format!("e2e-page-{i:03}");
+        job.created_at = start + chrono::Duration::seconds(i64::try_from(i)?);
+        job.status = if i % 2 == 0 {
+            JobStatus::Queued
+        } else {
+            JobStatus::Failed
+        };
+        queue.upsert_job(&job).await?;
+    }
+    Ok(())
 }
 
 pub fn e2e_system_valence() -> Valence {

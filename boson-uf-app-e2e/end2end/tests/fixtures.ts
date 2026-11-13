@@ -11,12 +11,13 @@ export type SeedFixtures = {
 export async function seedAuth(
   page: Page,
   auth: SeedAuthKind,
-  opts?: { refreshJob?: boolean },
+  opts?: { refreshJob?: boolean; pagingJobs?: boolean },
 ) {
   const res = await page.request.post("/api/test/seed-data", {
     data: {
       auth,
       refresh_job: opts?.refreshJob ?? false,
+      paging_jobs: opts?.pagingJobs ?? false,
     },
   });
   expect(res.ok()).toBeTruthy();
