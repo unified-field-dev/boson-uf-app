@@ -412,6 +412,7 @@ fn extract_status_filter_reads_equals_happy_path() {
             }],
         }),
         sort: None,
+        cursor: None,
     };
     assert_eq!(extract_status_filter(&request), Some("queued".into()));
 }
@@ -431,6 +432,7 @@ fn extract_status_filter_ignores_non_status_sad() {
             }],
         }),
         sort: None,
+        cursor: None,
     };
     assert_eq!(extract_status_filter(&request), None);
 }
@@ -450,6 +452,7 @@ fn resolve_job_filter_prefers_scope_happy_path() {
             }],
         }),
         sort: None,
+        cursor: None,
     };
     assert_eq!(
         resolve_job_filter(Some("from-scope".into()), &request),
@@ -465,6 +468,7 @@ fn quick_search_text_rejects_blank_sad() {
         quick_search: Some("  ".into()),
         filter: None,
         sort: None,
+        cursor: None,
     };
     assert_eq!(quick_search_text(&request), None);
 }
@@ -481,6 +485,7 @@ fn apply_jobs_datatable_query_filters_quick_search_happy_path() {
         quick_search: Some("alpha".into()),
         filter: None,
         sort: None,
+        cursor: None,
     };
     apply_jobs_datatable_query(&mut jobs, &request);
     assert_eq!(jobs.len(), 1);
@@ -506,6 +511,7 @@ fn apply_runs_datatable_query_status_equals_happy_path() {
             }],
         }),
         sort: None,
+        cursor: None,
     };
     apply_runs_datatable_query(&mut runs, &request);
     assert_eq!(runs.len(), 1);

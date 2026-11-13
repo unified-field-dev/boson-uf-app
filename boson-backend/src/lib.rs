@@ -21,6 +21,9 @@
 //!   helpers.
 //! - **`DataTable` query adapters** — Supports status and quick-search filters for queue and
 //!   run tables via [`apply_jobs_datatable_query`] and [`apply_runs_datatable_query`].
+//! - **Cursor paging** — Decides whether a jobs or runs table request pages by keyset cursor
+//!   or by offset, and builds the page with its `next_cursor`, via [`jobs_list_start`],
+//!   [`jobs_page_from_rows`], [`runs_list_start`], and [`runs_page_from_rows`].
 //!
 //! ## Validate ids
 //!
@@ -200,6 +203,7 @@
 
 #![cfg_attr(test, allow(clippy::unwrap_used, clippy::expect_used))]
 
+mod cursor_page;
 mod dashboard;
 mod lookup;
 mod map;
@@ -207,6 +211,10 @@ mod page_query;
 mod types;
 mod validate;
 
+pub use cursor_page::{
+    jobs_cursor_eligible, jobs_list_start, jobs_page_from_rows, runs_cursor_eligible,
+    runs_cursor_scope, runs_list_start, runs_page_from_rows, ListStart, JOBS_CURSOR_SCOPE,
+};
 pub use dashboard::{
     align_run_bucket, fill_bucket_range, run_bucket_granularity, run_stats_series_from_runs,
     RunBucketGranularity,

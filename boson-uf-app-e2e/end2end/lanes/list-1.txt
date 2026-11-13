@@ -4,6 +4,9 @@ dashboard.spec.ts › pw-boson-dashboard › pw-boson-dashboard-happy-kpis
 dashboard.spec.ts › pw-boson-dashboard › pw-boson-dashboard-sad-empty-recent-not-crash
 queue_cancel.spec.ts › pw-boson-queue-cancel › pw-boson-queue-cancel-happy-admin
 queue_cancel.spec.ts › pw-boson-queue-cancel › pw-boson-queue-cancel-sad-non-admin
+queue_paging.spec.ts › pw-boson-queue-paging › pw-boson-queue-paging-happy-status-filter-desktop-light
+queue_paging.spec.ts › pw-boson-queue-paging › pw-boson-queue-paging-happy-status-filter-desktop-dark
+queue_paging.spec.ts › pw-boson-queue-paging › pw-boson-queue-paging-happy-unfiltered-phone
 runs.spec.ts › pw-boson-runs › pw-boson-runs-happy-list-detail
 runs.spec.ts › pw-boson-runs › pw-boson-runs-sad-unknown-run
 task_config.spec.ts › pw-boson-task-config › pw-boson-task-config-sad-unverified-email

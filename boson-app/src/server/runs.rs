@@ -1,4 +1,11 @@
 //! Run history server functions.
+//!
+//! `list_runs_datatable_page` pages by keyset cursor (`list_runs_after`) when the request has
+//! no quick search and no filter beyond the job scope (or one `job_id` equals rule); other
+//! requests scan up to [`boson_backend::BOSON_LIST_FETCH_CAP`] runs in memory and page by
+//! offset. See [`boson_backend::runs_list_start`] for when a cursor request falls back to
+//! offset.
+//! `list_runs_page` pages by offset.
 
 use leptos::prelude::*;
 use orbital_paging::{Page, PageRequest};
@@ -10,6 +17,8 @@ use super::page_query;
 use super::types::RunSummary;
 #[cfg(feature = "ssr")]
 use super::types::{clamp_page_list_limit, BOSON_LIST_FETCH_CAP};
+#[cfg(feature = "ssr")]
+use boson_backend::ListStart;
 
 /// Paginated runs endpoint.
 #[uf_product_macros::server(permission = "BosonAdmin")]
@@ -68,13 +77,43 @@ pub async fn list_runs_datatable_page(
         let ctx = higgs::Higgs::from_request().await?;
         require_session(&ctx)?;
         let limit = clamp_page_list_limit(request.limit);
-        let job_filter = page_query::resolve_job_filter(scope_job_id, &request);
+        let job_filter = page_query::resolve_job_filter(scope_job_id.clone(), &request);
         if let Some(ref job_id) = job_filter {
             boson_backend::validate_job_id(job_id)
                 .map_err(|e| ServerFnError::new(e.to_string()))?;
         }
         let backend = super::helpers::boson_backend()?;
         let backend = backend.as_ref();
+
+        if boson_backend::runs_cursor_eligible(&request, scope_job_id.as_deref()) {
+            let start = boson_backend::runs_list_start(&request, scope_job_id.as_deref());
+            let runs = match &start {
+                ListStart::After(key) => {
+                    backend
+                        .list_runs_after(job_filter.as_deref(), key.as_ref(), (limit + 1) as usize)
+                        .await
+                }
+                ListStart::Offset(offset) => {
+                    backend
+                        .list_runs(job_filter.as_deref(), *offset, (limit + 1) as usize)
+                        .await
+                }
+            };
+            // Count on the first page only; cursor pages report `None`.
+            let total_count = if request.is_first_page() {
+                Some(backend.count_runs(job_filter.as_deref()).await)
+            } else {
+                None
+            };
+            return Ok(boson_backend::runs_page_from_rows(
+                runs,
+                &request,
+                scope_job_id.as_deref(),
+                limit,
+                &start,
+                total_count,
+            ));
+        }
 
         let runs = backend
             .list_runs(job_filter.as_deref(), 0, BOSON_LIST_FETCH_CAP)
